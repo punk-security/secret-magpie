@@ -24,7 +24,11 @@ if __name__ == "__main__":
     with open(args.out, "w", 1, encoding="utf-8") as f:
         for result_batch in results:
             processed_repos += 1
-            print(f"| Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |", end="\r", flush=True)
+            print(
+                f"       | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
+                end="\r",
+                flush=True,
+            )
             for result in result_batch:
                 if result.status == "FAIL" or result.findings == []:
                     continue

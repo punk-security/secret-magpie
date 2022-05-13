@@ -7,8 +7,9 @@ banner = """\
       / ____/ /_/ / / / / ,<  ___/ /  __/ /__/ /_/ / /  / / /_/ /_/ / 
      /_/    \__,_/_/ /_/_/|_|/____/\___/\___/\__,_/_/  /_/\__/\__, /  
                                             PRESENTS         /____/  
+                            Secret-Magpie ✨
 
-  Scan all your github repos from one tool, with multiple tools!
+    Scan all your github repos from one tool, with multiple tools!
         """
 
 parser = argparse.ArgumentParser(
