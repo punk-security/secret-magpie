@@ -43,13 +43,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--single-branch",
-    action="store_true",
-    help="Scan only the default branch",
-)
-
-parser.add_argument(
     "--disable-gitleaks",
     action="store_true",
     help="Scan with gitleaks",
+)
+
+parser.add_argument(
+    "--single-branch",
+    action="store_true",
+    help="Scan only the default branch",
 )

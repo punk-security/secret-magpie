@@ -13,10 +13,21 @@ if __name__ == "__main__":
         argparsing.parser.print_help()
         sys.exit(1)
     print(argparsing.banner)
+    tool_list = []
+    if not args.disable_gitleaks:
+        tool_list += tools.gitleaks
+    if not args.disable_trufflehog:
+        tool_list += tools.truffle_hog
+    if len(tool_list == 0):
+        print("ERROR: No tools to scan with")
+        sys.exit(1)
     repos = tasks.get_repos_from_github(args.github_org, args.pat)
     total_results = []
     f = partial(
-        tasks.process_repo, pat=args.pat, functions=[tools.gitleaks, tools.truffle_hog]
+        tasks.process_repo,
+        pat=args.pat,
+        functions=tool_list,
+        default_branches=args.single_branch,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)

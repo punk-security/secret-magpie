@@ -46,13 +46,19 @@ class ProcessRepoResult(object):
             return f"{self.status}::{self.repo.name}::{self.message}"
 
 
-def process_repo(repo, pat, functions):
+def process_repo(repo, pat, functions, single_branch=False):
     out = []
     try:
         path = clone_repo(repo.clone_url, pat)
     except:
         return [ProcessRepoResult(repo, "FAIL", "Could not clone")]
-    for branch in get_branches(path):
+    if not single_branch:
+        branches = get_branches(path)
+    else:
+        branches = [
+            None,
+        ]
+    for branch in branches:
         for function in functions:
             try:
                 out.append(
