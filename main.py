@@ -5,6 +5,7 @@ import sys
 import tools
 import tasks
 import argparsing
+import stats
 
 if __name__ == "__main__":
     try:
@@ -15,10 +16,10 @@ if __name__ == "__main__":
     print(argparsing.banner)
     tool_list = []
     if not args.disable_gitleaks:
-        tool_list += tools.gitleaks
+        tool_list.append(tools.gitleaks)
     if not args.disable_trufflehog:
-        tool_list += tools.truffle_hog
-    if len(tool_list == 0):
+        tool_list.append(tools.truffle_hog)
+    if len(tool_list) == 0:
         print("ERROR: No tools to scan with")
         sys.exit(1)
     repos = tasks.get_repos_from_github(args.github_org, args.pat)
@@ -27,7 +28,7 @@ if __name__ == "__main__":
         tasks.process_repo,
         pat=args.pat,
         functions=tool_list,
-        default_branches=args.single_branch,
+        single_branch=args.single_branch,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
@@ -45,4 +46,13 @@ if __name__ == "__main__":
                     continue
                 for item in result.findings:
                     total_results.append(item)
+                    if args.dont_store_secret:
+                        item.secret = ""
                     f.write(f"{item.__dict__}\n")
+    print(
+        f"       | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
+    )
+
+    if not args.no_stats:
+        s = stats.Stats(total_results, processed_repos)
+        print(s.Report())

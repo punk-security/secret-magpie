@@ -1,7 +1,7 @@
 from shutil import rmtree
 from time import sleep
 from hashlib import sha256
-from git import Repo  # gitpython
+from git import Repo
 from github import Github
 
 
@@ -90,6 +90,7 @@ def process_repo(repo, pat, functions, single_branch=False):
         ret.append(
             ProcessRepoResult(repo, "SUCCESS", function.__name__, deduped.values())
         )
+
     return ret
 
 

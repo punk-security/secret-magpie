@@ -33,7 +33,7 @@ def gitleaks(path, repo, branch=None):
     temp_path = f"{path}.out"
     gitleaks = ["gitleaks", "detect", "-s", path, "-r", temp_path]
     if branch != None:
-        gitleaks.append(f"--log-opts={branch}")
+        gitleaks.append(f"--log-opts=remotes/origin/{branch}")
     result = run(gitleaks, capture_output=True)
     if result.returncode == 1:
         try:

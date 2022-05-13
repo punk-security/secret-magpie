@@ -53,3 +53,15 @@ parser.add_argument(
     action="store_true",
     help="Scan only the default branch",
 )
+
+parser.add_argument(
+    "--dont-store-secret",
+    action="store_true",
+    help="Do not store the plaintext secret in the results",
+)
+
+parser.add_argument(
+    "--no-stats",
+    action="store_true",
+    help="Do not output stats summary",
+)
