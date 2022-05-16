@@ -6,6 +6,7 @@ import tools
 import tasks
 import argparsing
 import stats
+import output
 
 if __name__ == "__main__":
     print(argparsing.banner)
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
     processed_repos = 0
-    with open(f"results/{args.out}", "w", 1, encoding="utf-8") as f:
+    with output.Output(args.out_format, args.out) as o:
         for result_batch in results:
             processed_repos += 1
             print(
@@ -44,7 +45,7 @@ if __name__ == "__main__":
                     total_results.append(item)
                     if args.dont_store_secret:
                         item.secret = ""
-                    f.write(f"{item.__dict__}\n")
+                    o.write(item)
     print(
         f"       | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
     )

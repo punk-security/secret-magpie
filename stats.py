@@ -1,4 +1,3 @@
-from mailbox import linesep
 from os import linesep
 
 
