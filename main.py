@@ -33,7 +33,7 @@ if __name__ == "__main__":
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
     processed_repos = 0
-    with open(args.out, "w", 1, encoding="utf-8") as f:
+    with open(f"results/{args.out}", "w", 1, encoding="utf-8") as f:
         for result_batch in results:
             processed_repos += 1
             print(
