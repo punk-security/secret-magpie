@@ -38,7 +38,7 @@ parser.add_argument(
 
 
 parser.add_argument(
-    "--out", type=str, default="results.json", help="Output file (default: %(default)s)"
+    "--out", type=str, default="results/results.csv", help="Output file (default: %(default)s)"
 )
 
 parser.add_argument(
@@ -51,13 +51,13 @@ parser.add_argument(
 parser.add_argument(
     "--disable-trufflehog",
     action="store_true",
-    help="Scan with trufflehog",
+    help="Scan without trufflehog",
 )
 
 parser.add_argument(
     "--disable-gitleaks",
     action="store_true",
-    help="Scan with gitleaks",
+    help="Scan without gitleaks",
 )
 
 parser.add_argument(

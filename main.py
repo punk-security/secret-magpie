@@ -1,5 +1,6 @@
 from multiprocessing.pool import ThreadPool
 from functools import partial
+from csv import DictWriter
 import sys
 
 import tools
@@ -29,7 +30,8 @@ if __name__ == "__main__":
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
     processed_repos = 0
-    with open(f"results/{args.out}", "w", 1, encoding="utf-8") as f:
+    with open(f"{args.out}", "w", 1, encoding="utf-8", newline="") as f:
+        writer = None
         for result_batch in results:
             processed_repos += 1
             print(
@@ -42,9 +44,14 @@ if __name__ == "__main__":
                     continue
                 for item in result.findings:
                     total_results.append(item)
+                    if writer == None:
+                        writer = DictWriter(
+                            f, fieldnames=item.__dict__.keys(), dialect="excel"
+                        )
+                        writer.writeheader()
                     if args.dont_store_secret:
                         item.secret = ""
-                    f.write(f"{item.__dict__}\n")
+                    writer.writerow(item.__dict__)
     print(
         f"       | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
     )
