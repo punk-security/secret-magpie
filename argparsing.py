@@ -40,7 +40,7 @@ parser.add_argument(
 parser.add_argument(
     "--out",
     type=str,
-    default="results/results.csv",
+    default="results",
     help="Output file (default: %(default)s)",
 )
 
