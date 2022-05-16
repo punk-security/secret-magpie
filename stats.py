@@ -1,8 +1,34 @@
-from tabulate import tabulate
+from mailbox import linesep
+from os import linesep
 
 
 def dedup(l):
     return list(set(l))
+
+
+def template_table(list, headings, title):
+    ret = header_row(title)
+    if headings != []:
+        ret += template_row(*headings)
+        ret += header_row()
+    for item in list:
+        ret += template_row(*item)
+    ret += header_row()
+    return ret
+
+
+def template_row(a, b):
+    return ("| %.56s" % a).ljust(61) + " | " + ("%.8s" % b).ljust(12) + " |" + linesep
+
+
+def header_row(header=""):
+    if len(header) > 0:
+        header = f" {header.upper()} "
+    if len(header) % 2:
+        header += "="
+    l = len(template_row(" ", " ")) - 2 - len(linesep)
+    inject_index = int((l / 2) - (len(header) / 2))
+    return f"|{'=' * inject_index}{header}{'=' * inject_index}|{linesep}"
 
 
 class Stats:
@@ -64,6 +90,12 @@ class Stats:
         return self.FilteredByKV("source", s, False)
 
     def Report(self):
+        general_stats = [
+            ["Repo count", self.RepoCount],
+            ["Repos containing secrets", len(self.Repos)],
+            ["Detections", len(self.Findings)],
+            ["Unique Secrets", len(self.DeduplicatedBySecret)],
+        ]
         by_type = [
             (t, len(self.Bydetector_type(t))) for t in self.Observeddetector_types
         ]
@@ -77,22 +109,13 @@ class Stats:
         by_source = [(s, len(self.BySource(s))) for s in self.ObservedSources]
         by_source.sort(key=lambda x: x[1], reverse=True)
         return f"""
-:: STATS ::
-Repo count                    : {self.RepoCount}
-Repos containing secrets      : {len(self.Repos)}
-Detections                    : {len(self.Findings)}
-Unique Secrets                : {len(self.DeduplicatedBySecret)}
-auto-Verified Active Secrets  : {len(self.VerifiedSecrets)}
+{template_table(general_stats, [], "STATS")}
 
-========================= DETECTIONS BY TOOL ===============================
-{tabulate(by_source, ["Source","Occurance"])}
+{template_table(by_source, ["Source","Count"], "Detections by tool")}
 
-====================== UNIQUE SECRETS BY TYPE ==============================
-{tabulate(by_type, ["Type","Occurance"])}
+{template_table(by_type, ["Type","Count"], "Unique Secrets by type")}
 
-====================== DETECTIONS BY EXTENSION =============================
-{tabulate(by_extension, ["Extension","Occurance"])}
+{template_table(by_extension, ["Extension","Count"], "Detections by extension")}
 
-====================== DETECTIONS BY REPOSITORY ============================
-{tabulate(by_repository, ["Repository","Occurance"])}
+{template_table(by_repository, ["Repository","Count"], "Detections by repository")}
         """
