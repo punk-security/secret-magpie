@@ -8,12 +8,11 @@ import argparsing
 import stats
 
 if __name__ == "__main__":
+    print(argparsing.banner)
     try:
         args = argparsing.parser.parse_args()
     except SystemExit as e:
-        argparsing.parser.print_help()
         sys.exit(1)
-    print(argparsing.banner)
     tool_list = []
     if not args.disable_gitleaks:
         tool_list.append(tools.gitleaks)

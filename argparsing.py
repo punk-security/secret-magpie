@@ -1,4 +1,8 @@
 import argparse
+from os import linesep, environ
+import sys
+
+runtime = environ.get("SM_COMMAND", f"{sys.argv[0]}")
 
 banner = """\
          ____              __   _____                      _ __       
@@ -12,13 +16,20 @@ banner = """\
     Scan all your github repos from one tool, with multiple tools!
         """
 
-parser = argparse.ArgumentParser(
-    usage="%(prog)s [options] github_org pat",
+
+class CustomParser(argparse.ArgumentParser):
+    def error(self, message):
+        sys.stderr.write(" ❌ error: %s\n" % message)
+        sys.exit(2)
+
+
+parser = CustomParser(
+    usage=f"{linesep} {runtime} [options] 'github organisation name' 'personal access token' {linesep}",
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    description=banner,
+    description="",
 )
 
-parser.add_argument("github_org", type=str, help="Github organisation to target")
+parser.add_argument("github_org", type=str, help="Github organisation name to target")
 
 parser.add_argument(
     "pat", type=str, help="Github Personal Access Token for API access and cloning"
