@@ -19,7 +19,8 @@ banner = """\
 
 class CustomParser(argparse.ArgumentParser):
     def error(self, message):
-        sys.stderr.write(" ❌ error: %s\n" % message)
+        sys.stdout.write(f" ❌ error: {message}{linesep}{linesep}")
+        self.print_usage()
         sys.exit(2)
 
 
