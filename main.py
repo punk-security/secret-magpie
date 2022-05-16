@@ -1,6 +1,5 @@
 from multiprocessing.pool import ThreadPool
 from functools import partial
-from csv import DictWriter
 import sys
 
 import tools
@@ -31,7 +30,7 @@ if __name__ == "__main__":
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
     processed_repos = 0
-    with output.Output("csv", args.out) as o:
+    with output.Output("json", args.out) as o:
         for result_batch in results:
             processed_repos += 1
             print(

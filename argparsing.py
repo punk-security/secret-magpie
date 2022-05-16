@@ -45,6 +45,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--out-format",
+    type=str,
+    default="csv",
+    choices=["csv", "json"],
+)
+
+parser.add_argument(
     "--parallel-repos",
     type=int,
     default=1,
