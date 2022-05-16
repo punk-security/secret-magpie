@@ -38,7 +38,10 @@ parser.add_argument(
 
 
 parser.add_argument(
-    "--out", type=str, default="results/results.csv", help="Output file (default: %(default)s)"
+    "--out",
+    type=str,
+    default="results/results.csv",
+    help="Output file (default: %(default)s)",
 )
 
 parser.add_argument(
