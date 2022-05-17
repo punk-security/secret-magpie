@@ -20,7 +20,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `🕵️ Black Linting
-            \`${{ steps.black.outputs.stdout }}\`
+            \`${{ steps.black.outputs.stderr }}\`
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
             github.issues.createComment({
               issue_number: context.issue.number,
