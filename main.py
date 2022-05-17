@@ -34,7 +34,7 @@ if __name__ == "__main__":
         for result_batch in results:
             processed_repos += 1
             print(
-                f"       | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
+                f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
                 end="\r",
                 flush=True,
             )
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                         item.secret = ""
                     o.write(item)
     print(
-        f"       | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
+        f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
     )
 
     if not args.no_stats:
