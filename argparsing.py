@@ -1,5 +1,6 @@
 import argparse
-from os import linesep, environ
+import math
+from os import linesep, environ, cpu_count
 import sys
 
 runtime = environ.get("SM_COMMAND", f"{sys.argv[0]}")
@@ -15,6 +16,12 @@ banner = """\
 
     Scan all your github repos from one tool, with multiple tools!
         """
+
+cores = cpu_count()
+if cores is None or cores == 0:
+    parallel = 1
+else:
+    parallel = math.ceil(cores / 4)
 
 
 class CustomParser(argparse.ArgumentParser):
@@ -54,7 +61,7 @@ parser.add_argument(
 parser.add_argument(
     "--parallel-repos",
     type=int,
-    default=1,
+    default=parallel,
     help="Number of repos to process in parallel - more than 3 not advised (default: %(default)s)",
 )
 
