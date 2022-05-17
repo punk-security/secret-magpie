@@ -17,7 +17,7 @@ def template_table(list, headings, title):
 
 
 def template_row(a, b):
-    return ("| %.56s" % a).ljust(61) + " | " + ("%.8s" % b).ljust(12) + " |" + linesep
+    return ("| %.56s" % a).ljust(61) + " | " + ("%.8s" % b).ljust(10) + " |" + linesep
 
 
 def header_row(header=""):
