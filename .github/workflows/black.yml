@@ -4,27 +4,5 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.9
-      - name: Install Black
-        run: pip install black
-      - name: Run black --check .
-        run: black --check .
-        id: black
-      - name: Update Pull Request
-        uses: actions/github-script@0.9.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `🕵️ Black Linting
-            \`${{ steps.black.outputs.stderr }}\`
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
