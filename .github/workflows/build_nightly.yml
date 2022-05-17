@@ -25,4 +25,4 @@ jobs:
             --push \
             --progress=plain \
             --tag docker.io/punksecurity/secret-magpie:nightly \
-            --platform linux/amd64
+            --platform linux/amd64,linux/arm64
