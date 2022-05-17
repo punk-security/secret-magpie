@@ -30,4 +30,4 @@ jobs:
             --progress=plain \
             --tag docker.io/punksecurity/secret-magpie:${{ steps.version.outputs.version }} \
             --tag docker.io/punksecurity/secret-magpie:latest \
-            --platform linux/amd64
+            --platform linux/amd64,linux/arm64
