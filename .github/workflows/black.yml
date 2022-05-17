@@ -6,3 +6,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: psf/black@stable
+        id: black
+      - name: Update Pull Request
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `🕵️ Black Linting
+            \`${{ steps.black.outputs.stdout }}\`
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
