@@ -85,4 +85,4 @@ options:
   --no-stats            Do not output stats summary
 ```
 
-![CMD](Docs\secret-magpie.gif)
+![CMD](Docs/secret-magpie.gif)
