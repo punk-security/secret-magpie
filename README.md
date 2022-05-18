@@ -1,8 +1,6 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/punk-security/secret-magpie-cli/graphs/commit-activity)
 [![Maintaner](https://img.shields.io/badge/maintainer-PunkSecurity-blue)](https://www.punksecurity.co.uk)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=punk-security_SecretMagpie&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=punk-security_SecretMagpie)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=punk-security_SecretMagpie&metric=bugs)](https://sonarcloud.io/summary/new_code?id=punk-security_SecretMagpie)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=punk-security_SecretMagpie&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=punk-security_SecretMagpie)
+
 
 ```
           ____              __   _____                      _ __       
@@ -20,24 +18,34 @@
 
 ## Intro
 
-SecretMagpie is a secret detection tool that hunts out all the secrets hiding in your Github repositories. It uses multiple tools in one convenient package to scan every branch of every repository in an organisation. It then smooshes all those results together into a lovely json output and reports some big ticket stats right to the screen. 
+SecretMagpie is a secret detection tool that hunts out all the secrets hiding in your GitHub repositories. It uses multiple tools in one convenient package to scan every branch of every repository in an organisation. It then smooshes all those results together into a lovely json output and reports some big ticket stats right to the screen. 
 
 By making use of the opensource tools [Trufflehog](https://github.com/trufflesecurity/trufflehog) 🐷 and [Gitleaks](https://github.com/zricethezav/gitleaks), SecretMagpie can highlight a variety of different secrets and ensure that nothing is missed!
 
 ## Docker
 
-We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. SecretMagpie has two mandatory parameters, a github organisation name and a github personal access token.
+We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. SecretMagpie has two mandatory parameters, a GitHub organisation name and a GitHub personal access token.
 
 Simply run the following command to get started.
 
 ```
 docker run punksecurity/secret-magpie 'github organisation name' 'personal access token'
 ```
+
+## Get your results
+Copy from the container
+
+```
+docker cp 'container':/app/results/results.json /host/path/target
+```
+Mount the volume
+
+```
+docker -v /localpath:/app/results
+```
 ## Installation
 
-If you prefer not to use Docker then the following dependencies are required to run SecretMagpie.
-
-You will need to manually install the following:
+If you prefer not to use Docker then you will need to manually install the following:
 
 * Python 3.10
 * Git
