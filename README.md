@@ -36,9 +36,9 @@ docker run punksecurity/secret-magpie 'github organisation name' 'personal acces
 Copy from the container
 
 ```
-docker cp 'container':/app/results/results.json /host/path/target
+docker cp 'container':/app/results/results.[csv/json] /host/path/target
 ```
-Mount the volume
+OR Mount the volume
 
 ```
 docker -v /localpath:/app/results
@@ -64,7 +64,7 @@ pip install -r requirements.txt
 ```
 usage:
 
- docker run punksecurity/secret-magpie -- [options] 'github organisation name' 'personal access token'
+ [options] 'github organisation name' 'personal access token'
 
 positional arguments:
 
