@@ -17,16 +17,18 @@
 ```                                                       
     
 # SecretMagpie 
-
+We secret scan every repo on Github (and now Bitbucket) !!! 
 ## Intro
 
-SecretMagpie is a secret detection tool that hunts out all the secrets hiding in your GitHub repositories. It uses multiple tools in one convenient package to scan every branch of every repository in an organisation. It then smooshes all those results together into a lovely json output and reports some big ticket stats right to the screen. 
+SecretMagpie is a secret detection tool that hunts out all the secrets hiding in your GitHub and BitBucket repositories. It uses multiple tools in one convenient package to scan every branch of every repository in an organisation. It then smooshes all those results together into a lovely json output and reports some big ticket stats right to the screen. 
+
+SecretMagpie discovers every repo you can access via the Github or Bitbucket APIs and then clone each down to run the secret detection tools over them.  We run the tools again and again, iterating over all the branches in each repository.  The findings from both tools are then normalized and written to either CSV or JSON.
 
 By making use of the opensource tools [Trufflehog](https://github.com/trufflesecurity/trufflehog) 🐷 and [Gitleaks](https://github.com/zricethezav/gitleaks), SecretMagpie can highlight a variety of different secrets and ensure that nothing is missed!
 
 ## Docker
 
-We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. SecretMagpie has two mandatory parameters, a GitHub organisation name and a GitHub personal access token.
+We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. SecretMagpie requires slightly different options for Githib and Bitbucket.
 
 Simply run one of the following commands to get started:
 ```shell
