@@ -1,6 +1,8 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/punk-security/secret-magpie-cli/graphs/commit-activity)
 [![Maintaner](https://img.shields.io/badge/maintainer-PunkSecurity-blue)](https://www.punksecurity.co.uk)
-
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=punk-security_secret-magpie-cli&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=punk-security_secret-magpie-cli)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=punk-security_secret-magpie-cli&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=punk-security_secret-magpie-cli)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=punk-security_secret-magpie-cli&metric=bugs)](https://sonarcloud.io/summary/new_code?id=punk-security_secret-magpie-cli)
 
 ```
           ____              __   _____                      _ __       
