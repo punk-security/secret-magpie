@@ -135,10 +135,10 @@ def get_repos_from_github(org, pat):
 
 
 def get_repos(provider, **kwargs):
-    if 'github' == provider:
+    if "github" == provider:
         return get_repos_from_github(kwargs["org"], kwargs["pat"])
 
-    if 'bitbucket' == provider:
+    if "bitbucket" == provider:
         return get_repos_from_bitbucket(
             kwargs["workspace"], kwargs["username"], kwargs["password"]
         )
