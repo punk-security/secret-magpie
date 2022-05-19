@@ -13,7 +13,7 @@
                                              PRESENTS         /____/  
                               Secret-Magpie ✨
 
-      Scan all your github repos from one tool, with multiple tools!
+      Scan all your github/bitbucket repos from one tool, with multiple tools!
 ```                                                       
     
 # SecretMagpie 
@@ -28,10 +28,13 @@ By making use of the opensource tools [Trufflehog](https://github.com/trufflesec
 
 We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. SecretMagpie has two mandatory parameters, a GitHub organisation name and a GitHub personal access token.
 
-Simply run the following command to get started.
-
+Simply run one of the following commands to get started:
+```shell
+docker run punksecurity/secret-magpie github --org 'github organisation name' --pat 'personal access token'
 ```
-docker run punksecurity/secret-magpie 'github organisation name' 'personal access token'
+or
+```shell
+docker run punksecurity/secret-magpie bitbucket --workspace 'workspace name to scan' --username 'your username' --password 'your application password'
 ```
 
 ## Get your results
@@ -65,26 +68,31 @@ pip install -r requirements.txt
 
 ```
 usage:
-
- [options] 'github organisation name' 'personal access token'
+ secret-magpie {bitbucket,github} [options]
 
 positional arguments:
+  {github,bitbucket}
 
-  github_org            Github organisation name to target
-  pat                   Github Personal Access Token for API access and
-                        cloning
 options:
-
   -h, --help            show this help message and exit
-  --out OUT             Output file (default: results.json)
+  --out OUT             Output file (default: results)
+  --out-format {csv,json}
   --parallel-repos PARALLEL_REPOS
-                        Number of repos to process in parallel - more than 3
-                        not advised (default: 1)
-  --disable-trufflehog  Scan with trufflehog
-  --disable-gitleaks    Scan with gitleaks
+                        Number of repos to process in parallel - more than 3 not advised (default: 4)
+  --disable-trufflehog  Scan without trufflehog
+  --disable-gitleaks    Scan without gitleaks
   --single-branch       Scan only the default branch
   --dont-store-secret   Do not store the plaintext secret in the results
   --no-stats            Do not output stats summary
+
+github:
+  --org ORG             Github organisation name to target
+  --pat PAT             Github Personal Access Token for API access and cloning
+
+bitbucket:
+  --workspace WORKSPACE
+  --username USERNAME
+  --password PASSWORD
 ```
 
 ![CMD](Docs/secret-magpie.gif)

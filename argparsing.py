@@ -32,7 +32,7 @@ class CustomParser(argparse.ArgumentParser):
 
 
 parser = CustomParser(
-    usage=f"{linesep} {runtime} [options] 'github organisation name' 'personal access token' {linesep}",
+    usage=f"{linesep} {runtime} {{bitbucket/github}} [options] {linesep}",
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description="",
 )
