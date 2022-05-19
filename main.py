@@ -44,7 +44,7 @@ if __name__ == "__main__":
                 for item in result.findings:
                     total_results.append(item)
                     if args.dont_store_secret:
-                        item.secret = ""
+                        item.secret = ""  # nosec hardcoded_password_string
                     o.write(item)
     print(
         f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
