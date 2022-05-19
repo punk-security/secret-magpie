@@ -36,6 +36,8 @@ class Output:
             self.writer = csv.DictWriter(
                 self.fd, fieldnames=finding.__dict__.keys(), dialect="excel"
             )
+            self.writer.writeheader()
+
         self.writer.writerow(finding.__dict__)
 
     def write_json(self, finding):

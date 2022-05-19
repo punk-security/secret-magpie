@@ -14,7 +14,7 @@ banner = """\
                                              PRESENTS         /____/  
                               Secret-Magpie ✨
 
-      Scan all your github repos from one tool, with multiple tools!
+      Scan all your github/bitbucket repos from one tool, with multiple tools!
         """
 
 cores = cpu_count()
@@ -37,12 +37,22 @@ parser = CustomParser(
     description="",
 )
 
-parser.add_argument("github_org", type=str, help="Github organisation name to target")
-
 parser.add_argument(
-    "pat", type=str, help="Github Personal Access Token for API access and cloning"
+    "provider",
+    type=str,
+    choices=["github", "bitbucket"],
 )
 
+github_group = parser.add_argument_group("github")
+github_group.add_argument("--org", type=str, help="Github organisation name to target")
+github_group.add_argument(
+    "--pat", type=str, help="Github Personal Access Token for API access and cloning"
+)
+
+bitbucket_group = parser.add_argument_group("bitbucket")
+bitbucket_group.add_argument("--workspace")
+bitbucket_group.add_argument("--username")
+bitbucket_group.add_argument("--password")
 
 parser.add_argument(
     "--out",
@@ -94,3 +104,16 @@ parser.add_argument(
     action="store_true",
     help="Do not output stats summary",
 )
+
+
+def parse_args():
+    args = parser.parse_args()
+    if "bitbucket" == args.provider and (
+        args.workspace is None or args.password is None or args.username is None
+    ):
+        parser.error("bitbucket requires --workspace, --username and --password")
+
+    if "github" == args.provider and (args.pat is None or args.org is None):
+        parser.error("github requires --pat and --org")
+
+    return args

@@ -59,7 +59,7 @@ class Finding(object):
             author_email=data["Git"]["email"],
             repository=repo.name,
             repository_uri=data["Git"]["repository"],
-            link=f"{repo.html_url}/blob/{commit}/{data['Git']['file']}",
+            link=repo.link_to_file(commit, data["Git"]["file"], data["Git"]["line"]),
             secret=b64decode(trufflehog_dict["Raw"]).decode("utf-8"),
             file=data["Git"]["file"],
             line=data["Git"]["line"],
@@ -68,7 +68,9 @@ class Finding(object):
     @staticmethod
     def fromGitLeak(gitleak_dict, repo):
         repo_url = repo.html_url
-        link = f"{repo.html_url}/blob/{gitleak_dict['Commit']}/{gitleak_dict['File']}"
+        link = repo.link_to_file(
+            gitleak_dict["Commit"], gitleak_dict["File"], gitleak_dict["StartLine"]
+        )
         return Finding(
             source="gitleaks",
             detector_type=gitleak_dict["RuleID"],
