@@ -12,7 +12,6 @@ def truffle_hog(path, repo, branch=None):
         "--json",
         "git",
         target,
-        "--no-verification",
         "--fail",
     ]
     if branch != None:

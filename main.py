@@ -10,7 +10,8 @@ import output
 
 if __name__ == "__main__":
     print(argparsing.banner)
-    args = argparsing.parser.parse_args()
+    args = argparsing.parse_args()
+
     tool_list = []
     if not args.disable_gitleaks:
         tool_list.append(tools.gitleaks)
@@ -19,11 +20,10 @@ if __name__ == "__main__":
     if len(tool_list) == 0:
         print("ERROR: No tools to scan with")
         sys.exit(1)
-    repos = tasks.get_repos_from_github(args.github_org, args.pat)
+    repos = tasks.get_repos(**args.__dict__)
     total_results = []
     f = partial(
         tasks.process_repo,
-        pat=args.pat,
         functions=tool_list,
         single_branch=args.single_branch,
     )
