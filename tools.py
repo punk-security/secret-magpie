@@ -1,5 +1,5 @@
 from os import remove
-from subprocess import run
+from subprocess import run  # nosec B404
 from finding import Finding
 from json import loads
 
@@ -17,7 +17,9 @@ def truffle_hog(path, repo, branch=None):
     ]
     if branch != None:
         truffle_hog.append(f"--branch={branch}")
-    output = run(truffle_hog, capture_output=True)
+    output = run(  # nosec B603 git branch has limited char set
+        truffle_hog, capture_output=True
+    )
     if output.returncode == 0:
         return []
     ret = []
@@ -34,7 +36,9 @@ def gitleaks(path, repo, branch=None):
     gitleaks = ["gitleaks", "detect", "-s", path, "-r", temp_path]
     if branch != None:
         gitleaks.append(f"--log-opts=remotes/origin/{branch}")
-    result = run(gitleaks, capture_output=True)
+    result = run(  # nosec B603 git branch has limited char set
+        gitleaks, capture_output=True
+    )
     if result.returncode == 1:
         try:
             with open(temp_path, "r") as f:
@@ -50,6 +54,7 @@ def gitleaks(path, repo, branch=None):
     else:
         try:
             remove(temp_path)
-        except:
+        except FileNotFoundError:
+            # Expected sometimes
             pass
         return []
