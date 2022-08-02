@@ -11,6 +11,7 @@ import output
 if __name__ == "__main__":
     print(argparsing.banner)
     args = argparsing.parse_args()
+    cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
     tool_list = []
     if not args.disable_gitleaks:
@@ -26,6 +27,7 @@ if __name__ == "__main__":
         tasks.process_repo,
         functions=tool_list,
         single_branch=args.single_branch,
+        cleanup=cleanup
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)

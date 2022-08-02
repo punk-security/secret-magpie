@@ -4,8 +4,8 @@ from finding import Finding
 from json import loads
 
 
-def truffle_hog(path, repo, branch=None):
-    target = f"file://{path}"
+def truffle_hog(path: str, repo, branch=None):
+    target = "file://" + path.replace("\\", "/")
     truffle_hog = [
         "trufflehog",
         "--no-update",

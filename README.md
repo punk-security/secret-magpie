@@ -36,7 +36,11 @@ or
 ```shell
 docker run punksecurity/secret-magpie bitbucket --workspace 'workspace name to scan' --username 'your username' --password 'your application password'
 ```
+or
+```shell
 
+docker run -v /local/path/to/repos/:/repos punksecurity/secret-magpie filesystem --path /repos
+```
 ## Get your results
 Copy from the container
 
@@ -68,17 +72,18 @@ pip install -r requirements.txt
 
 ```
 usage:
- secret-magpie {bitbucket,github} [options]
+ .\main.py {bitbucket/github/filesystem} [options]
 
 positional arguments:
-  {github,bitbucket}
+  {github,bitbucket,filesystem}
 
 options:
   -h, --help            show this help message and exit
   --out OUT             Output file (default: results)
+  --no-cleanup          Don't remove checked-out repositories upon completion
   --out-format {csv,json}
   --parallel-repos PARALLEL_REPOS
-                        Number of repos to process in parallel - more than 3 not advised (default: 4)
+                        Number of repos to process in parallel - more than 3 not advised (default: 5)
   --disable-trufflehog  Scan without trufflehog
   --disable-gitleaks    Scan without gitleaks
   --single-branch       Scan only the default branch
@@ -93,6 +98,9 @@ bitbucket:
   --workspace WORKSPACE
   --username USERNAME
   --password PASSWORD
+
+filesystem:
+  --path PATH           The root directory that contains all of the repositories to scan. Each repository should be a subdirectory under this path.
 ```
 
 ![CMD](Docs/secret-magpie.gif)

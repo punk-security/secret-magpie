@@ -1,23 +1,11 @@
+import glob
 from shutil import rmtree
 from time import sleep
-from hashlib import sha256
 from git import Repo as GitRepo
 from github import Github
 from atlassian import bitbucket
 
-from exceptions import InvalidArgumentsException
-from repos import BitbucketRepo, GithubRepo, Repo, RepoCredentials
-
-
-def clone_repo(repo: Repo):
-    path = sha256(repo.clone_url.encode("utf-8")).hexdigest()[0:8]
-    if repo.clone_url.lower()[0:8] != "https://":
-        raise Exception(f"clone url not in expected format: '{repo.clone_url}'")
-
-    target = f"https://{repo.credentials.get_auth_string()}@{repo.clone_url[8:]}"
-    GitRepo.clone_from(target, path).remotes[0].fetch()
-
-    return path
+from repos import BitbucketRepo, GithubRepo, Repo, RepoCredentials, FilesystemRepo
 
 
 def onerror(func, path, exc_info):
@@ -52,10 +40,10 @@ class ProcessRepoResult(object):
             return f"{self.status}::{self.repo.name}::{self.message}"
 
 
-def process_repo(repo, functions, single_branch=False):
+def process_repo(repo, functions, single_branch=False, cleanup=True):
     out = []
     try:
-        path = clone_repo(repo)
+        path = repo.clone_repo()
     except:
         return [ProcessRepoResult(repo, "FAIL", "Could not clone")]
     if not single_branch:
@@ -76,13 +64,14 @@ def process_repo(repo, functions, single_branch=False):
                 out.append(
                     ProcessRepoResult(repo, "FAIL", f"Could not {function.__name__}")
                 )
-    for i in range(3):
-        try:
-            rmtree(path, onerror=onerror)
-            break
-        except:
-            sleep(10)
-            pass
+    if cleanup:
+        for i in range(3):
+            try:
+                rmtree(path, onerror=onerror)
+                break
+            except:
+                sleep(10)
+                pass
     ret = []
     for function in functions:
         deduped = {}
@@ -134,6 +123,10 @@ def get_repos_from_github(org, pat):
         )
 
 
+def get_repos_from_filesystem(path):
+    for repo_path in glob.glob(path + "/*", recursive=False):
+        yield FilesystemRepo(repo_path)
+
 def get_repos(provider, **kwargs):
     if "github" == provider:
         return get_repos_from_github(kwargs["org"], kwargs["pat"])
@@ -142,5 +135,7 @@ def get_repos(provider, **kwargs):
         return get_repos_from_bitbucket(
             kwargs["workspace"], kwargs["username"], kwargs["password"]
         )
+    if "filesystem" == provider:
+        return get_repos_from_filesystem(kwargs["path"])
 
     raise NotImplementedError("Unsupported provider: " + provider)

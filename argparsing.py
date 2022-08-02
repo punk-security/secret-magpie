@@ -32,7 +32,7 @@ class CustomParser(argparse.ArgumentParser):
 
 
 parser = CustomParser(
-    usage=f"{linesep} {runtime} {{bitbucket/github}} [options] {linesep}",
+    usage=f"{linesep} {runtime} {{bitbucket/github/filesystem}} [options] {linesep}",
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description="",
 )
@@ -40,7 +40,7 @@ parser = CustomParser(
 parser.add_argument(
     "provider",
     type=str,
-    choices=["github", "bitbucket"],
+    choices=["github", "bitbucket", "filesystem"],
 )
 
 github_group = parser.add_argument_group("github")
@@ -54,6 +54,12 @@ bitbucket_group.add_argument("--workspace")
 bitbucket_group.add_argument("--username")
 bitbucket_group.add_argument("--password")
 
+filesystem_group = parser.add_argument_group("filesystem")
+filesystem_group.add_argument(
+    "--path",
+    help="The root directory that contains all of the repositories to scan. Each repository should be a subdirectory "
+         "under this path.")
+
 parser.add_argument(
     "--out",
     type=str,
@@ -61,6 +67,11 @@ parser.add_argument(
     help="Output file (default: %(default)s)",
 )
 
+parser.add_argument(
+    "--no-cleanup",
+    action="store_true",
+    help="Don't remove checked-out repositories upon completion"
+)
 parser.add_argument(
     "--out-format",
     type=str,
@@ -116,4 +127,6 @@ def parse_args():
     if "github" == args.provider and (args.pat is None or args.org is None):
         parser.error("github requires --pat and --org")
 
+    if "filesystem" == args.provider and (args.path is None):
+        parser.error("filesystem requires --path")
     return args
