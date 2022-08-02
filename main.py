@@ -27,7 +27,7 @@ if __name__ == "__main__":
         tasks.process_repo,
         functions=tool_list,
         single_branch=args.single_branch,
-        cleanup=cleanup
+        cleanup=cleanup,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)

@@ -127,6 +127,7 @@ def get_repos_from_filesystem(path):
     for repo_path in glob.glob(path + "/*", recursive=False):
         yield FilesystemRepo(repo_path)
 
+
 def get_repos(provider, **kwargs):
     if "github" == provider:
         return get_repos_from_github(kwargs["org"], kwargs["pat"])

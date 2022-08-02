@@ -58,7 +58,8 @@ filesystem_group = parser.add_argument_group("filesystem")
 filesystem_group.add_argument(
     "--path",
     help="The root directory that contains all of the repositories to scan. Each repository should be a subdirectory "
-         "under this path.")
+    "under this path.",
+)
 
 parser.add_argument(
     "--out",
@@ -70,7 +71,7 @@ parser.add_argument(
 parser.add_argument(
     "--no-cleanup",
     action="store_true",
-    help="Don't remove checked-out repositories upon completion"
+    help="Don't remove checked-out repositories upon completion",
 )
 parser.add_argument(
     "--out-format",
