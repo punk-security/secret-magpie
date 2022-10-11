@@ -28,6 +28,7 @@ class Repo:
 
         target = f"https://{self.credentials.get_auth_string()}@{self.clone_url[8:]}"
         GitRepo.clone_from(target, path).remotes[0].fetch()
+        return path
 
     def link_to_file(self, commit_hash, file_path, line_num):
         raise NotImplementedError("This method must be overridden in child classes")
