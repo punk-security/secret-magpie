@@ -40,13 +40,13 @@ parser = CustomParser(
 parser.add_argument(
     "provider",
     type=str,
-    choices=["github", "bitbucket", "filesystem"],
+    choices=["github", "gitlab", "bitbucket", "filesystem"],
 )
 
-github_group = parser.add_argument_group("github")
-github_group.add_argument("--org", type=str, help="Github organisation name to target")
+github_group = parser.add_argument_group("github/gitlab")
+github_group.add_argument("--org", type=str, help="Organisation name to target")
 github_group.add_argument(
-    "--pat", type=str, help="Github Personal Access Token for API access and cloning"
+    "--pat", type=str, help="Personal Access Token for API access and cloning"
 )
 
 bitbucket_group = parser.add_argument_group("bitbucket")
@@ -125,8 +125,11 @@ def parse_args():
     ):
         parser.error("bitbucket requires --workspace, --username and --password")
 
-    if "github" == args.provider and (args.pat is None or args.org is None):
+    if ("github" == args.provider) and (args.pat is None or args.org is None):
         parser.error("github requires --pat and --org")
+
+    if ("gitlab" == args.provider) and (args.pat is None or args.org is None):
+        parser.error("gitlab requires --pat and --org")
 
     if "filesystem" == args.provider and (args.path is None):
         parser.error("filesystem requires --path")

@@ -3,9 +3,10 @@ from shutil import rmtree
 from time import sleep
 from git import Repo as GitRepo
 from github import Github
+from gitlab import Gitlab
 from atlassian import bitbucket
 
-from repos import BitbucketRepo, GithubRepo, Repo, RepoCredentials, FilesystemRepo
+from repos import BitbucketRepo, GithubRepo, GitlabRepo, RepoCredentials, FilesystemRepo
 
 
 def onerror(func, path, exc_info):
@@ -123,6 +124,20 @@ def get_repos_from_github(org, pat):
         )
 
 
+def get_repos_from_gitlab(org, pat):
+    g = Gitlab(private_token=pat)
+    group = g.groups.get(org, lazy=True)
+    repos = group.projects.list(all=True)
+
+    for repo in repos:
+        yield GitlabRepo(
+            clone_url=repo.http_url_to_repo,
+            name=repo.name,
+            html_url=repo.web_url,
+            credentials=RepoCredentials(pat, username="oauth2"),
+        )
+
+
 def get_repos_from_filesystem(path):
     for repo_path in glob.glob(path + "/*", recursive=False):
         yield FilesystemRepo(repo_path)
@@ -131,6 +146,9 @@ def get_repos_from_filesystem(path):
 def get_repos(provider, **kwargs):
     if "github" == provider:
         return get_repos_from_github(kwargs["org"], kwargs["pat"])
+
+    if "gitlab" == provider:
+        return get_repos_from_gitlab(kwargs["org"], kwargs["pat"])
 
     if "bitbucket" == provider:
         return get_repos_from_bitbucket(
