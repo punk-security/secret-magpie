@@ -39,6 +39,11 @@ class GithubRepo(Repo):
         return f"{self.html_url}/blob/{commit_hash}/{file_path}#L{line_num}"
 
 
+class GitlabRepo(Repo):
+    def link_to_file(self, commit_hash, file_path, line_num) -> str:
+        return f"{self.html_url}/blob/{commit_hash}/{file_path}#L{line_num}"
+
+
 class BitbucketRepo(Repo):
     def link_to_file(self, commit_hash, file_path, line_num) -> str:
         return f"{self.html_url}/src/{commit_hash}/{file_path}#lines-{line_num}"
