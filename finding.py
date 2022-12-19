@@ -58,7 +58,7 @@ class Finding(object):
             date=data["Git"]["timestamp"],
             author_email=data["Git"]["email"],
             repository=repo.name,
-            repository_uri=data["Git"].get("repository"),
+            repository_uri=data["Git"].get("repository", ""),
             link=repo.link_to_file(commit, data["Git"]["file"], data["Git"]["line"]),
             secret=b64decode(trufflehog_dict["Raw"]).decode("utf-8"),
             file=data["Git"]["file"],
