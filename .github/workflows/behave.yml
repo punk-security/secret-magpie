@@ -1,0 +1,23 @@
+name: behave
+on: [pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.10.9
+      - name: Install Behave and pip dependencies
+        run: pip install -r test-requirements.txt
+      - name: Download gitleaks
+        run: wget https://github.com/zricethezav/gitleaks/releases/download/v8.15.2/gitleaks_8.15.2_linux_x64.tar.gz -O gitleaks.tar.gz
+      - name: Download trufflehog
+        run: wget https://github.com/trufflesecurity/trufflehog/releases/download/v3.20.0/trufflehog_3.20.0_linux_amd64.tar.gz -O trufflehog.tar.gz
+      - name: Extract gitleaks
+        run: sudo tar -xf gitleaks.tar.gz -C /bin
+      - name: Extract trufflehog
+        run: sudo tar -xf trufflehog.tar.gz -C /bin
+      - name: Run Behave
+        run: behave

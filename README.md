@@ -58,8 +58,8 @@ If you prefer not to use Docker then you will need to manually install the follo
 
 * Python 3.10
 * Git
-* [Trufflehog](https://github.com/trufflesecurity/trufflehog) installed and on PATH
-* [Gitleaks](https://github.com/zricethezav/gitleaks) installed and on PATH
+* [Trufflehog 3.20.0](https://github.com/trufflesecurity/trufflehog/releases/tag/v3.20.0) installed and on PATH
+* [Gitleaks v8.15.2](https://github.com/zricethezav/gitleaks/releases/tag/v8.15.2) installed and on PATH
 
 You will also need to install the dependencies in requirements.txt by running the following command:
 

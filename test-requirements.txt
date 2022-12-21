@@ -1,3 +1,4 @@
+behave==1.2.6
 gitpython==3.*
 pygithub==1.*
 python-gitlab==3.*
