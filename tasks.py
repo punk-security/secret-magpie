@@ -22,7 +22,23 @@ def onerror(func, path, exc_info):
 
 def get_branches(path):
     r = GitRepo.init(path)
-    return list([x.remote_head for x in r.remotes[0].refs if x.is_detached == True])
+
+    branches = []
+
+    if len(r.remotes) > 0:
+        branches.extend(
+            ["remotes/" + x.name for x in r.remotes[0].refs if x.is_detached == True]
+        )
+
+    branches.extend(
+        [
+            head.name
+            for head in r.heads
+            if head.is_detached == True and not head.is_remote()
+        ]
+    )
+
+    return branches
 
 
 class ProcessRepoResult(object):
@@ -50,9 +66,7 @@ def process_repo(repo, functions, single_branch=False, cleanup=True):
     if not single_branch:
         branches = get_branches(path)
     else:
-        branches = [
-            None,
-        ]
+        branches = ["HEAD"]
     for branch in branches:
         for function in functions:
             try:

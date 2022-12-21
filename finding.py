@@ -60,7 +60,7 @@ class Finding(object):
             repository=repo.name,
             repository_uri=data["Git"].get("repository", ""),
             link=repo.link_to_file(commit, data["Git"]["file"], data["Git"]["line"]),
-            secret=b64decode(trufflehog_dict["Raw"]).decode("utf-8"),
+            secret=trufflehog_dict["Raw"].rstrip("\n"),
             file=data["Git"]["file"],
             line=data["Git"]["line"],
         )
@@ -81,7 +81,7 @@ class Finding(object):
             repository=repo.name,
             repository_uri=repo_url,
             link=link,
-            secret=gitleak_dict["Secret"],
+            secret=gitleak_dict["Secret"].rstrip("\n"),
             file=gitleak_dict["File"],
             line=gitleak_dict["StartLine"],
         )
