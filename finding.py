@@ -57,11 +57,13 @@ class Finding(object):
             commit=commit,
             date=data["Git"]["timestamp"],
             author_email=data["Git"]["email"],
-            repository=repo.name,
-            repository_uri=data["Git"].get("repository", ""),
-            link=repo.link_to_file(commit, data["Git"]["file"], data["Git"]["line"]),
+            repository=repo.name.replace("\\", "/"),
+            repository_uri=data["Git"].get("repository", "").replace("\\", "/"),
+            link=repo.link_to_file(
+                commit, data["Git"]["file"], data["Git"]["line"]
+            ).replace("\\", "/"),
             secret=trufflehog_dict["Raw"].rstrip("\n"),
-            file=data["Git"]["file"],
+            file=data["Git"]["file"].replace("\\", "/"),
             line=data["Git"]["line"],
         )
 
@@ -78,11 +80,11 @@ class Finding(object):
             commit=gitleak_dict["Commit"],
             date=gitleak_dict["Date"],
             author_email=gitleak_dict["Email"],
-            repository=repo.name,
-            repository_uri=repo_url,
-            link=link,
+            repository=repo.name.replace("\\", "/"),
+            repository_uri=repo_url.replace("\\", "/"),
+            link=link.replace("\\", "/"),
             secret=gitleak_dict["Secret"].rstrip("\n"),
-            file=gitleak_dict["File"],
+            file=gitleak_dict["File"].replace("\\", "/"),
             line=gitleak_dict["StartLine"],
         )
 

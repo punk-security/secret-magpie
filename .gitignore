@@ -1,7 +1,7 @@
 .idea
 venv
 __pycache__/
-*.csv
-*.json
+/*.csv
+/*.json
 testing/
 .vscode

@@ -56,19 +56,65 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
 
     context.format = outformat
 
-    param_list = [
-        "python",
-        "./main.py",
-        "--out-format",
-        outformat,
-        "filesystem",
-        "--path",
-        TESTING_DIRECTORY,
-        "--no-cleanup",
-    ]
+    param_list = []
 
-    for arg in args:
-        param_list.append(arg)
+    match context.repo_type:
+        case "local":
+            param_list = [
+                "python",
+                "./main.py",
+                "--out-format",
+                outformat,
+                "filesystem",
+                "--path",
+                TESTING_DIRECTORY,
+            ]
+        case "github":
+            param_list = [
+                "python",
+                "./main.py",
+                "--out-format",
+                outformat,
+                "github",
+                "--org",
+                context.org,
+                "--pat",
+                context.pat,
+            ]
+        case "gitlab":
+            param_list = [
+                "python",
+                "./main.py",
+                "--out-format",
+                outformat,
+                "gitlab",
+                "--org",
+                context.org,
+                "--pat",
+                context.pat,
+            ]
+        case "bitbucket":
+            param_list = [
+                "python",
+                "./main.py",
+                "--out-format",
+                outformat,
+                "bitbucket",
+                "--workspace",
+                context.workspace,
+                "--username",
+                context.username,
+                "--password",
+                context.password,
+            ]
+        case _:
+            raise (AssertionError("Repo type not specified"))
+
+    param_list.extend(args)
+    try:
+        param_list.extend(context.args)
+    except:
+        pass
 
     if engines != "all":
         engines = engines.split(" ")
@@ -152,6 +198,20 @@ def step_impl(context):
     assert stdout == expected, (
         "Expected output: " + str(stdout) + ", found " + str(expected)
     )
+
+
+@then("directory {dir} won't exist")
+def step_impl(context, dir):
+    assert (
+        os.path.exists(dir) == False
+    ), f"Directory check failed! {dir} exists even though we expect it not to."
+
+
+@then("directory {dir} will exist")
+def step_impl(context, dir):
+    assert (
+        os.path.exists(dir) == True
+    ), f"Directory check failed! {dir} doesn't exist even though we expect it to."
 
 
 def onerror(func, path, exc_info):
