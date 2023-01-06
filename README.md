@@ -4,7 +4,6 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=punk-security_secret-magpie-cli&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=punk-security_secret-magpie-cli)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=punk-security_secret-magpie-cli&metric=bugs)](https://sonarcloud.io/summary/new_code?id=punk-security_secret-magpie-cli)
 
-```
           ____              __   _____                      _ __       
          / __ \__  ______  / /__/ ___/___  _______  _______(_) /___  __
         / /_/ / / / / __ \/ //_/\__ \/ _ \/ ___/ / / / ___/ / __/ / / /
@@ -12,9 +11,7 @@
       /_/    \__,_/_/ /_/_/|_|/____/\___/\___/\__,_/_/  /_/\__/\__, /  
                                              PRESENTS         /____/  
                               Secret-Magpie ✨
-
-      Scan all your github/bitbucket repos from one tool, with multiple tools!
-```                                                       
+                                                  
     
 # SecretMagpie 
 
