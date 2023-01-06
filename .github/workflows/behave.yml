@@ -18,6 +18,7 @@ jobs:
       - name: Install and run behave
         run: |
           docker run \
+            -e SECRETMAGPIE_GITHUB_PAT=${{ secrets.SECRETMAGPIE_GITHUB_PAT }} \
             --entrypoint sh \
             secret-magpie \
             -c "pip install behave; python -m behave"
