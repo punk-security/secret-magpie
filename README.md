@@ -49,7 +49,7 @@ We've kept things nice and simple and bundled everything into a Docker container
 Simply run one of the following commands to get started:
 for github, gitlab or azuredevops
 ```shell
-docker run punksecurity/secret-magpie <github/gitlab/azuredevops> --org 'github organisation name' --pat 'personal access token'
+docker run punksecurity/secret-magpie <github/gitlab/azuredevops> --org 'organisation name' --pat 'personal access token'
 ```
 or for bitbucket
 ```shell
@@ -60,7 +60,7 @@ or for the local filesystem
 docker run -v /local/path/to/repos/:/repos punksecurity/secret-magpie filesystem --path /repos
 ```
 ## Get your results
-You can copy your results file back otu of the completed container with this command.
+You can copy your results file back out of the completed container with this command.
 
 You need the container id, which should be output when you ran the run command. 
 
