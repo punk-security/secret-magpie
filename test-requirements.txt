@@ -3,3 +3,4 @@ gitpython==3.*
 pygithub==1.*
 python-gitlab==3.*
 atlassian-python-api==3.*
+requests==2.28.*

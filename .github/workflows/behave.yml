@@ -19,6 +19,7 @@ jobs:
         run: |
           docker run \
             -e SECRETMAGPIE_GITHUB_PAT=${{ secrets.SECRETMAGPIE_GITHUB_PAT }} \
+            -e SECRETMAGPIE_ADO_PAT=${{ secrets.SECRETMAGPIE_ADO_PAT }} \
             --entrypoint sh \
             secret-magpie \
             -c "pip install behave; python -m behave"

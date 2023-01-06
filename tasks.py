@@ -5,8 +5,17 @@ from git import Repo as GitRepo
 from github import Github
 from gitlab import Gitlab
 from atlassian import bitbucket
+import requests
+from base64 import b64encode
 
-from repos import BitbucketRepo, GithubRepo, GitlabRepo, RepoCredentials, FilesystemRepo
+from repos import (
+    BitbucketRepo,
+    GithubRepo,
+    GitlabRepo,
+    ADORepo,
+    RepoCredentials,
+    FilesystemRepo,
+)
 
 
 def onerror(func, path, exc_info):
@@ -152,6 +161,37 @@ def get_repos_from_gitlab(org, pat):
         )
 
 
+def get_repos_from_ado(org, pat):
+    headers = {
+        "Accept": "application/json",
+        "Authorization": f"Basic {b64encode(f':{pat}'.encode('ascii')).decode()}",
+    }
+
+    response = requests.get(
+        f"https://dev.azure.com/{org}/_apis/projects", headers=headers
+    )
+
+    if response.content == b"":
+        return []
+
+    projects = [x["name"] for x in response.json()["value"]]
+
+    for project in projects:
+        response = requests.get(
+            f"https://dev.azure.com/{org}/{project}/_apis/git/repositories",
+            headers=headers,
+        )
+        if response.content == b"":
+            continue
+        for repo in response.json()["value"]:
+            yield ADORepo(
+                clone_url=repo["webUrl"],
+                name=repo["name"],
+                html_url=repo["webUrl"],
+                credentials=RepoCredentials(pat),
+            )
+
+
 def get_repos_from_filesystem(path):
     for repo_path in glob.glob(path + "/*", recursive=False):
         yield FilesystemRepo(repo_path)
@@ -163,6 +203,9 @@ def get_repos(provider, **kwargs):
 
     if "gitlab" == provider:
         return get_repos_from_gitlab(kwargs["org"], kwargs["pat"])
+
+    if "azuredevops" == provider:
+        return get_repos_from_ado(kwargs["org"], kwargs["pat"])
 
     if "bitbucket" == provider:
         return get_repos_from_bitbucket(

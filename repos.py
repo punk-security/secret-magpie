@@ -49,6 +49,11 @@ class BitbucketRepo(Repo):
         return f"{self.html_url}/src/{commit_hash}/{file_path}#lines-{line_num}"
 
 
+class ADORepo(Repo):
+    def link_to_file(self, commit_hash, file_path, line_num):
+        return f"{self.html_url}/commit/{commit_hash}?path=%2F{file_path}"
+
+
 class FilesystemRepo(Repo):
     """Represents a repository that is already checked out in the local filesystem"""
 

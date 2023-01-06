@@ -32,7 +32,7 @@ class CustomParser(argparse.ArgumentParser):
 
 
 parser = CustomParser(
-    usage=f"{linesep} {runtime} {{bitbucket/github/filesystem}} [options] {linesep}",
+    usage=f"{linesep} {runtime} {{bitbucket/github/gitlab/azuredevops/filesystem}} [options] {linesep}",
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description="",
 )
@@ -40,10 +40,10 @@ parser = CustomParser(
 parser.add_argument(
     "provider",
     type=str,
-    choices=["github", "gitlab", "bitbucket", "filesystem"],
+    choices=["github", "gitlab", "bitbucket", "azuredevops", "filesystem"],
 )
 
-github_group = parser.add_argument_group("github/gitlab")
+github_group = parser.add_argument_group("github/gitlab/azuredevops")
 github_group.add_argument("--org", type=str, help="Organisation name to target")
 github_group.add_argument(
     "--pat", type=str, help="Personal Access Token for API access and cloning"
@@ -130,6 +130,9 @@ def parse_args():
 
     if ("gitlab" == args.provider) and (args.pat is None or args.org is None):
         parser.error("gitlab requires --pat and --org")
+
+    if ("azuredevops" == args.provider) and (args.pat is None or args.org is None):
+        parser.error("azuredevops requires --pat and --org")
 
     if "filesystem" == args.provider and (args.path is None):
         parser.error("filesystem requires --path")
