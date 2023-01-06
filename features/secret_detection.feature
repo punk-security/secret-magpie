@@ -55,3 +55,8 @@ Feature: Validate secret detection against various engines.
     Scenario: Validate that we can detect secrets for remote repos
         When we run secret-magpie-cli with engines: all
         Then there will be 4 secrets detected
+
+    @azuredevops.PunkSecurity
+    Scenario: Ensure that we can detect secrets in AzureDevOps organisations
+        When we run secret-magpie-cli with engines: all
+        Then there will be 4 secrets detected

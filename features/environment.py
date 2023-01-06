@@ -34,6 +34,13 @@ def before_tag(context, tag):
             # PAT is provided via environment variables
             context.pat = os.environ["SECRETMAGPIE_GITLAB_PAT"]
 
+        case "azuredevops":
+            context.repo_type = "azuredevops"
+            context.org = tag_parts[1]
+
+            # PAT is provided via environment variables
+            context.pat = os.environ["SECRETMAGPIE_ADO_PAT"]
+
         case "bitbucket":
             context.repo_type = "bitbucket"
             context.workspace = tag_parts[1]

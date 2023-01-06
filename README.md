@@ -4,7 +4,6 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=punk-security_secret-magpie-cli&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=punk-security_secret-magpie-cli)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=punk-security_secret-magpie-cli&metric=bugs)](https://sonarcloud.io/summary/new_code?id=punk-security_secret-magpie-cli)
 
-```
           ____              __   _____                      _ __       
          / __ \__  ______  / /__/ ___/___  _______  _______(_) /___  __
         / /_/ / / / / __ \/ //_/\__ \/ _ \/ ___/ / / / ___/ / __/ / / /
@@ -12,47 +11,71 @@
       /_/    \__,_/_/ /_/_/|_|/____/\___/\___/\__,_/_/  /_/\__/\__, /  
                                              PRESENTS         /____/  
                               Secret-Magpie ✨
-
-      Scan all your github/bitbucket repos from one tool, with multiple tools!
-```                                                       
+                                                  
     
 # SecretMagpie 
 
 ## Intro
 
-SecretMagpie is a secret detection tool that hunts out all the secrets hiding in your GitHub repositories. It uses multiple tools in one convenient package to scan every branch of every repository in an organisation. It then smooshes all those results together into a lovely json output and reports some big ticket stats right to the screen. 
+Organisations struggle to scan for leaked secrets in ALL of their repos.  It's easy to scan one repo, but time consuming and tedious to scan all of them.
+
+SecretMagpie is a secret detection tool that hunts out all the secrets hiding in ALL your repositories. 
+
+It supports finding repos in Github, Gitlab, Azure DevOps (ADO), Bitbucket and the local file system.
+
+Given an auth token, it will:
+
+* enumerate all of the repos
+* clone each repo down
+* scan EVERY branch with multiple tools
+* squash all the findings into one big list
+* deduplicate them so you dont triage the same thing twice
+* give you some great stats and a full report in csv or json
+
+## See it in action!
+
+![CMD](Docs/secret-magpie.gif)
 
 By making use of the opensource tools [Trufflehog](https://github.com/trufflesecurity/trufflehog) 🐷 and [Gitleaks](https://github.com/zricethezav/gitleaks), SecretMagpie can highlight a variety of different secrets and ensure that nothing is missed!
 
-## Docker
+We plan on adding more tools soon, providing even wider coverage.
 
-We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. SecretMagpie has two mandatory parameters, a GitHub organisation name and a GitHub personal access token.
+The easiest approach is to use Docker...
+
+## Running SecretMagpie in Docker
+
+We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. 
 
 Simply run one of the following commands to get started:
+for github, gitlab or azuredevops
 ```shell
-docker run punksecurity/secret-magpie github --org 'github organisation name' --pat 'personal access token'
+docker run punksecurity/secret-magpie <github/gitlab/azuredevops> --org 'organisation name' --pat 'personal access token'
 ```
-or
+or for bitbucket
 ```shell
 docker run punksecurity/secret-magpie bitbucket --workspace 'workspace name to scan' --username 'your username' --password 'your application password'
 ```
-or
+or for the local filesystem
 ```shell
-
 docker run -v /local/path/to/repos/:/repos punksecurity/secret-magpie filesystem --path /repos
 ```
 ## Get your results
-Copy from the container
+You can copy your results file back out of the completed container with this command.
+
+You need the container id, which should be output when you ran the run command. 
+
+If needs be, you can run "docker ps -a" to find your container id.
 
 ```
-docker cp 'container':/app/results/results.[csv/json] /host/path/target
+docker cp 'container':/app/results.[csv/json] /host/path/target
 ```
-OR Mount the volume
+
+Alternatively you mount the volume the results folder and direct output to it
 
 ```
-docker -v /localpath:/app/results
+docker -v /localpath:/app/results run ... blah ... --out results/results
 ```
-## Installation
+## Running the tool locally
 
 If you prefer not to use Docker then you will need to manually install the following:
 
@@ -67,15 +90,28 @@ You will also need to install the dependencies in requirements.txt by running th
 pip install -r requirements.txt
 ```
 
+You can run it like this:
+for github, gitlab or azuredevops
+```shell
+python main.py <github/gitlab/azuredevops> --org 'github organisation name' --pat 'personal access token'
+```
+or for bitbucket
+```shell
+python main.py bitbucket --workspace 'workspace name to scan' --username 'your username' --password 'your application password'
+```
+or for the local filesystem
+```shell
+python main.py filesystem --path <path to repos>
+```
 
 ## Full Usage
 
 ```
-usage:
- .\main.py {bitbucket/github/filesystem} [options]
+usage: 
+ main.py {bitbucket/github/gitlab/azuredevops/filesystem} [options] 
 
 positional arguments:
-  {github,bitbucket,filesystem}
+  {github,gitlab,bitbucket,azuredevops,filesystem}
 
 options:
   -h, --help            show this help message and exit
@@ -83,16 +119,16 @@ options:
   --no-cleanup          Don't remove checked-out repositories upon completion
   --out-format {csv,json}
   --parallel-repos PARALLEL_REPOS
-                        Number of repos to process in parallel - more than 3 not advised (default: 5)
+                        Number of repos to process in parallel - more than 3 not advised (default: 3)
   --disable-trufflehog  Scan without trufflehog
   --disable-gitleaks    Scan without gitleaks
   --single-branch       Scan only the default branch
   --dont-store-secret   Do not store the plaintext secret in the results
   --no-stats            Do not output stats summary
 
-github:
-  --org ORG             Github organisation name to target
-  --pat PAT             Github Personal Access Token for API access and cloning
+github/gitlab/azuredevops:
+  --org ORG             Organisation name to target
+  --pat PAT             Personal Access Token for API access and cloning
 
 bitbucket:
   --workspace WORKSPACE
@@ -102,5 +138,3 @@ bitbucket:
 filesystem:
   --path PATH           The root directory that contains all of the repositories to scan. Each repository should be a subdirectory under this path.
 ```
-
-![CMD](Docs/secret-magpie.gif)

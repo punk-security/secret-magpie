@@ -93,6 +93,18 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
                 "--pat",
                 context.pat,
             ]
+        case "azuredevops":
+            param_list = [
+                "python",
+                "./main.py",
+                "--out-format",
+                outformat,
+                "azuredevops",
+                "--org",
+                context.org,
+                "--pat",
+                context.pat,
+            ]
         case "bitbucket":
             param_list = [
                 "python",
