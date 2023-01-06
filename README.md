@@ -28,8 +28,8 @@ Given an auth token, it will:
 * enumerate all of the repos
 * clone each repo down
 * scan EVERY branch with multiple tools
-* deduplicate findings
-* squash all the findings into one big list, and then deduplicate them
+* squash all the findings into one big list
+* deduplicate them so you dont triage the same thing twice
 * give you some great stats and a full report in csv or json
 
 ## See it in action!
