@@ -50,9 +50,9 @@ The easiest approach is to use Docker...
 We've kept things nice and simple and bundled everything into a Docker container to enable you to start finding secrets as soon as possible. 
 
 Simply run one of the following commands to get started:
-for github, gitlab or ado
+for github, gitlab or azuredevops
 ```shell
-docker run punksecurity/secret-magpie <github/gitlab/ado> --org 'github organisation name' --pat 'personal access token'
+docker run punksecurity/secret-magpie <github/gitlab/azuredevops> --org 'github organisation name' --pat 'personal access token'
 ```
 or for bitbucket
 ```shell
@@ -94,9 +94,9 @@ pip install -r requirements.txt
 ```
 
 You can run it like this:
-for github, gitlab or ado
+for github, gitlab or azuredevops
 ```shell
-python main.py <github/gitlab/ado> --org 'github organisation name' --pat 'personal access token'
+python main.py <github/gitlab/azuredevops> --org 'github organisation name' --pat 'personal access token'
 ```
 or for bitbucket
 ```shell
