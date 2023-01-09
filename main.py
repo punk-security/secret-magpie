@@ -27,6 +27,7 @@ if __name__ == "__main__":
         tasks.process_repo,
         functions=tool_list,
         single_branch=args.single_branch,
+        extra_context=args.extra_context,
         cleanup=cleanup,
     )
     pool = ThreadPool(args.parallel_repos)
@@ -47,6 +48,8 @@ if __name__ == "__main__":
                     total_results.append(item)
                     if args.dont_store_secret:
                         item.secret = ""  # nosec hardcoded_password_string
+                        item.context = ""
+                        item.extra_context = ""
                     o.write(item)
     print(
         f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"

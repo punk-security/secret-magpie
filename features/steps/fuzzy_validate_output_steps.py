@@ -6,6 +6,8 @@ import csv
 import glob
 import subprocess
 
+import io
+
 
 @when("we run Trufflehog capturing JSON output")
 def step_impl(context):
@@ -124,7 +126,7 @@ def do_match_test(format, expected):
                 ), "results.json did not match!"
         case "csv":
             with open("results.csv", "r") as f:
-                expected = list(csv.DictReader(expected.split("\n")))
+                expected = list(csv.DictReader(io.StringIO(expected)))
                 actual = list(csv.DictReader(f))
 
                 assert len(expected) == len(actual), "results.csv did not match!"
@@ -139,7 +141,7 @@ def do_match_test(format, expected):
                             continue
                         assert (
                             expected_value == actual_value
-                        ), "results.csv did not match!"
+                        ), f"results.csv did not match! Failing comparison: {expected_value} == {actual_value}"
 
 
 @then("results.{format} will match")

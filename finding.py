@@ -1,6 +1,8 @@
 from hashlib import sha256
 from base64 import b64decode
+from repos import FilesystemRepo
 import enums
+import git
 
 
 class Finding(object):
@@ -18,7 +20,9 @@ class Finding(object):
         secret,
         file,
         line,
+        directory,
         redacted_secret=None,
+        extra_context=False,
     ):
         self.source = source
         self.detector_type = detector_type
@@ -38,6 +42,29 @@ class Finding(object):
         if redacted_secret == None:
             self.redacted_secret = self.redact(secret)
 
+        g = git.Repo(directory)
+        lines = g.git.show(f"{commit}:{file}").split("\n")
+
+        lines_of_secret = len(secret.rstrip("\n").split("\n"))
+
+        start_line = max(0, line - 1)
+
+        end_line = line + lines_of_secret - 1
+
+        self.context = "\n".join(
+            [l.rstrip("\n").rstrip("\r") for l in lines[start_line:end_line]]
+        )
+
+        start_line = max(0, line - 3)
+        end_line = min(len(lines), lines_of_secret + 1)
+
+        if extra_context:
+            self.extra_context = "\n".join(
+                [l.rstrip("\n").rstrip("\r") for l in lines[start_line:end_line]]
+            )
+        else:
+            self.extra_context = ""
+
     def redact(self, secret):
         if len(secret) < 5:
             return "REDACTED"
@@ -45,7 +72,14 @@ class Finding(object):
             return f"{secret[0:3]}{'*' * (len(secret) - 4)}"
 
     @staticmethod
-    def fromTrufflehog(trufflehog_dict, repo):
+    def getDirectoryOfRepo(repo):
+        if type(repo) == FilesystemRepo:
+            return repo.name.replace("\\", "/")
+        else:
+            return sha256(repo.clone_url.encode("utf-8")).hexdigest()[0:8]
+
+    @staticmethod
+    def fromTrufflehog(trufflehog_dict, repo, extra_context):
         data = trufflehog_dict["SourceMetadata"]["Data"]
         commit = (
             "master" if data["Git"]["commit"] == "unstaged" else data["Git"]["commit"]
@@ -65,10 +99,12 @@ class Finding(object):
             secret=trufflehog_dict["Raw"].rstrip("\n"),
             file=data["Git"]["file"].replace("\\", "/"),
             line=data["Git"]["line"],
+            directory=Finding.getDirectoryOfRepo(repo),
+            extra_context=extra_context,
         )
 
     @staticmethod
-    def fromGitLeak(gitleak_dict, repo):
+    def fromGitLeak(gitleak_dict, repo, extra_context):
         repo_url = repo.html_url
         link = repo.link_to_file(
             gitleak_dict["Commit"], gitleak_dict["File"], gitleak_dict["StartLine"]
@@ -86,6 +122,8 @@ class Finding(object):
             secret=gitleak_dict["Secret"].rstrip("\n"),
             file=gitleak_dict["File"].replace("\\", "/"),
             line=gitleak_dict["StartLine"],
+            directory=Finding.getDirectoryOfRepo(repo),
+            extra_context=extra_context,
         )
 
     def __repr__(self):
