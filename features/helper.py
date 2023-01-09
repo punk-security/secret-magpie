@@ -202,6 +202,20 @@ def step_impl(context, branch_toggle, secret_toggle, format, engines):
     run_secret_magpie(context, engines, outformat=format, args=args)
 
 
+@when(
+    "we run secret-magpie-cli in {branch_toggle} branch mode, extra context {extra_context}, secret storing {secret_toggle}, output format {format} and engines: {engines}"
+)
+def step_impl(context, branch_toggle, extra_context, secret_toggle, format, engines):
+    args = []
+    if extra_context == "enabled":
+        args.append("--extra-context")
+    if secret_toggle == "disabled":
+        args.append("--dont-store-secret")
+    if branch_toggle == "single":
+        args.append("--single-branch")
+    run_secret_magpie(context, engines, outformat=format, args=args)
+
+
 @then("secret-magpie-cli's output will be")
 def step_impl(context):
     stdout = context.stdout

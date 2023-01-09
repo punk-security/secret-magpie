@@ -112,6 +112,12 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--extra-context",
+    action="store_true",
+    help="Output two lines before and after the secret for additional context.",
+)
+
+parser.add_argument(
     "--no-stats",
     action="store_true",
     help="Do not output stats summary",

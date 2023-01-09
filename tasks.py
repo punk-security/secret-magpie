@@ -66,7 +66,9 @@ class ProcessRepoResult(object):
             return f"{self.status}::{self.repo.name}::{self.message}"
 
 
-def process_repo(repo, functions, single_branch=False, cleanup=True):
+def process_repo(
+    repo, functions, single_branch=False, extra_context=False, cleanup=True
+):
     out = []
     try:
         path = repo.clone_repo()
@@ -81,7 +83,10 @@ def process_repo(repo, functions, single_branch=False, cleanup=True):
             try:
                 out.append(
                     ProcessRepoResult(
-                        repo, "SUCCESS", function.__name__, function(path, repo, branch)
+                        repo,
+                        "SUCCESS",
+                        function.__name__,
+                        function(path, repo, branch, extra_context),
                     )
                 )
             except:

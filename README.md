@@ -124,6 +124,7 @@ options:
   --disable-gitleaks    Scan without gitleaks
   --single-branch       Scan only the default branch
   --dont-store-secret   Do not store the plaintext secret in the results
+  --extra-context       Output two lines before and after the secret for additional context.
   --no-stats            Do not output stats summary
 
 github/gitlab/azuredevops:
