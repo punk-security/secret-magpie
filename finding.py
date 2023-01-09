@@ -48,7 +48,6 @@ class Finding(object):
         lines_of_secret = len(secret.rstrip("\n").split("\n"))
 
         start_line = max(0, line - 1)
-
         end_line = line + lines_of_secret - 1
 
         self.context = "\n".join(
@@ -56,7 +55,7 @@ class Finding(object):
         )
 
         start_line = max(0, line - 3)
-        end_line = min(len(lines), lines_of_secret + 1)
+        end_line = min(len(lines), line + lines_of_secret + 1)
 
         if extra_context:
             self.extra_context = "\n".join(

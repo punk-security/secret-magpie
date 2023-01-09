@@ -28,6 +28,12 @@ Feature: Validate that the output of the various tools and secret magpie itself 
         When we run secret-magpie-cli in multi branch mode, extra context enabled, secret storing enabled, output format csv and engines: all
         Then results.csv will match file secret-magpie-extra-context.csv
 
+    @localrepos
+    @fixture.wantsLongSecret
+    Scenario: Validate that results.csv contains expected data when secret-magpie-cli is run with secret storing disabled with long files
+        When we run secret-magpie-cli in multi branch mode, extra context enabled, secret storing enabled, output format csv and engines: all
+        Then results.csv will match file secret-magpie-extra-context-long.csv
+
     @github.secretmagpie-testing
     Scenario: Validate that results.csv contains expected data when secret-magpie-cli is run against remote repos
         When we run secret-magpie-cli with output format csv and engines: all
