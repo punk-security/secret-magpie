@@ -52,6 +52,25 @@ def wantsAWSSecret(context):
     )
 
 
+@fixture
+def wantsLongSecret(context):
+    safe_add_rules(
+        context,
+        [
+            ["repo aws"],
+            [
+                "file aws_key",
+                "gooseygooseygoosey\n",
+                "gooseygooseygoosey\n",
+                "aws_access_key_id = AKIAYVP4CIPPERUVIFXG\n",
+                "aws_secret_access_key = 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\n",
+                "gooseygooseygoosey",
+            ],
+            ["commit"],
+        ],
+    )
+
+
 def branchTest(context):
     safe_add_rules(
         context,
@@ -88,4 +107,5 @@ fixture_map = {
     "wantsSSHKey": wantsSSHKey,
     "wantsAWSSecret": wantsAWSSecret,
     "branchTest": branchTest,
+    "wantsLongSecret": wantsLongSecret,
 }
