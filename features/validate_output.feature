@@ -43,3 +43,9 @@ Feature: Validate that the results files produced by secret-magpie-cli is of val
         When we run secret-magpie-cli with engines: all
         Then directory 7c484be0 will exist
         And directory 42cbad53 will exist
+
+    @localrepos
+    @wantsAWSSecret
+    Scenario: Ensure that the date field within the repo is parseable in ISO8601 format.
+        When we run secret-magpie-cli with engines: all
+        Then the date column of results.csv will be ISO8601 format
