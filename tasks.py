@@ -153,9 +153,17 @@ def get_repos_from_github(org, pat):
 
 
 def get_repos_from_gitlab(org, pat):
+    def get_projects_from_group(g, group):
+        for project in group.projects.list(all=True):
+            yield project
+        for group in group.subgroups.list(all=True):
+            group = g.groups.get(group.id, lazy=True)
+            for project in get_projects_from_group(g, group):
+                yield project
+
     g = Gitlab(private_token=pat)
     group = g.groups.get(org, lazy=True)
-    repos = group.projects.list(all=True)
+    repos = get_projects_from_group(g, group)
 
     for repo in repos:
         yield GitlabRepo(
