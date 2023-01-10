@@ -3,6 +3,7 @@ from helper import *
 
 import json
 import csv
+import datetime
 
 
 def validate_results_csv():
@@ -71,3 +72,29 @@ def step_impl(context):
                 assert (
                     entry["secret"] == ""
                 ), "Found secret within secret column when secret column is expected to be blank!"
+
+
+@then("the date column of results.{format} will be ISO8601 format")
+def step_impl(context, format):
+    if context.format == "csv":
+        with open("results.csv", "r") as f:
+            table = csv.DictReader(f)
+            for row in table:
+                try:
+                    datetime.datetime.fromisoformat(row["date"])
+                except:
+                    raise AssertionError(
+                        f"Failed to parse date column value `{row['date']}` as ISO8601 datetime!"
+                    )
+    elif context.format == "json":
+        with open("results.json", "r") as f:
+            json_content = f.read()
+            json_data = json.loads(json_content)
+
+            for entry in json_data:
+                try:
+                    datetime.datetime.fromisoformat(entry["date"])
+                except:
+                    raise AssertionError(
+                        f"Failed to parse date column value `{entry['date']}` as ISO8601 datetime!"
+                    )

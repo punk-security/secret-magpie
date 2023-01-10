@@ -3,6 +3,7 @@ from base64 import b64decode
 from repos import FilesystemRepo
 import enums
 import git
+import re
 
 
 class Finding(object):
@@ -78,6 +79,23 @@ class Finding(object):
             return sha256(repo.clone_url.encode("utf-8")).hexdigest()[0:8]
 
     @staticmethod
+    def normaliseTrufflehogTimestamp(ts):
+        parts = re.match(
+            r"([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) \+([0-9]{2})([0-9]{2})",
+            ts,
+        ).groups()
+        return f"{parts[0]}-{parts[1]}-{parts[2]}T{parts[3]}:{parts[4]}:{parts[5]}+{parts[6]}:{parts[7]}"
+
+    @staticmethod
+    def normaliseGitleaksTimestamp(ts):
+        parts = re.match(
+            r"([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})", ts
+        ).groups()
+        return (
+            f"{parts[0]}-{parts[1]}-{parts[2]}T{parts[3]}:{parts[4]}:{parts[5]}+00:00"
+        )
+
+    @staticmethod
     def fromTrufflehog(trufflehog_dict, repo, extra_context):
         data = trufflehog_dict["SourceMetadata"]["Data"]
         commit = (
@@ -88,7 +106,7 @@ class Finding(object):
             detector_type=enums.DetectorTypeEnum(trufflehog_dict["DetectorType"]).name,
             verified=trufflehog_dict["Verified"],
             commit=commit,
-            date=data["Git"]["timestamp"],
+            date=Finding.normaliseTrufflehogTimestamp(data["Git"]["timestamp"]),
             author_email=data["Git"]["email"],
             repository=repo.name.replace("\\", "/"),
             repository_uri=data["Git"].get("repository", "").replace("\\", "/"),
@@ -113,7 +131,7 @@ class Finding(object):
             detector_type=gitleak_dict["RuleID"],
             verified=False,
             commit=gitleak_dict["Commit"],
-            date=gitleak_dict["Date"],
+            date=Finding.normaliseGitleaksTimestamp(gitleak_dict["Date"]),
             author_email=gitleak_dict["Email"],
             repository=repo.name.replace("\\", "/"),
             repository_uri=repo_url.replace("\\", "/"),
