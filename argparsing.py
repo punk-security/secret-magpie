@@ -123,6 +123,13 @@ parser.add_argument(
     help="Do not output stats summary",
 )
 
+parser.add_argument(
+    "--ignore-branches-older-than",
+    type=str,
+    default=None,
+    help="Ignore branches whose last commit date is before this value. Format is Pythons's expected ISO format e.g. 2020-01-01T00:00:00+00:00",
+)
+
 
 def parse_args():
     args = parser.parse_args()

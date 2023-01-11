@@ -49,3 +49,12 @@ Feature: Validate that the results files produced by secret-magpie-cli is of val
     Scenario: Ensure that the date field within the repo is parseable in ISO8601 format.
         When we run secret-magpie-cli with engines: all
         Then the date column of results.csv will be ISO8601 format
+
+    @localrepos
+    @wantsAWSSecret
+    Scenario: Ensure that secret-magpie-cli gives the expected error when we run it with an invalid threshold date
+        When we run secret-magpie-cli in multi branch mode, ignoring commits older than invaliddate extra context disabled, secret storing enabled, output format csv and engines: all
+        Then secret-magpie-cli's output will be
+            """
+            ERROR: Invalid ISO format string.
+            """

@@ -126,7 +126,8 @@ options:
   --dont-store-secret   Do not store the plaintext secret in the results
   --extra-context       Output two lines before and after the secret for additional context.
   --no-stats            Do not output stats summary
-
+  --ignore-branches-older-than IGNORE_BRANCHES_OLDER_THAN
+                        Ignore branches whose last commit date is before this value. Format is Pythons's expected ISO format e.g. 2020-01-01T00:00:00+00:00
 github/gitlab/azuredevops:
   --org ORG             Organisation name to target
   --pat PAT             Personal Access Token for API access and cloning

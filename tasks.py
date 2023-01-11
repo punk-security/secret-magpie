@@ -29,23 +29,38 @@ def onerror(func, path, exc_info):
         raise
 
 
-def get_branches(path):
+def get_branches(path, threshold_date=None, single_branch=False):
     r = GitRepo.init(path)
 
     branches = []
 
-    if len(r.remotes) > 0:
+    if single_branch:
+        branches = ["HEAD"]
+    else:
+        if len(r.remotes) > 0:
+            branches.extend(
+                [
+                    "remotes/" + x.name
+                    for x in r.remotes[0].refs
+                    if x.is_detached == True
+                ]
+            )
+
         branches.extend(
-            ["remotes/" + x.name for x in r.remotes[0].refs if x.is_detached == True]
+            [
+                head.name
+                for head in r.heads
+                if head.is_detached == True and not head.is_remote()
+            ]
         )
 
-    branches.extend(
-        [
-            head.name
-            for head in r.heads
-            if head.is_detached == True and not head.is_remote()
-        ]
-    )
+    if threshold_date != None:
+        branches = list(
+            filter(
+                lambda branch: r.commit(branch).committed_date >= threshold_date,
+                branches,
+            )
+        )
 
     return branches
 
@@ -67,17 +82,23 @@ class ProcessRepoResult(object):
 
 
 def process_repo(
-    repo, functions, single_branch=False, extra_context=False, cleanup=True
+    repo,
+    functions,
+    single_branch=False,
+    extra_context=False,
+    cleanup=True,
+    threshold_date=None,
 ):
     out = []
     try:
         path = repo.clone_repo()
     except:
         return [ProcessRepoResult(repo, "FAIL", "Could not clone")]
-    if not single_branch:
-        branches = get_branches(path)
-    else:
-        branches = ["HEAD"]
+
+    branches = get_branches(
+        path, threshold_date=threshold_date, single_branch=single_branch
+    )
+
     for branch in branches:
         for function in functions:
             try:

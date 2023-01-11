@@ -7,11 +7,25 @@ import tasks
 import argparsing
 import stats
 import output
+import datetime
+import time
 
 if __name__ == "__main__":
     print(argparsing.banner)
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
+
+    threshold_date = None
+    if args.ignore_branches_older_than != None:
+        try:
+            threshold_date = time.mktime(
+                datetime.datetime.fromisoformat(
+                    args.ignore_branches_older_than
+                ).timetuple()
+            )
+        except ValueError:
+            print("ERROR: Invalid ISO format string.")
+            sys.exit(1)
 
     tool_list = []
     if not args.disable_gitleaks:
@@ -29,6 +43,7 @@ if __name__ == "__main__":
         single_branch=args.single_branch,
         extra_context=args.extra_context,
         cleanup=cleanup,
+        threshold_date=threshold_date,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)

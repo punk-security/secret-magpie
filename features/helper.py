@@ -216,6 +216,30 @@ def step_impl(context, branch_toggle, extra_context, secret_toggle, format, engi
     run_secret_magpie(context, engines, outformat=format, args=args)
 
 
+@when(
+    "we run secret-magpie-cli in {branch_toggle} branch mode, ignoring commits older than {threshold_date} extra context {extra_context}, secret storing {secret_toggle}, output format {format} and engines: {engines}"
+)
+def step_impl(
+    context,
+    branch_toggle,
+    threshold_date,
+    extra_context,
+    secret_toggle,
+    format,
+    engines,
+):
+    args = []
+    if threshold_date != "None":
+        args.append(f"--ignore-branches-older-than={threshold_date}")
+    if extra_context == "enabled":
+        args.append("--extra-context")
+    if secret_toggle == "disabled":
+        args.append("--dont-store-secret")
+    if branch_toggle == "single":
+        args.append("--single-branch")
+    run_secret_magpie(context, engines, outformat=format, args=args)
+
+
 @then("secret-magpie-cli's output will be")
 def step_impl(context):
     stdout = context.stdout
@@ -304,6 +328,15 @@ class LocalRepos:
                         commit_all = True
                         if len(rule) > 1:
                             current_repo.index.commit(rule[1])
+                        else:
+                            current_repo.index.commit("Commit.")
+
+                case "commitdate":
+                    current_repo.git.add(A=True)
+                    if not commit_all:
+                        commit_all = True
+                        if len(rule) > 1:
+                            current_repo.index.commit("Commit.", commit_date=rule[1])
                         else:
                             current_repo.index.commit("Commit.")
 
