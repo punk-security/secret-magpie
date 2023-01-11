@@ -8,7 +8,7 @@ import time
 
 
 def before_tag(context, tag):
-    tag_parts = tag.split(".")
+    tag_parts = tag.split(".", 2)
     match tag_parts[0].lower():
         case "fixture":
             if len(tag_parts) > 1:
@@ -30,6 +30,9 @@ def before_tag(context, tag):
         case "gitlab":
             context.repo_type = "gitlab"
             context.org = tag_parts[1]
+
+            if len(tag_parts) > 2:
+                context.url = tag_parts[2]
 
             # PAT is provided via environment variables
             context.pat = os.environ["SECRETMAGPIE_GITLAB_PAT"]
@@ -57,6 +60,9 @@ def before_tag(context, tag):
 
             context.args.append("--no-cleanup")
 
+        case "pat":
+            context.pat = os.environ[tag_parts[1]]
+
 
 def after_tag(context, tag):
     tag_parts = tag.split(".")
@@ -69,3 +75,9 @@ def after_tag(context, tag):
                 except:
                     time.sleep(10)
                     continue
+
+
+def before_scenario(context, scenario):
+    if "skipinrunner" in scenario.effective_tags:
+        if os.environ.get("SKIP_IN_RUNNER") != None:
+            scenario.skip("Skipping in GitHub Action Runner")

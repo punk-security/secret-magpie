@@ -49,6 +49,14 @@ github_group.add_argument(
     "--pat", type=str, help="Personal Access Token for API access and cloning"
 )
 
+gitlab_group = parser.add_argument_group("gitlab")
+gitlab_group.add_argument(
+    "--gitlab-url",
+    type=str,
+    default="https://gitlab.com",
+    help="URL of the GitLab instance to run against. (default: %(default)s)",
+)
+
 bitbucket_group = parser.add_argument_group("bitbucket")
 bitbucket_group.add_argument("--workspace")
 bitbucket_group.add_argument("--username")
@@ -73,6 +81,7 @@ parser.add_argument(
     action="store_true",
     help="Don't remove checked-out repositories upon completion",
 )
+
 parser.add_argument(
     "--out-format",
     type=str,

@@ -132,6 +132,9 @@ github/gitlab/azuredevops:
   --org ORG             Organisation name to target
   --pat PAT             Personal Access Token for API access and cloning
 
+gitlab:
+  --url URL             URL of the GitLab instance to run against. (default: https://gitlab.com)
+
 bitbucket:
   --workspace WORKSPACE
   --username USERNAME

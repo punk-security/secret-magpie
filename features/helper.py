@@ -93,6 +93,11 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
                 "--pat",
                 context.pat,
             ]
+
+            try:
+                param_list.extend(["--gitlab-url", context.url])
+            except:
+                pass
         case "azuredevops":
             param_list = [
                 "python",

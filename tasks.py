@@ -173,7 +173,7 @@ def get_repos_from_github(org, pat):
         )
 
 
-def get_repos_from_gitlab(org, pat):
+def get_repos_from_gitlab(org, pat, url):
     def get_projects_from_group(g, group):
         for project in group.projects.list(all=True):
             yield project
@@ -182,7 +182,7 @@ def get_repos_from_gitlab(org, pat):
             for project in get_projects_from_group(g, group):
                 yield project
 
-    g = Gitlab(private_token=pat)
+    g = Gitlab(private_token=pat, url=url)
     group = g.groups.get(org, lazy=True)
     repos = get_projects_from_group(g, group)
 
@@ -236,7 +236,7 @@ def get_repos(provider, **kwargs):
         return get_repos_from_github(kwargs["org"], kwargs["pat"])
 
     if "gitlab" == provider:
-        return get_repos_from_gitlab(kwargs["org"], kwargs["pat"])
+        return get_repos_from_gitlab(kwargs["org"], kwargs["pat"], kwargs["gitlab_url"])
 
     if "azuredevops" == provider:
         return get_repos_from_ado(kwargs["org"], kwargs["pat"])
