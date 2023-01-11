@@ -60,3 +60,20 @@ Feature: Validate secret detection against various engines.
     Scenario: Ensure that we can detect secrets in AzureDevOps organisations
         When we run secret-magpie-cli with engines: all
         Then there will be 4 secrets detected
+
+    @localrepos
+    @fixture.wantsFixedDateSecret
+    Scenario: Detect all secrets with fixed dates when we don't ignore secrets
+        When we run secret-magpie-cli in multi branch mode, ignoring commits older than None extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 2 secrets detected
+
+    @localrepos
+    @fixture.wantsFixedDateSecret
+    Scenario Outline: Detect no secrets with fixed dates when we ignore secrets older than 2022-01-01T00:00:00+00:00 in <mode> branch mode.
+        When we run secret-magpie-cli in <mode> branch mode, ignoring commits older than 2022-01-01T00:00:00+00:00 extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 0 secrets detected
+
+        Examples:
+            | mode   |
+            | single |
+            | multi  |

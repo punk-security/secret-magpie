@@ -71,6 +71,22 @@ def wantsLongSecret(context):
     )
 
 
+@fixture
+def wantsFixedDateSecret(context):
+    safe_add_rules(
+        context,
+        [
+            ["repo aws"],
+            [
+                "file aws_key",
+                "aws_access_key_id = AKIAYVP4CIPPERUVIFXG\n",
+                "aws_secret_access_key = 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",
+            ],
+            ["commitdate 2020-01-01T00:00:00"],
+        ],
+    )
+
+
 def branchTest(context):
     safe_add_rules(
         context,
@@ -108,4 +124,5 @@ fixture_map = {
     "wantsAWSSecret": wantsAWSSecret,
     "branchTest": branchTest,
     "wantsLongSecret": wantsLongSecret,
+    "wantsFixedDateSecret": wantsFixedDateSecret,
 }
