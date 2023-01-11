@@ -81,7 +81,7 @@ If you're running our tool inside Docker, you may find you need to pass in CA ce
 This can be achieved using the following command
 
 ```
-docker -v /path/to/your/certificates:/usr/local/share/ca-certificates/ run ... blah ... --update-ca-certificates
+docker -v /path/to/your/certificates:/usr/local/share/ca-certificates/ run punksecurity/secret-magpie <other options> --update-ca-certificates
 ```
 
 ## Running the tool locally
