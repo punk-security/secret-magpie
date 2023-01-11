@@ -73,7 +73,7 @@ docker cp 'container':/app/results.[csv/json] /host/path/target
 Alternatively you mount the volume the results folder and direct output to it
 
 ```
-docker -v /localpath:/app/results run ... blah ... --out results/results
+docker -v /localpath:/app/results run punksecurity/secret-magpie <other options> --out results/results
 ```
 # Passing certificates to Docker
 If you're running our tool inside Docker, you may find you need to pass in CA certificates from the host.
