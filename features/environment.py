@@ -61,7 +61,7 @@ def before_tag(context, tag):
             context.args.append("--no-cleanup")
 
         case "pat":
-            context.pat = os.environ[tag_parts[1]]
+            context.pat = os.environ.get(tag_parts[1], "")
 
 
 def after_tag(context, tag):

@@ -9,11 +9,19 @@ import stats
 import output
 import datetime
 import time
+import os
+import subprocess  # nosec blacklist
 
 if __name__ == "__main__":
     print(argparsing.banner)
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
+
+    with open(os.devnull, "wb") as devnull:
+        if args.update_ca_store:
+            subprocess.call(  # nosec subprocess_without_shell_equals_true start_process_with_partial_path
+                ["update-ca-certificates"], stdout=devnull, stderr=devnull
+            )
 
     threshold_date = None
     if args.ignore_branches_older_than != None:

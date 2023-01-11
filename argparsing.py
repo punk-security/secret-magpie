@@ -43,13 +43,23 @@ parser.add_argument(
     choices=["github", "gitlab", "bitbucket", "azuredevops", "filesystem"],
 )
 
-github_group = parser.add_argument_group("github/gitlab/azuredevops")
+github_group = parser.add_argument_group("github/azuredevops")
 github_group.add_argument("--org", type=str, help="Organisation name to target")
 github_group.add_argument(
     "--pat", type=str, help="Personal Access Token for API access and cloning"
 )
 
 gitlab_group = parser.add_argument_group("gitlab")
+gitlab_group.add_argument(
+    "--group",
+    type=str,
+    help="The GitLab Group to import repositories from",
+)
+gitlab_group.add_argument(
+    "--access-token",
+    type=str,
+    help="The access token to use for accessing GitLab.",
+)
 gitlab_group.add_argument(
     "--gitlab-url",
     type=str,
@@ -139,6 +149,12 @@ parser.add_argument(
     help="Ignore branches whose last commit date is before this value. Format is Pythons's expected ISO format e.g. 2020-01-01T00:00:00+00:00",
 )
 
+parser.add_argument(
+    "--update-ca-store",
+    action="store_true",
+    help="If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.",
+)
+
 
 def parse_args():
     args = parser.parse_args()
@@ -150,8 +166,10 @@ def parse_args():
     if ("github" == args.provider) and (args.pat is None or args.org is None):
         parser.error("github requires --pat and --org")
 
-    if ("gitlab" == args.provider) and (args.pat is None or args.org is None):
-        parser.error("gitlab requires --pat and --org")
+    if ("gitlab" == args.provider) and (
+        args.access_token is None or args.group is None
+    ):
+        parser.error("gitlab requires --access-token and --group")
 
     if ("azuredevops" == args.provider) and (args.pat is None or args.org is None):
         parser.error("azuredevops requires --pat and --org")

@@ -88,9 +88,9 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
                 "--out-format",
                 outformat,
                 "gitlab",
-                "--org",
+                "--group",
                 context.org,
-                "--pat",
+                "--access-token",
                 context.pat,
             ]
 

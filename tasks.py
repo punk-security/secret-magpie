@@ -236,7 +236,9 @@ def get_repos(provider, **kwargs):
         return get_repos_from_github(kwargs["org"], kwargs["pat"])
 
     if "gitlab" == provider:
-        return get_repos_from_gitlab(kwargs["org"], kwargs["pat"], kwargs["gitlab_url"])
+        return get_repos_from_gitlab(
+            kwargs["group"], kwargs["access_token"], kwargs["gitlab_url"]
+        )
 
     if "azuredevops" == provider:
         return get_repos_from_ado(kwargs["org"], kwargs["pat"])
