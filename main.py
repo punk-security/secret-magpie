@@ -52,6 +52,7 @@ if __name__ == "__main__":
         extra_context=args.extra_context,
         cleanup=cleanup,
         threshold_date=threshold_date,
+        validate_https=not args.dont_validate_https,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)

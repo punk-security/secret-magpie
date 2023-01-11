@@ -138,6 +138,8 @@ options:
   --ignore-branches-older-than IGNORE_BRANCHES_OLDER_THAN
                         Ignore branches whose last commit date is before this value. Format is Pythons's expected ISO format e.g. 2020-01-01T00:00:00+00:00
   --update-ca-store     If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.
+  --dont-validate-https
+                        Disables HTTPS validation for APIs/cloning.
 
 github/azuredevops:
   --org ORG             Organisation name to target

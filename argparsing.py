@@ -155,6 +155,12 @@ parser.add_argument(
     help="If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.",
 )
 
+parser.add_argument(
+    "--dont-validate-https",
+    action="store_true",
+    help="Disables HTTPS validation for APIs/cloning.",
+)
+
 
 def parse_args():
     args = parser.parse_args()

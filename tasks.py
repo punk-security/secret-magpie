@@ -88,10 +88,11 @@ def process_repo(
     extra_context=False,
     cleanup=True,
     threshold_date=None,
+    validate_https=True,
 ):
     out = []
     try:
-        path = repo.clone_repo()
+        path = repo.clone_repo(validate_https=validate_https)
     except:
         return [ProcessRepoResult(repo, "FAIL", "Could not clone")]
 
@@ -173,7 +174,7 @@ def get_repos_from_github(org, pat):
         )
 
 
-def get_repos_from_gitlab(org, pat, url):
+def get_repos_from_gitlab(org, pat, url, dont_validate_https):
     def get_projects_from_group(g, group):
         for project in group.projects.list(all=True):
             yield project
@@ -182,7 +183,7 @@ def get_repos_from_gitlab(org, pat, url):
             for project in get_projects_from_group(g, group):
                 yield project
 
-    g = Gitlab(private_token=pat, url=url)
+    g = Gitlab(private_token=pat, url=url, ssl_verify=not dont_validate_https)
     group = g.groups.get(org, lazy=True)
     repos = get_projects_from_group(g, group)
 
@@ -237,7 +238,10 @@ def get_repos(provider, **kwargs):
 
     if "gitlab" == provider:
         return get_repos_from_gitlab(
-            kwargs["group"], kwargs["access_token"], kwargs["gitlab_url"]
+            kwargs["group"],
+            kwargs["access_token"],
+            kwargs["gitlab_url"],
+            kwargs["dont_validate_https"],
         )
 
     if "azuredevops" == provider:

@@ -21,13 +21,18 @@ class Repo:
         self.name = name
         self.clone_url = clone_url
 
-    def clone_repo(self):
+    def clone_repo(self, validate_https=True):
         path = sha256(self.clone_url.encode("utf-8")).hexdigest()[0:8]
         if self.clone_url.lower()[0:8] != "https://":
             raise Exception(f"clone url not in expected format: '{self.clone_url}'")
 
         target = f"https://{self.credentials.get_auth_string()}@{self.clone_url[8:]}"
-        GitRepo.clone_from(target, path).remotes[0].fetch()
+        if validate_https:
+            GitRepo.clone_from(target, path).remotes[0].fetch()
+        else:
+            GitRepo.clone_from(target, path, c="http.sslVerify=false").remotes[
+                0
+            ].fetch()
         return path
 
     def link_to_file(self, commit_hash, file_path, line_num):
@@ -60,7 +65,7 @@ class FilesystemRepo(Repo):
     def __init__(self, clone_url):
         super().__init__(clone_url, "", clone_url, None)
 
-    def clone_repo(self):
+    def clone_repo(self, validate_https=False):
         return self.clone_url
 
     def link_to_file(self, commit_hash, file_path, line_num):
