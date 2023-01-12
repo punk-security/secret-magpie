@@ -140,8 +140,13 @@ def process_repo(
     return ret
 
 
-def get_repos_from_bitbucket(workspace, username, password):
-    instance = bitbucket.Cloud(username=username, password=password, cloud=True)
+def get_repos_from_bitbucket(workspace, username, password, dont_validate_https):
+    instance = bitbucket.Cloud(
+        username=username,
+        password=password,
+        cloud=True,
+        verify_ssl=not dont_validate_https,
+    )
 
     workspace = instance.workspaces.get(workspace)
     for repo in workspace.repositories.each():
@@ -160,8 +165,8 @@ def get_repos_from_bitbucket(workspace, username, password):
         )
 
 
-def get_repos_from_github(org, pat):
-    g = Github(pat)
+def get_repos_from_github(org, pat, dont_validate_https):
+    g = Github(pat, verify=not dont_validate_https)
     organisation = g.get_organization(org)
     repos = organisation.get_repos()
 
@@ -196,14 +201,16 @@ def get_repos_from_gitlab(org, pat, url, dont_validate_https):
         )
 
 
-def get_repos_from_ado(org, pat):
+def get_repos_from_ado(org, pat, dont_validate_https):
     headers = {
         "Accept": "application/json",
         "Authorization": f"Basic {b64encode(f':{pat}'.encode('ascii')).decode()}",
     }
 
     response = requests.get(
-        f"https://dev.azure.com/{org}/_apis/projects", headers=headers
+        f"https://dev.azure.com/{org}/_apis/projects",
+        headers=headers,
+        verify=not dont_validate_https,
     )
 
     if response.content == b"":
@@ -215,6 +222,7 @@ def get_repos_from_ado(org, pat):
         response = requests.get(
             f"https://dev.azure.com/{org}/{project}/_apis/git/repositories",
             headers=headers,
+            verify=not dont_validate_https,
         )
         if response.content == b"":
             continue
@@ -234,7 +242,11 @@ def get_repos_from_filesystem(path):
 
 def get_repos(provider, **kwargs):
     if "github" == provider:
-        return get_repos_from_github(kwargs["org"], kwargs["pat"])
+        return get_repos_from_github(
+            kwargs["org"],
+            kwargs["pat"],
+            kwargs["dont_validate_https"],
+        )
 
     if "gitlab" == provider:
         return get_repos_from_gitlab(
@@ -245,11 +257,18 @@ def get_repos(provider, **kwargs):
         )
 
     if "azuredevops" == provider:
-        return get_repos_from_ado(kwargs["org"], kwargs["pat"])
+        return get_repos_from_ado(
+            kwargs["org"],
+            kwargs["pat"],
+            kwargs["dont_validate_https"],
+        )
 
     if "bitbucket" == provider:
         return get_repos_from_bitbucket(
-            kwargs["workspace"], kwargs["username"], kwargs["password"]
+            kwargs["workspace"],
+            kwargs["username"],
+            kwargs["password"],
+            kwargs["dont_validate_https"],
         )
     if "filesystem" == provider:
         return get_repos_from_filesystem(kwargs["path"])
