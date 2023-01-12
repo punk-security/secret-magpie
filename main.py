@@ -11,8 +11,10 @@ import datetime
 import time
 import os
 import subprocess  # nosec blacklist
+import urllib3
 
 if __name__ == "__main__":
+    urllib3.disable_warnings()
     print(argparsing.banner)
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
