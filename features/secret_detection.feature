@@ -52,7 +52,7 @@ Feature: Validate secret detection against various engines.
         Then there will be 1 secrets detected
 
     @github.secretmagpie-testing
-    Scenario: Validate that we can detect secrets for remote repos
+    Scenario: Validate that we can detect secrets for a GitHub remote
         When we run secret-magpie-cli with engines: all
         Then there will be 4 secrets detected
 
@@ -77,3 +77,37 @@ Feature: Validate secret detection against various engines.
             | mode   |
             | single |
             | multi  |
+
+    @skipinrunner 
+    @gitlab.secretmagpie-testing.https://gitlab.punksecurity.io
+    @pat.SECRETMAGPIE_GITLAB_CE_PAT
+    Scenario: Validate that we can detect secrets for GitLab CE remote
+        When we run secret-magpie-cli with engines: all
+        Then there will be 4 secrets detected
+
+    @gitlab.secretmagpie-testing
+    Scenario: Validate that we can detect secrets for GitLab remote
+        When we run secret-magpie-cli with engines: all
+        Then there will be 4 secrets detected
+
+    @github.secretmagpie-testing
+    Scenario: Ensure that we still detect secrets on GitHub remote works when we turn off HTTPS validation
+        When we run secret-magpie-cli in multi branch mode, https validation disabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 4 secrets detected
+
+    @gitlab.secretmagpie-testing
+    Scenario: Ensure that we still detect secrets on GitLab remote works when we turn off HTTPS validation
+        When we run secret-magpie-cli in multi branch mode, https validation disabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 4 secrets detected
+
+    @skipinrunner
+    @gitlab.secretmagpie-testing.https://gitlab.punksecurity.io
+    @pat.SECRETMAGPIE_GITLAB_CE_PAT
+    Scenario: Ensure that we still detect secrets on GitLab CE remote works when we turn off HTTPS validation
+        When we run secret-magpie-cli in multi branch mode, https validation disabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 4 secrets detected
+    
+    @azuredevops.PunkSecurity
+    Scenario: Ensure that we still detect secrets on AzureDevOps remote works when we turn off HTTPS validation
+        When we run secret-magpie-cli in multi branch mode, https validation disabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 4 secrets detected

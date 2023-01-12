@@ -73,8 +73,17 @@ docker cp 'container':/app/results.[csv/json] /host/path/target
 Alternatively you mount the volume the results folder and direct output to it
 
 ```
-docker -v /localpath:/app/results run ... blah ... --out results/results
+docker -v /localpath:/app/results run punksecurity/secret-magpie <other options> --out results/results
 ```
+# Passing certificates to Docker
+If you're running our tool inside Docker, you may find you need to pass in CA certificates from the host.
+
+This can be achieved using the following command
+
+```
+docker -v /path/to/your/certificates:/usr/local/share/ca-certificates/ run punksecurity/secret-magpie <other options> --update-ca-certificates
+```
+
 ## Running the tool locally
 
 If you prefer not to use Docker then you will need to manually install the following:
@@ -128,10 +137,20 @@ options:
   --no-stats            Do not output stats summary
   --ignore-branches-older-than IGNORE_BRANCHES_OLDER_THAN
                         Ignore branches whose last commit date is before this value. Format is Pythons's expected ISO format e.g. 2020-01-01T00:00:00+00:00
-github/gitlab/azuredevops:
+  --update-ca-store     If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.
+  --dont-validate-https
+                        Disables HTTPS validation for APIs/cloning.
+
+github/azuredevops:
   --org ORG             Organisation name to target
   --pat PAT             Personal Access Token for API access and cloning
 
+gitlab:
+  --group GROUP         The GitLab Group to import repositories from
+  --access-token ACCESS_TOKEN
+                        The access token to use for accessing GitLab.
+  --gitlab-url GITLAB_URL
+                        URL of the GitLab instance to run against. (default: https://gitlab.com)
 bitbucket:
   --workspace WORKSPACE
   --username USERNAME

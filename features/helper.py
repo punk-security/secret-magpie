@@ -88,11 +88,16 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
                 "--out-format",
                 outformat,
                 "gitlab",
-                "--org",
+                "--group",
                 context.org,
-                "--pat",
+                "--access-token",
                 context.pat,
             ]
+
+            try:
+                param_list.extend(["--gitlab-url", context.url])
+            except:
+                pass
         case "azuredevops":
             param_list = [
                 "python",
@@ -144,6 +149,9 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
         raise AssertionError(proc.stderr)
 
     if "❌" in proc.stdout:
+        raise AssertionError(proc.stdout)
+
+    if "warning" in proc.stdout:
         raise AssertionError(proc.stdout)
 
     stdout = proc.stdout.split("\n")
@@ -229,6 +237,33 @@ def step_impl(
     engines,
 ):
     args = []
+    if threshold_date != "None":
+        args.append(f"--ignore-branches-older-than={threshold_date}")
+    if extra_context == "enabled":
+        args.append("--extra-context")
+    if secret_toggle == "disabled":
+        args.append("--dont-store-secret")
+    if branch_toggle == "single":
+        args.append("--single-branch")
+    run_secret_magpie(context, engines, outformat=format, args=args)
+
+
+@when(
+    "we run secret-magpie-cli in {branch_toggle} branch mode, https validation {https_validation}, ignoring commits older than {threshold_date}, extra context {extra_context}, secret storing {secret_toggle}, output format {format} and engines: {engines}"
+)
+def step_impl(
+    context,
+    branch_toggle,
+    https_validation,
+    threshold_date,
+    extra_context,
+    secret_toggle,
+    format,
+    engines,
+):
+    args = []
+    if https_validation == "disabled":
+        args.append("--dont-validate-https")
     if threshold_date != "None":
         args.append(f"--ignore-branches-older-than={threshold_date}")
     if extra_context == "enabled":

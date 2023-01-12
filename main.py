@@ -9,11 +9,21 @@ import stats
 import output
 import datetime
 import time
+import os
+import subprocess  # nosec blacklist
+import urllib3
 
 if __name__ == "__main__":
+    urllib3.disable_warnings()
     print(argparsing.banner)
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
+
+    with open(os.devnull, "wb") as devnull:
+        if args.update_ca_store:
+            subprocess.call(  # nosec subprocess_without_shell_equals_true start_process_with_partial_path
+                ["update-ca-certificates"], stdout=devnull, stderr=devnull
+            )
 
     threshold_date = None
     if args.ignore_branches_older_than != None:
@@ -44,6 +54,7 @@ if __name__ == "__main__":
         extra_context=args.extra_context,
         cleanup=cleanup,
         threshold_date=threshold_date,
+        validate_https=not args.dont_validate_https,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
