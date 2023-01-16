@@ -64,12 +64,13 @@ ag_grid_template = """
 		    font-family: anaheim, sans-serif;
 	    }
         .ag-theme-customtheme{
-		--ag-borders: solid 6px;
-		--ag-border-color: #1d2024;
-		--ag-header-background-color: #1d2024;
+		    --ag-borders: solid 6px;
+		    --ag-border-color: #1d2024;
+		    --ag-header-background-color: #1d2024;
             --ag-background-color: black;
-		--ag-odd-row-background-color: #1d2024;
-		--ag-row-border-color: transparent;
+		    --ag-odd-row-background-color: #1d2024;
+		    --ag-row-border-color: transparent;
+            --ag-header-foreground-color: #be7b1e;
         }
         .downloadButtons{
 		    padding: 10px 20px;
@@ -94,7 +95,7 @@ ag_grid_template = """
 </head>
 <body style="background-color: #242930; margin: 20px">
     <div class="selectionBar">
-		<p style="color: white; display: inline-block;">Download as:</p>
+		<p style="color: #f39b20; display: inline-block;">Download as:</p>
 		<button type="button" class="downloadButtons">CSV</>
 		<button type="button" class="downloadButtons">JSON</button>
 	</div>
