@@ -3,5 +3,6 @@ venv
 __pycache__/
 /*.csv
 /*.json
+/*.html
 testing/
 .vscode

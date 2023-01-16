@@ -96,7 +96,7 @@ parser.add_argument(
     "--out-format",
     type=str,
     default="csv",
-    choices=["csv", "json"],
+    choices=["csv", "json", "html"],
 )
 
 parser.add_argument(
@@ -161,6 +161,11 @@ parser.add_argument(
     help="Disables HTTPS validation for APIs/cloning.",
 )
 
+parser.add_argument(
+    "--convert-to-html",
+    type=str,
+    help="Specifies the input results file to read in and convert to a HTML document"
+)
 
 def parse_args():
     args = parser.parse_args()
