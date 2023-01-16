@@ -22,25 +22,110 @@ ag_grid_template = """
     <title>Ag-Grid Basic Example</title>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script>
+        let excludeHashes = [];
+
+        class HashIgnorer {
+            // gets called once before the renderer is used
+            init(params) {
+                // create the cell
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML = `
+                    <span>
+                        <span class="my-value"></span>
+                        <button class="btn-simple">Ignore Hash</button>
+                    </span>
+                `;
+
+                // get references to the elements we want
+                this.eButton = this.eGui.querySelector('.btn-simple');
+                this.eValue = this.eGui.querySelector('.my-value');
+
+                // set value into cell
+                this.cellValue = this.getValueToDisplay(params);
+                this.eValue.innerHTML = this.cellValue;
+
+                // add event listener to button
+                this.eventListener = () => {
+                    excludeHashes.push(this.cellValue);
+                    params.api.onFilterChanged();
+                }
+                this.eButton.addEventListener('click', this.eventListener);
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            // gets called whenever the cell refreshes
+            refresh(params) {
+                // set value into cell again
+                this.cellValue = this.getValueToDisplay(params);
+                this.eValue.innerHTML = this.cellValue;
+
+                // return true to tell the grid we refreshed successfully
+                return true;
+            }
+
+            // gets called when the cell is removed from the grid
+            destroy() {
+                // do cleanup, remove event listener from button
+                if (this.eButton) {
+                    // check that the button element exists as destroy() can be called before getGui()
+                    this.eButton.removeEventListener('click', this.eventListener);
+                }
+            }
+
+            getValueToDisplay(params) {
+                return params.valueFormatted ? params.valueFormatted : params.value;
+            }
+        }
+
+        class ContextTooltip {
+            init(params) {
+                const eGui = (this.eGui = document.createElement('div'));
+                const color = 'white';
+                const data = params.api.getDisplayedRowAtIndex(params.rowIndex).data;
+
+                eGui.classList.add('context-tooltip');
+
+                eGui.style['background-color'] = "#242930";
+                eGui.innerHTML = `
+                        <p>
+                            <span class"orange">${data.secret}</span>
+                        </p>
+                        <p>
+                            <span><span class="orange">Context: </span><code>${data.context.split('\\n').join('</br>')}</code></span>
+                        </p>
+                        <p>
+                            <span class="orange">Total: </span>
+                            <code>
+                                ${data.extra_context.split('\\n').join('</br>')}
+                            </code>
+                        </p>
+                    `;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+        }
+
         const columnDefs = [
+                { field: "date" },
                 { field: "source" },
                 { field: "detector_type" },
-                { field: "verified" },
                 { field: "commit" },
-                { field: "date" },
-                { field: "author_email" },
-                { field: "repository" },
-                { field: "repository_uri" },
                 { field: "link" },
                 { field: "file" },
                 { field: "line" },
-                { field: "filename" },
-                { field: "extension" },
-                { field: "hashed_secret" },
-                { field: "secret" },
-                { field: "redacted_secret" },
-                { field: "context" },
-                { field: "extra_context" }
+                { 
+                    field: "hashed_secret",
+                    cellRenderer: HashIgnorer
+                },
+                { 
+                    field: "secret",
+                    tooltipField: "secret"
+                }
             ];
 
             // specify the data
@@ -48,8 +133,15 @@ ag_grid_template = """
 
             // let the grid know which columns and what data to use
             const gridOptions = {
+                defaultColDef: {
+                    resizable: true,
+                    tooltipComponent: ContextTooltip
+                },
                 columnDefs: columnDefs,
-                rowData: rowData
+                rowData: rowData,
+
+                isExternalFilterPresent: () => true,
+                doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1
             };
 
             // setup the grid after the page has finished loading
@@ -99,6 +191,36 @@ ag_grid_template = """
 		.makeInline {
 			display: inline-block;
 		}
+
+        .orange {
+            color: #be7b1e;
+            font-weight: bold;
+        }
+
+        code {
+            color: white;
+            font-family: monospace;
+        }
+
+        .context-tooltip {
+            max-width: 500px;
+            max-height: 300px;
+            border: 1px solid white;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            width: auto;
+            height: auto;
+        }
+
+        .context-tooltip p {
+            margin: 5px;
+            white-space: nowrap;
+        }
+
+        .context-tooltip p:first-of-type {
+            font-weight: bold;
+        }
+
 	</style>
 </head>
 <body style="background-color: #242930; margin: 20px">
