@@ -111,22 +111,24 @@ ag_grid_template = """
         }
 
         const columnDefs = [
-                { field: "date" },
-                { field: "source" },
-                { field: "detector_type" },
-                { field: "commit" },
-                { field: "link" },
-                { field: "file" },
-                { field: "line" },
-                { 
-                    field: "hashed_secret",
-                    cellRenderer: HashIgnorer
-                },
-                { 
-                    field: "secret",
-                    tooltipField: "secret"
-                }
-            ];
+            { field: "date", filter: "agTextColumnFilter" },
+            { field: "source", filter: "agTextColumnFilter" },
+            { field: "detector_type", filter: "agTextColumnFilter" },
+            { field: "commit", filter: "agTextColumnFilter" },
+            { field: "link", filter: "agTextColumnFilter" },
+            { field: "file", filter: "agTextColumnFilter" },
+            { field: "line", filter: "agTextColumnFilter" },
+            { 
+                field: "hashed_secret",
+                cellRenderer: HashIgnorer,
+                filter: "agTextColumnFilter"
+            },
+            { 
+                field: "secret",
+                tooltipField: "secret",
+                filter: "agTextColumnFilter"
+            }
+        ];
 
             // specify the data
             const rowData = $$ROWDATA$$;
@@ -160,9 +162,25 @@ ag_grid_template = """
 			})
 		}
 
-        function onFilterTextBoxChanged() {
-            gridOptions.api.setQuickFilter(document.getElementById('searchbar').value);
-		}
+        // TODO: Can probably tidy this up
+        var filter = "";
+        var val = ""
+        function onSearchBoxChange(filter) {
+            filter = filter || "all columns";
+            val = document.getElementById('searchbar').value
+            if (filter == "all columns") {
+                gridOptions.api.setQuickFilter(val);
+            }
+            else {
+                var obj = {};
+                obj[filter] = {
+                    filterType: 'text',
+                    type: 'startsWith',
+                    filter: val
+                }
+                gridOptions.api.setFilterModel(obj);
+            }
+        }
 
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
@@ -245,13 +263,14 @@ ag_grid_template = """
 		<button type="button" class="downloadButtons">JSON</button>
 		<div style="display: inline-block; float: right">
 			<p class="makeInline" style="color: white;">In </p>
-			<select id="headerDropDown" name="column"></select>
+			<select id="headerDropDown" name="column" onchange="onSearchBoxChange(this.value)"></select>
 
 			<p class="makeInline" style="color: white;"> search for </p>
-			<input class="makeInline" id="searchbar" onkeyup="onFilterTextBoxChanged()" type="text" name="search">
+			<input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
 		</div>
 	</div>
 	<div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
+</body>
 </html>
 
 """
