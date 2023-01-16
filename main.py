@@ -71,7 +71,11 @@ ag_grid_template = """
     </style>
 </head>
 <body style="background-color: #242930; margin: 20px">
-    <div></div>
+    <div style="background-color: #1d2024; margin-bottom: 20px;">
+		<p>Download as:</p>
+		<button>CSV</button>
+		<button>JSON</button>
+	</div>
     <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
 </body>
 </html>
