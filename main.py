@@ -58,9 +58,21 @@ ag_grid_template = """
                 new agGrid.Grid(gridDiv, gridOptions);
             });
     </script>
+    <link rel="stylesheet">
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
+    <style>
+        .ag-theme-customtheme{
+		--ag-borders: solid 6px;
+		--ag-border-color: #1d2024;
+		--ag-header-background-color: #1d2024;
+            --ag-background-color: black;
+		--ag-odd-row-background-color: #1d2024;
+		--ag-row-border-color: transparent;
+        }
+    </style>
 </head>
-<body>
-    <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine"></div>
+<body style="background-color: #242930; margin: 20px">
+    <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
 </body>
 </html>
 

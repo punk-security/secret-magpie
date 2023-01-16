@@ -6,3 +6,5 @@ __pycache__/
 /*.html
 testing/
 .vscode
+.vs
+.run
