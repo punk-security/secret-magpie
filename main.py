@@ -58,8 +58,7 @@ ag_grid_template = """
                 new agGrid.Grid(gridDiv, gridOptions);
             });
     </script>
-    <link rel="stylesheet">
-        href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
     <style>
         .ag-theme-customtheme{
 		--ag-borders: solid 6px;
@@ -72,6 +71,7 @@ ag_grid_template = """
     </style>
 </head>
 <body style="background-color: #242930; margin: 20px">
+    <div></div>
     <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
 </body>
 </html>
