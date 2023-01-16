@@ -57,6 +57,16 @@ ag_grid_template = """
                 const gridDiv = document.querySelector('#myGrid');
                 new agGrid.Grid(gridDiv, gridOptions);
             });
+
+        // When the window loads, populates the dropdown
+		window.onload = function populateDropdown() {
+			var dropDown = document.getElementById('headerDropDown');
+            dropDown.innerHTML += ("<option>all columns</option>");
+            columnDefs.forEach( function (element) {
+                console.log(element.field);
+                dropDown.innerHTML += (`<option>${element.field}</option>`);
+			})
+		}
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
 	<style>
@@ -108,17 +118,14 @@ ag_grid_template = """
 		<button type="button" class="downloadButtons">JSON</button>
 		<div style="display: inline-block; float: right">
 			<p class="makeInline" style="color: white;">In </p>
-			<input class="makeInline" id="searchbar" onkeyup="" type="text" name="search">
+			<select id="headerDropDown" name="column"></select>
 
 			<p class="makeInline" style="color: white;"> search for </p>
-			<!--TODO: Pull column headers from JSON using JS and display them here-->
-			<!--This option will make it so that words searched for will only be searched for in said column--->
-			<select name="column">
-				<option value="test">TestOption</option>
-			</select>
+			<input class="makeInline" id="searchbar" onkeyup="" type="text" name="search">
 		</div>
 	</div>
 	<div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
+</body>
 </html>
 
 """
