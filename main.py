@@ -79,15 +79,22 @@ ag_grid_template = """
 		    color: white;
 		    background-color: transparent;
 		    transition: all .3s ease-in 0s;
+            display: inline-block;
+            margin-left: 10px;
 	    }
 	    .downloadButtons:hover{
 		    background-color: #2da84d;
 	    }
+        .selectionBar{
+		    background-color: #1d2024; 
+		    margin-bottom: 20px;
+		    padding: 5px 20px;
+	    }
     </style>
 </head>
 <body style="background-color: #242930; margin: 20px">
-    <div style="background-color: #1d2024; margin-bottom: 20px;">
-		<p style="color: white;">Download as:</p>
+    <div class="selectionBar">
+		<p style="color: white; display: inline-block;">Download as:</p>
 		<button type="button" class="downloadButtons">CSV</>
 		<button type="button" class="downloadButtons">JSON</button>
 	</div>
