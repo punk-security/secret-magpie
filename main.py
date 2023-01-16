@@ -130,22 +130,7 @@ ag_grid_template = """
             { field: "context" },
             { field: "extra_context" }
         ];
-                { field: "date" },
-                { field: "source" },
-                { field: "detector_type" },
-                { field: "commit" },
-                { field: "link" },
-                { field: "file" },
-                { field: "line" },
-                { 
-                    field: "hashed_secret",
-                    cellRenderer: HashIgnorer
-                },
-                { 
-                    field: "secret",
-                    tooltipField: "secret"
-                }
-            ];
+               
 
         // TODO: make columns editable
         // TODO: save this as a new copy so you have an original if you make a mistake
