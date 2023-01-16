@@ -111,33 +111,25 @@ ag_grid_template = """
         }
 
         const columnDefs = [
-            { field: "source" },
-            { field: "detector_type" },
-            { field: "verified" },
-            { field: "commit" },
-            { field: "date" },
-            { field: "author_email" },
-            { field: "repository" },
-            { field: "repository_uri" },
-            { field: "link" },
-            { field: "file" },
-            { field: "line" },
-            { field: "filename" },
-            { field: "extension" },
-            { field: "hashed_secret" },
-            { field: "secret" },
-            { field: "redacted_secret" },
-            { field: "context" },
-            { field: "extra_context" }
-        ];
-               
+                { field: "date" },
+                { field: "source" },
+                { field: "detector_type" },
+                { field: "commit" },
+                { field: "link" },
+                { field: "file" },
+                { field: "line" },
+                { 
+                    field: "hashed_secret",
+                    cellRenderer: HashIgnorer
+                },
+                { 
+                    field: "secret",
+                    tooltipField: "secret"
+                }
+            ];
 
-        // TODO: make columns editable
-        // TODO: save this as a new copy so you have an original if you make a mistake
-        // defaultColDef = { flex: 1, editable: true}
-
-        // specify the data
-        const rowData = $$ROWDATA$$;
+            // specify the data
+            const rowData = $$ROWDATA$$;
 
             // let the grid know which columns and what data to use
             const gridOptions = {
@@ -260,7 +252,6 @@ ag_grid_template = """
 		</div>
 	</div>
 	<div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
-</body>
 </html>
 
 """
