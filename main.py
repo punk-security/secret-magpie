@@ -111,6 +111,25 @@ ag_grid_template = """
         }
 
         const columnDefs = [
+            { field: "source" },
+            { field: "detector_type" },
+            { field: "verified" },
+            { field: "commit" },
+            { field: "date" },
+            { field: "author_email" },
+            { field: "repository" },
+            { field: "repository_uri" },
+            { field: "link" },
+            { field: "file" },
+            { field: "line" },
+            { field: "filename" },
+            { field: "extension" },
+            { field: "hashed_secret" },
+            { field: "secret" },
+            { field: "redacted_secret" },
+            { field: "context" },
+            { field: "extra_context" }
+        ];
                 { field: "date" },
                 { field: "source" },
                 { field: "detector_type" },
@@ -128,8 +147,12 @@ ag_grid_template = """
                 }
             ];
 
-            // specify the data
-            const rowData = $$ROWDATA$$;
+        // TODO: make columns editable
+        // TODO: save this as a new copy so you have an original if you make a mistake
+        // defaultColDef = { flex: 1, editable: true}
+
+        // specify the data
+        const rowData = $$ROWDATA$$;
 
             // let the grid know which columns and what data to use
             const gridOptions = {
@@ -144,11 +167,11 @@ ag_grid_template = """
                 doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1
             };
 
-            // setup the grid after the page has finished loading
-            document.addEventListener('DOMContentLoaded', () => {
-                const gridDiv = document.querySelector('#myGrid');
-                new agGrid.Grid(gridDiv, gridOptions);
-            });
+        // setup the grid after the page has finished loading
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridDiv = document.querySelector('#myGrid');
+            new agGrid.Grid(gridDiv, gridOptions);
+        });
 
         // When the window loads, populates the dropdown
 		window.onload = function populateDropdown() {
@@ -159,6 +182,11 @@ ag_grid_template = """
                 dropDown.innerHTML += (`<option>${element.field}</option>`);
 			})
 		}
+
+        function onFilterTextBoxChanged() {
+            gridOptions.api.setQuickFilter(document.getElementById('searchbar').value);
+		}
+
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
 	<style>
@@ -243,7 +271,7 @@ ag_grid_template = """
 			<select id="headerDropDown" name="column"></select>
 
 			<p class="makeInline" style="color: white;"> search for </p>
-			<input class="makeInline" id="searchbar" onkeyup="" type="text" name="search">
+			<input class="makeInline" id="searchbar" onkeyup="onFilterTextBoxChanged()" type="text" name="search">
 		</div>
 	</div>
 	<div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
