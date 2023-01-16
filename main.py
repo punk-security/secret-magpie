@@ -60,6 +60,9 @@ ag_grid_template = """
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
     <style>
+        body{
+		    font-family: anaheim, sans-serif;
+	    }
         .ag-theme-customtheme{
 		--ag-borders: solid 6px;
 		--ag-border-color: #1d2024;
@@ -68,13 +71,25 @@ ag_grid_template = """
 		--ag-odd-row-background-color: #1d2024;
 		--ag-row-border-color: transparent;
         }
+        .downloadButtons{
+		    padding: 10px 20px;
+		    border: 1px solid;
+		    border-color: #c5c6c7;
+		    border-radius: 0;
+		    color: white;
+		    background-color: transparent;
+		    transition: all .3s ease-in 0s;
+	    }
+	    .downloadButtons:hover{
+		    background-color: #2da84d;
+	    }
     </style>
 </head>
 <body style="background-color: #242930; margin: 20px">
     <div style="background-color: #1d2024; margin-bottom: 20px;">
-		<p>Download as:</p>
-		<button>CSV</button>
-		<button>JSON</button>
+		<p style="color: white;">Download as:</p>
+		<button type="button" class="downloadButtons">CSV</>
+		<button type="button" class="downloadButtons">JSON</button>
 	</div>
     <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
 </body>
