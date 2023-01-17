@@ -8,9 +8,7 @@
         let excludeHashes = window.localStorage.getItem("excludeHashes")?.split(",") ?? [];
 
         class HashIgnorer {
-            // gets called once before the renderer is used
             init(params) {
-                // create the cell
                 this.eGui = document.createElement('div');
                 this.eGui.innerHTML = `
                     <span>
@@ -19,15 +17,12 @@
                     </span>
                 `;
 
-                // get references to the elements we want
                 this.eButton = this.eGui.querySelector('.btn-simple');
                 this.eValue = this.eGui.querySelector('.my-value');
 
-                // set value into cell
                 this.cellValue = this.getValueToDisplay(params);
                 this.eValue.innerHTML = this.cellValue;
 
-                // add event listener to button
                 this.eventListener = () => {
                     excludeHashes.push(this.cellValue);
                     window.localStorage.setItem("excludeHashes", excludeHashes);
@@ -40,21 +35,14 @@
                 return this.eGui;
             }
 
-            // gets called whenever the cell refreshes
             refresh(params) {
-                // set value into cell again
                 this.cellValue = this.getValueToDisplay(params);
                 this.eValue.innerHTML = this.cellValue;
 
-                // return true to tell the grid we refreshed successfully
                 return true;
             }
-
-            // gets called when the cell is removed from the grid
             destroy() {
-                // do cleanup, remove event listener from button
                 if (this.eButton) {
-                    // check that the button element exists as destroy() can be called before getGui()
                     this.eButton.removeEventListener('click', this.eventListener);
                 }
             }
@@ -62,6 +50,30 @@
             getValueToDisplay(params) {
                 return params.valueFormatted ? params.valueFormatted : params.value;
             }
+        }
+
+        class LinkRenderer {
+            init(params) {
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML = `
+                    <a target="_blank" href="${params.value}">${params.value}</a>
+                `;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh(params) {
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML = `
+                    <a target="_blank" href="${this.params.value}">${params.value}</a>
+                `;
+
+                return true;
+            }
+
+            destroy() { }
         }
 
         class ContextTooltip {
@@ -99,7 +111,12 @@
             { field: "source", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
-            { field: "link", filter: "agTextColumnFilter", unSortIcon: true },
+            {
+                field: "link",
+                filter: "agTextColumnFilter",
+                unSortIcon: true,
+                cellRenderer: LinkRenderer
+            },
             { field: "file", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "line", filter: "agTextColumnFilter", unSortIcon: true },
             {
