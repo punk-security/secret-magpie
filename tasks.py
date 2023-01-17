@@ -89,7 +89,13 @@ def process_repo(
     cleanup=True,
     threshold_date=None,
     validate_https=True,
+    to_scan_list=None,
 ):
+    if to_scan_list is not None:
+        print(repo.html_url)
+        if repo.html_url not in to_scan_list:
+            return []
+
     out = []
     try:
         path = repo.clone_repo(validate_https=validate_https)
