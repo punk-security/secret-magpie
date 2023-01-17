@@ -27,10 +27,10 @@
                     // Goes up from buttom until it reaches the row to get the row's ID
                     var rowID = this.eGui.parentNode.parentNode.getAttribute('row-id');
                     var newRow = `
-                        <div class="hashRow" style="display: flex">
-                            <div style="display: inline-block; flex-grow: 1; width: 50%; overflow: scroll">${rowData[rowID].hashed_secret}</div>
-                            <div style="display: inline-block; flex-grow: 1; width: 50%; overflow: scroll" class="makeInline">${rowData[rowID].secret}</div>
-                        </div>                    
+                        <div class="exclHashesTableRow">
+                            <div class="hashRowCell">${rowData[rowID].hashed_secret}</div>
+                            <div class="hashRowCell">${rowData[rowID].secret}</div>                  
+                        </div>
                     `
                     document.getElementById("excludedHashesTable").innerHTML += newRow;
 
@@ -257,10 +257,6 @@
             background-color: #2da84d;
         }
 
-        .sideBarIgnoredHashes {
-            background-color: #1d2024;
-        }
-
         .selectionBar {
             background-color: #1d2024;
             margin-bottom: 20px;
@@ -274,6 +270,36 @@
         .orange {
             color: #be7b1e;
             font-weight: bold;
+        }
+
+        .excludedHashesBar {
+            background-color: #1d2024;
+            max-height: 300px;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .excludedHashesTable {
+            overflow: scroll;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+            display: inline-grid;
+        }
+
+        .hashRowCell {
+            display: inline-block;
+            grid: initial;
+            overflow: scroll;
+            color: white;
+            height: 30px;
+            padding: 5px;
+            max-width: 50%;
+        }
+
+        .exclHashesTableRow {
+            grid-template-columns: 1fr 1fr;
+            display: grid
         }
 
         code {
@@ -321,9 +347,12 @@
     </div>
 
     <!-- Drop down table stickied to the bottom of the page. Shows all excluded hashes-->
-    <div class="sideBarIgnoredHashes" style="background-color: yellow; max-height: 150px; overflow: scroll;">
+    <div class="excludedHashesBar">
         <div id="excludedHashesTable">
-            <p>hello</p>
+            <div class="exclHashesTableRow orange">
+                <h5>Hashed_secret</h5>
+                <h5>Secret</h5>
+            </div>
         </div>
     </div>
 
