@@ -195,6 +195,12 @@
             }
         }
 
+        function deleteExcludedCellsLS() {
+            window.localStorage.setItem('excludeHashes', null);
+            // Temp while testing - find a way to just refresh the table
+            location.reload();
+        }
+
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css" />
     <style>
@@ -282,8 +288,18 @@
             <p class="makeInline" style="color: white;"> search for </p>
             <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
         </div>
+        <div>
+            <button type="button" onclick="deleteExcludedCellsLS()">Restart</button>
+        </div>
     </div>
     <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
+
+    <!-- Drop down table stickied to the bottom of the page. Shows all excluded hashes-->
+    <div style="position: sticky">
+        <div id="excludedHashesTable">
+
+        </div>
+    </div>
 </body>
 
 </html>
