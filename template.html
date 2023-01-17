@@ -23,7 +23,17 @@
                 this.cellValue = this.getValueToDisplay(params);
                 this.eValue.innerHTML = this.cellValue;
 
-                this.eventListener = () => {
+                this.eventListener = () => { 
+                    // Goes up from buttom until it reaches the row to get the row's ID
+                    var rowID = this.eGui.parentNode.parentNode.getAttribute('row-id');
+                    var newRow = `
+                        <div class="hashRow" style="display: flex">
+                            <div style="display: inline-block; flex-grow: 1; width: 50%; overflow: scroll">${rowData[rowID].hashed_secret}</div>
+                            <div style="display: inline-block; flex-grow: 1; width: 50%; overflow: scroll" class="makeInline">${rowData[rowID].secret}</div>
+                        </div>                    
+                    `
+                    document.getElementById("excludedHashesTable").innerHTML += newRow;
+
                     excludeHashes.push(this.cellValue);
                     window.localStorage.setItem("excludeHashes", excludeHashes);
                     params.api.onFilterChanged();
@@ -145,6 +155,7 @@
         // specify the data
         const rowData = $$ROWDATA$$;
 
+
         // let the grid know which columns and what data to use
         const gridOptions = {
             defaultColDef: {
@@ -246,6 +257,10 @@
             background-color: #2da84d;
         }
 
+        .sideBarIgnoredHashes {
+            background-color: #1d2024;
+        }
+
         .selectionBar {
             background-color: #1d2024;
             margin-bottom: 20px;
@@ -304,14 +319,15 @@
             <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
         </div>
     </div>
-    <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
 
     <!-- Drop down table stickied to the bottom of the page. Shows all excluded hashes-->
-    <div style="position: sticky">
+    <div class="sideBarIgnoredHashes" style="background-color: yellow; max-height: 150px; overflow: scroll;">
         <div id="excludedHashesTable">
-
+            <p>hello</p>
         </div>
     </div>
+
+    <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
 </body>
 
 </html>
