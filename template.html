@@ -240,6 +240,12 @@
             window.localStorage.removeItem('hashSecrets');
             excludeHashes = []
             hashSecrets = []
+
+            var tableVals = document.getElementById("excludedHashesTable");
+            while (tableVals.firstChild) {
+                tableVals.removeChild(tableVals.lastChild);
+            }
+
             gridOptions.api.onFilterChanged();
         }
 
@@ -367,11 +373,11 @@
 
     <!-- Drop down table stickied to the bottom of the page. Shows all excluded hashes-->
     <div class="excludedHashesBar">
+        <div id="excluedTableHeader" class="exclHashesTableRow orange">
+            <h5>Hashed_secret</h5>
+            <h5>Secret</h5>
+        </div>
         <div id="excludedHashesTable">
-            <div class="exclHashesTableRow orange">
-                <h5>Hashed_secret</h5>
-                <h5>Secret</h5>
-            </div>
         </div>
     </div>
 
