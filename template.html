@@ -95,22 +95,24 @@
         }
 
         const columnDefs = [
-            { field: "date", filter: "agTextColumnFilter" },
-            { field: "source", filter: "agTextColumnFilter" },
-            { field: "detector_type", filter: "agTextColumnFilter" },
-            { field: "commit", filter: "agTextColumnFilter" },
-            { field: "link", filter: "agTextColumnFilter" },
-            { field: "file", filter: "agTextColumnFilter" },
-            { field: "line", filter: "agTextColumnFilter" },
+            { field: "date", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "source", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "link", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "file", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "line", filter: "agTextColumnFilter", unSortIcon: true },
             {
                 field: "hashed_secret",
                 cellRenderer: HashIgnorer,
-                filter: "agTextColumnFilter"
+                filter: "agTextColumnFilter",
+                unSortIcon: true
             },
             {
                 field: "secret",
                 tooltipField: "secret",
-                filter: "agTextColumnFilter"
+                filter: "agTextColumnFilter",
+                unSortIcon: true
             }
         ];
 
