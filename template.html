@@ -6,6 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script>
         let excludeHashes = window.localStorage.getItem("excludeHashes")?.split(",") ?? [];
+        let hashSecrets = window.localStorage.getItem("hashSecrets")?.split(",") ?? [];
 
         class HashIgnorer {
             init(params) {
@@ -26,16 +27,14 @@
                 this.eventListener = () => { 
                     // Goes up from buttom until it reaches the row to get the row's ID
                     var rowID = this.eGui.parentNode.parentNode.getAttribute('row-id');
-                    var newRow = `
-                        <div class="exclHashesTableRow">
-                            <div class="hashRowCell">${rowData[rowID].hashed_secret}</div>
-                            <div class="hashRowCell">${rowData[rowID].secret}</div>                  
-                        </div>
-                    `
-                    document.getElementById("excludedHashesTable").innerHTML += newRow;
+
+                    addExclRows(this.cellValue, rowData[rowID].secret);
 
                     excludeHashes.push(this.cellValue);
+                    hashSecrets.push(rowData[rowID].secret);
                     window.localStorage.setItem("excludeHashes", excludeHashes);
+                    window.localStorage.setItem("hashSecrets", hashSecrets);
+                    
                     params.api.onFilterChanged();
                 }
                 this.eButton.addEventListener('click', this.eventListener);
@@ -190,6 +189,8 @@
 
         // When the window loads, populates the dropdown
         window.onload = function populateDropdown() {
+            populateExclHashTable()
+
             var dropDown = document.getElementById('headerDropDown');
             dropDown.innerHTML += ("<option>all columns</option>");
             columnDefs.forEach(function (element) {
@@ -218,9 +219,27 @@
             }
         }
 
+        function populateExclHashTable() {
+            for (var i = 0; i < excludeHashes.length; i++) {
+                addExclRows(excludeHashes[i], hashSecrets[i])
+            }
+        }
+
+        function addExclRows(x, y) {
+            var newRow = `
+                    <div class="exclHashesTableRow">
+                        <div class="hashRowCell">${x}</div>
+                        <div class="hashRowCell">${y}</div>                  
+                    </div>
+                `
+            document.getElementById("excludedHashesTable").innerHTML += newRow;
+        }
+
         function deleteExcludedCellsLS() {
-            window.localStorage.setItem('excludeHashes', null);
+            window.localStorage.removeItem('excludeHashes');
+            window.localStorage.removeItem('hashSecrets');
             excludeHashes = []
+            hashSecrets = []
             gridOptions.api.onFilterChanged();
         }
 
