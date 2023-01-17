@@ -22,7 +22,7 @@ ag_grid_template = """
     <title>Ag-Grid Basic Example</title>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script>
-        let excludeHashes = [];
+        let excludeHashes = window.localStorage.getItem("excludeHashes")?.split(",") ?? [];
 
         class HashIgnorer {
             // gets called once before the renderer is used
@@ -31,8 +31,8 @@ ag_grid_template = """
                 this.eGui = document.createElement('div');
                 this.eGui.innerHTML = `
                     <span>
-                        <span class="my-value"></span>
                         <button class="btn-simple">Ignore Hash</button>
+                        <span class="my-value"></span>
                     </span>
                 `;
 
@@ -47,6 +47,7 @@ ag_grid_template = """
                 // add event listener to button
                 this.eventListener = () => {
                     excludeHashes.push(this.cellValue);
+                    window.localStorage.setItem("excludeHashes", excludeHashes);
                     params.api.onFilterChanged();
                 }
                 this.eButton.addEventListener('click', this.eventListener);
@@ -97,7 +98,7 @@ ag_grid_template = """
                             <span><span class="orange">Context: </span><code>${data.context.split('\\n').join('</br>')}</code></span>
                         </p>
                         <p>
-                            <span class="orange">Total: </span>
+                            <span class="orange">Extra Context: </span>
                             <code>
                                 ${data.extra_context.split('\\n').join('</br>')}
                             </code>
@@ -151,6 +152,15 @@ ag_grid_template = """
             const gridDiv = document.querySelector('#myGrid');
             new agGrid.Grid(gridDiv, gridOptions);
         });
+
+        function exportCSV() {
+            gridOptions.api.exportDataAsCsv({
+                skipHeader: false,
+                skipFooters: true,
+                skipGroups: true,
+                fileName: "results.csv"
+            });
+        }
 
         // When the window loads, populates the dropdown
 		window.onload = function populateDropdown() {
@@ -259,7 +269,7 @@ ag_grid_template = """
 <body style="background-color: #242930; margin: 20px">
 	<div class="selectionBar">
 		<p style="color: #f39b20; display: inline-block;">Download as:</p>
-		<button type="button" class="downloadButtons">CSV</button>
+		<button type="button" class="downloadButtons" onclick="exportCSV()">CSV</button>
 		<button type="button" class="downloadButtons">JSON</button>
 		<div style="display: inline-block; float: right">
 			<p class="makeInline" style="color: white;">In </p>
