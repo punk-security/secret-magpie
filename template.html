@@ -227,11 +227,11 @@
 
         function addExclRows(x, y) {
             var newRow = `
-                    <div class="exclHashesTableRow">
-                        <div class="hashRowCell">${x}</div>
-                        <div class="hashRowCell">${y}</div>                  
-                    </div>
-                `
+                <div class="exclHashesTableRow">
+                    <div class="hashRowCell" style="margin-right: 20px;">${x}</div>
+                    <div class="hashRowCell">${y}</div>                  
+                </div>
+            `
             document.getElementById("excludedHashesTable").innerHTML += newRow;
         }
 
@@ -301,7 +301,7 @@
             background-color: #1d2024;
             max-height: 300px;
             margin-bottom: 20px;
-            padding: 10px;
+            padding-left: 20px;
         }
 
         .excludedHashesTable {
@@ -318,8 +318,8 @@
             overflow: scroll;
             color: white;
             height: 30px;
-            padding: 5px;
-            max-width: 50%;
+            font-size: 14px;
+            margin: 10px 0px 10px 0px;
         }
 
         .exclHashesTableRow {
