@@ -209,8 +209,8 @@
 
         function deleteExcludedCellsLS() {
             window.localStorage.setItem('excludeHashes', null);
-            // Temp while testing - find a way to just refresh the table
-            location.reload();
+            excludeHashes = []
+            gridOptions.api.onFilterChanged();
         }
 
     </script>
