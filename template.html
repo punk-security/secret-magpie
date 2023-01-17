@@ -12,12 +12,12 @@
                 this.eGui = document.createElement('div');
                 this.eGui.innerHTML = `
                     <span>
-                        <button class="btn-simple">Ignore Hash</button>
+                        <button class="button">Ignore Hash</button>
                         <span class="my-value"></span>
                     </span>
                 `;
 
-                this.eButton = this.eGui.querySelector('.btn-simple');
+                this.eButton = this.eGui.querySelector('.button');
                 this.eValue = this.eGui.querySelector('.my-value');
 
                 this.cellValue = this.getValueToDisplay(params);
@@ -107,10 +107,14 @@
         }
 
         const columnDefs = [
-            { field: "date", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "source", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "verified", hide: true },
             { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "date", filter: "agTextColumnFilter", unSortIcon: true, lockPosition: true },
+            { field: "author_email", hide: true },
+            { field: "repository", hide: true },
+            { field: "repository_url", hide: true },
             {
                 field: "link",
                 filter: "agTextColumnFilter",
@@ -125,12 +129,17 @@
                 filter: "agTextColumnFilter",
                 unSortIcon: true
             },
+            { field: "filename", hide: true },
+            { field: "extension", hide: true },
             {
                 field: "secret",
                 tooltipField: "secret",
                 filter: "agTextColumnFilter",
                 unSortIcon: true
-            }
+            },
+            { field: "redacted_secret", hide: true },
+            { field: "context", hide: true },
+            { field: "extra_context", hide: true },
         ];
 
         // specify the data
@@ -147,7 +156,9 @@
             rowData: rowData,
 
             isExternalFilterPresent: () => true,
-            doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1
+            doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
+
+            rowHeight: 50,
         };
 
         // setup the grid after the page has finished loading
@@ -161,7 +172,8 @@
                 skipHeader: false,
                 skipFooters: true,
                 skipGroups: true,
-                fileName: "results.csv"
+                fileName: "results.csv",
+                allColumns: true
             });
         }
 
@@ -218,7 +230,7 @@
             --ag-header-foreground-color: #be7b1e;
         }
 
-        .downloadButtons {
+        .button {
             padding: 10px 20px;
             border: 1px solid;
             border-color: #c5c6c7;
@@ -230,7 +242,7 @@
             margin-left: 10px;
         }
 
-        .downloadButtons:hover {
+        .button:hover {
             background-color: #2da84d;
         }
 
@@ -279,7 +291,7 @@
 <body style="background-color: #242930; margin: 20px">
     <div class="selectionBar">
         <p style="color: #f39b20; display: inline-block;">Download as:</p>
-        <button type="button" class="downloadButtons" onclick="exportCSV()">CSV</button>
+        <button type="button" class="button" onclick="exportCSV()">CSV</button>
         <!--<button type="button" class="downloadButtons">JSON</button>-->
         <div style="display: inline-block; float: right;">
             <p class="makeInline" style="color: white;">In </p>
@@ -289,7 +301,7 @@
             <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
         </div>
         <div>
-            <button type="button" onclick="deleteExcludedCellsLS()">Restart</button>
+            <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
         </div>
     </div>
     <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
