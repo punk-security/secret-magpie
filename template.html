@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Ag-Grid Basic Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <script>
+        let excludeHashes = window.localStorage.getItem("excludeHashes")?.split(",") ?? [];
+
+        class HashIgnorer {
+            // gets called once before the renderer is used
+            init(params) {
+                // create the cell
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML = `
+                    <span>
+                        <button class="btn-simple">Ignore Hash</button>
+                        <span class="my-value"></span>
+                    </span>
+                `;
+
+                // get references to the elements we want
+                this.eButton = this.eGui.querySelector('.btn-simple');
+                this.eValue = this.eGui.querySelector('.my-value');
+
+                // set value into cell
+                this.cellValue = this.getValueToDisplay(params);
+                this.eValue.innerHTML = this.cellValue;
+
+                // add event listener to button
+                this.eventListener = () => {
+                    excludeHashes.push(this.cellValue);
+                    window.localStorage.setItem("excludeHashes", excludeHashes);
+                    params.api.onFilterChanged();
+                }
+                this.eButton.addEventListener('click', this.eventListener);
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            // gets called whenever the cell refreshes
+            refresh(params) {
+                // set value into cell again
+                this.cellValue = this.getValueToDisplay(params);
+                this.eValue.innerHTML = this.cellValue;
+
+                // return true to tell the grid we refreshed successfully
+                return true;
+            }
+
+            // gets called when the cell is removed from the grid
+            destroy() {
+                // do cleanup, remove event listener from button
+                if (this.eButton) {
+                    // check that the button element exists as destroy() can be called before getGui()
+                    this.eButton.removeEventListener('click', this.eventListener);
+                }
+            }
+
+            getValueToDisplay(params) {
+                return params.valueFormatted ? params.valueFormatted : params.value;
+            }
+        }
+
+        class ContextTooltip {
+            init(params) {
+                const eGui = (this.eGui = document.createElement('div'));
+                const color = 'white';
+                const data = params.api.getDisplayedRowAtIndex(params.rowIndex).data;
+
+                eGui.classList.add('context-tooltip');
+
+                eGui.style['background-color'] = "#242930";
+                eGui.innerHTML = `
+                        <p>
+                            <span class"orange">${data.secret}</span>
+                        </p>
+                        <p>
+                            <span><span class="orange">Context: </span><code>${data.context.split('\\n').join('</br>')}</code></span>
+                        </p>
+                        <p>
+                            <span class="orange">Extra Context: </span>
+                            <code>
+                                ${data.extra_context.split('\\n').join('</br>')}
+                            </code>
+                        </p>
+                    `;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+        }
+
+        const columnDefs = [
+            { field: "date", filter: "agTextColumnFilter" },
+            { field: "source", filter: "agTextColumnFilter" },
+            { field: "detector_type", filter: "agTextColumnFilter" },
+            { field: "commit", filter: "agTextColumnFilter" },
+            { field: "link", filter: "agTextColumnFilter" },
+            { field: "file", filter: "agTextColumnFilter" },
+            { field: "line", filter: "agTextColumnFilter" },
+            {
+                field: "hashed_secret",
+                cellRenderer: HashIgnorer,
+                filter: "agTextColumnFilter"
+            },
+            {
+                field: "secret",
+                tooltipField: "secret",
+                filter: "agTextColumnFilter"
+            }
+        ];
+
+        // specify the data
+        const rowData = $$ROWDATA$$;
+
+        // let the grid know which columns and what data to use
+        const gridOptions = {
+            defaultColDef: {
+                resizable: true,
+                tooltipComponent: ContextTooltip
+            },
+            columnDefs: columnDefs,
+            rowData: rowData,
+
+            isExternalFilterPresent: () => true,
+            doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1
+        };
+
+        // setup the grid after the page has finished loading
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridDiv = document.querySelector('#myGrid');
+            new agGrid.Grid(gridDiv, gridOptions);
+        });
+
+        function exportCSV() {
+            gridOptions.api.exportDataAsCsv({
+                skipHeader: false,
+                skipFooters: true,
+                skipGroups: true,
+                fileName: "results.csv"
+            });
+        }
+
+        // When the window loads, populates the dropdown
+        window.onload = function populateDropdown() {
+            var dropDown = document.getElementById('headerDropDown');
+            dropDown.innerHTML += ("<option>all columns</option>");
+            columnDefs.forEach(function (element) {
+                console.log(element.field);
+                dropDown.innerHTML += (`<option>${element.field}</option>`);
+            })
+        }
+
+        // TODO: Can probably tidy this up
+        var filter = "";
+        var val = ""
+        function onSearchBoxChange(filter) {
+            filter = filter || "all columns";
+            val = document.getElementById('searchbar').value
+            if (filter == "all columns") {
+                gridOptions.api.setQuickFilter(val);
+            }
+            else {
+                var obj = {};
+                obj[filter] = {
+                    filterType: 'text',
+                    type: 'startsWith',
+                    filter: val
+                }
+                gridOptions.api.setFilterModel(obj);
+            }
+        }
+
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css" />
+    <style>
+        body {
+            font-family: anaheim, sans-serif;
+        }
+
+        .ag-theme-customtheme {
+            --ag-borders: solid 6px;
+            --ag-border-color: #1d2024;
+            --ag-header-background-color: #1d2024;
+            --ag-background-color: black;
+            --ag-odd-row-background-color: #1d2024;
+            --ag-row-border-color: transparent;
+            --ag-header-foreground-color: #be7b1e;
+        }
+
+        .downloadButtons {
+            padding: 10px 20px;
+            border: 1px solid;
+            border-color: #c5c6c7;
+            border-radius: 0;
+            color: white;
+            background-color: transparent;
+            transition: all .3s ease-in 0s;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .downloadButtons:hover {
+            background-color: #2da84d;
+        }
+
+        .selectionBar {
+            background-color: #1d2024;
+            margin-bottom: 20px;
+            padding: 5px 20px;
+        }
+
+        .makeInline {
+            display: inline-block;
+        }
+
+        .orange {
+            color: #be7b1e;
+            font-weight: bold;
+        }
+
+        code {
+            color: white;
+            font-family: monospace;
+        }
+
+        .context-tooltip {
+            max-width: 500px;
+            max-height: 300px;
+            border: 1px solid white;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            width: auto;
+            height: auto;
+        }
+
+        .context-tooltip p {
+            margin: 5px;
+            white-space: nowrap;
+        }
+
+        .context-tooltip p:first-of-type {
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+
+<body style="background-color: #242930; margin: 20px">
+    <div class="selectionBar">
+        <p style="color: #f39b20; display: inline-block;">Download as:</p>
+        <button type="button" class="downloadButtons" onclick="exportCSV()">CSV</button>
+        <button type="button" class="downloadButtons">JSON</button>
+        <div style="display: inline-block; float: right;">
+            <p class="makeInline" style="color: white;">In </p>
+            <select id="headerDropDown" name="column" onchange="onSearchBoxChange(this.value)"></select>
+
+            <p class="makeInline" style="color: white;"> search for </p>
+            <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
+        </div>
+    </div>
+    <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
+</body>
+
+</html>
