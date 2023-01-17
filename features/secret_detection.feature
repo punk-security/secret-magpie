@@ -111,3 +111,30 @@ Feature: Validate secret detection against various engines.
     Scenario: Ensure that we still detect secrets on AzureDevOps remote works when we turn off HTTPS validation
         When we run secret-magpie-cli in multi branch mode, https validation disabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
         Then there will be 4 secrets detected
+
+    @github.secretmagpie-testing
+    Scenario: Validate that repo filtering works for GitHub
+        Given we have a file called repos.txt with content
+            """
+            https://github.com/secretmagpie-testing/ssh_key
+            """
+        When we run secret-magpie-cli in multi branch mode, to scan list repos.txt, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 2 secrets detected
+    
+    @gitlab.secretmagpie-testing
+    Scenario: Validate that repo filtering works for GitLab
+        Given we have a file called repos.txt with content
+            """
+            https://gitlab.com/secretmagpie-testing/ssh_key
+            """
+        When we run secret-magpie-cli in multi branch mode, to scan list repos.txt, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 2 secrets detected
+    
+    @azuredevops.PunkSecurity
+    Scenario: Validate that repo filtering works for AzureDevOps
+        Given we have a file called repos.txt with content
+            """
+            https://dev.azure.com/PunkSecurity/SecretMagpie-Testing/_git/ssh_key
+            """
+        When we run secret-magpie-cli in multi branch mode, to scan list repos.txt, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then there will be 2 secrets detected

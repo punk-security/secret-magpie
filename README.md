@@ -140,6 +140,8 @@ options:
   --update-ca-store     If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.
   --dont-validate-https
                         Disables HTTPS validation for APIs/cloning.
+  --to-scan-list TO_SCAN_LIST
+                        The file to read the list of repositories to scan from. One repository per line, web URL to the repository.
 
 github/azuredevops:
   --org ORG             Organisation name to target

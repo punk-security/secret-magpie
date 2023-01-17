@@ -162,6 +162,13 @@ parser.add_argument(
 )
 
 
+parser.add_argument(
+    "--to-scan-list",
+    type=str,
+    help="The file to read the list of repositories to scan from. One repository per line, web URL to the repository.",
+)
+
+
 def parse_args():
     args = parser.parse_args()
     if "bitbucket" == args.provider and (

@@ -19,6 +19,12 @@ if __name__ == "__main__":
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
+    to_scan_list = None
+
+    if args.to_scan_list is not None:
+        with open(args.to_scan_list, "r") as f:
+            to_scan_list = f.read().split("\n")
+
     with open(os.devnull, "wb") as devnull:
         if args.update_ca_store:
             subprocess.call(  # nosec subprocess_without_shell_equals_true start_process_with_partial_path
@@ -55,6 +61,7 @@ if __name__ == "__main__":
         cleanup=cleanup,
         threshold_date=threshold_date,
         validate_https=not args.dont_validate_https,
+        to_scan_list=to_scan_list,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
