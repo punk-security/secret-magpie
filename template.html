@@ -121,7 +121,8 @@
         const gridOptions = {
             defaultColDef: {
                 resizable: true,
-                tooltipComponent: ContextTooltip
+                tooltipComponent: ContextTooltip,
+                sortable: true
             },
             columnDefs: columnDefs,
             rowData: rowData,
@@ -254,7 +255,7 @@
     <div class="selectionBar">
         <p style="color: #f39b20; display: inline-block;">Download as:</p>
         <button type="button" class="downloadButtons" onclick="exportCSV()">CSV</button>
-        <button type="button" class="downloadButtons">JSON</button>
+        <!--<button type="button" class="downloadButtons">JSON</button>-->
         <div style="display: inline-block; float: right;">
             <p class="makeInline" style="color: white;">In </p>
             <select id="headerDropDown" name="column" onchange="onSearchBoxChange(this.value)"></select>
