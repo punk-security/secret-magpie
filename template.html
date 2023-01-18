@@ -183,8 +183,8 @@
                 lockPosition: true,
                 maxWidth: 50
             },
-            { field: "source", filter: "agTextColumnFilter", unSortIcon: true },
-            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "source", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
+            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180 },
             { field: "verified", hide: true },
             { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "date", filter: "agTextColumnFilter", unSortIcon: true },
@@ -198,7 +198,7 @@
                 cellRenderer: LinkRenderer
             },
             { field: "file", filter: "agTextColumnFilter", unSortIcon: true },
-            { field: "line", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "line", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
             {
                 field: "hashed_secret",
                 cellRenderer: HashIgnorer,
