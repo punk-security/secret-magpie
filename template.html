@@ -332,7 +332,26 @@
             gridOptions.api.onFilterChanged();
         }
 
+        function setFilterTo(column, value) {
+            let model = gridOptions.api.getFilterModel();
+            model[column] = {
+                filterType: "text",
+                type: "equals",
+                filter: value,
+            };
+            gridOptions.api.setFilterModel(model);
+            gridOptions.api.onFilterChanged();
+        }
+
+        function removeFilterFrom(column) {
+            let model = gridOptions.api.getFilterModel();
+            delete model[column];
+            gridOptions.api.setFilterModel(model);
+            gridOptions.api.onFilterChanged();
+        }
+
         function populateFilterPanel() {
+            let model = gridOptions.api.getFilterModel();
             // Populate the filter panel
             let filterPanel = document.getElementById("filter-panel-content");
             //filterPanel.childNodes.forEach(n => filterPanel.removeChild(n));
@@ -367,15 +386,36 @@
                     }
 
                     let header = document.createElement("h3");
-                    header.innerHTML = columnName;
+                    header.innerHTML = `By ${columnName}`;
                     filterPanel.appendChild(header);
 
+                    // Always add an "All" option that resets the filter state
+                    let item = document.createElement("a");
+                    item.setAttribute("class", "filterlink");
+                    if (model[columnName] == undefined) {
+                        item.classList.add("activefilterlink");
+                    }
+                    item.setAttribute("href", "#");
+                    item.innerHTML = `All`;
+                    item.setAttribute("id", `${columnName}All`);
+                    item.setAttribute("onclick", `removeFilterFrom("${columnName}")`)
+                    filterPanel.appendChild(item)
+                    filterPanel.appendChild(document.createElement("br"));
+
                     for (const pair of topTen) {
-                        let item = document.createElement("h4");
+                        let item = document.createElement("a");
+                        item.setAttribute("class", "filterlink");
+                        if (model[columnName] && model[columnName].filter == pair['k']) {
+                            item.classList.add("activefilterlink");
+                        }
                         item.setAttribute("href", "#");
                         item.innerHTML = `${pair['k']} (${pair['v']})`;
-                        filterPanel.appendChild(item)
+                        item.setAttribute("id", `${columnName}${pair['k']}`);
+                        item.setAttribute("onclick", `setFilterTo("${columnName}", "${pair['k']}")`)
+                        filterPanel.appendChild(item);
+                        filterPanel.appendChild(document.createElement("br"));
                     }
+                    filterPanel.appendChild(document.createElement("br"));
                 }
             }
         }
@@ -421,7 +461,7 @@
             border-left: none;
             border-right: none;
             border-width: 2px;
-            border-image: linear-gradient( to right, red, orange, yellow, green, blue, purple ) 1;
+            border-image: linear-gradient(to right, red, orange, yellow, green, blue, purple) 1;
         }
 
         .makeInline {
@@ -551,6 +591,19 @@
             margin-top: 0px;
         }
 
+        .filterlink,
+        .filterlink:active,
+        .filterlink:visited {
+            color: white;
+            text-decoration: underline;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+
+        .activefilterlink {
+            color: royalblue !important;
+        }
+
     </style>
 </head>
 
@@ -578,9 +631,10 @@
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
             <p id="selectedText" style="display: inline-block"> 0 out of x selected</p>
-            
+
             <div style="display: inline-block; float: right;">
-                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
+                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive
+                    List</button>
             </div>
         </div>
 
