@@ -235,6 +235,7 @@
             rowData: rowData,
             rowSelection: 'multiple',
             rowHeight: 50,
+            suppressRowClickSelection: true,
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
             onFilterChanged: populateFilterPanel,
@@ -294,9 +295,11 @@
 
         let dropdown = null;
         let selectedRows = null;
+        let s = null;
+
         function onActionButtonClick() {
             dropdown = document.getElementById("actionDropDown").selectedOptions;
-            selectedRows = gridOptions.api.getSelectedRows
+            selectedRows = gridOptions.api.getSelectedRows();
 
             if (dropdown[0].value == 0) {
                 
