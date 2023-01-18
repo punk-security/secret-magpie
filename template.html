@@ -295,6 +295,13 @@
 
         let dropdown = null;
         let selectedRows = null;
+
+        function updatedSelectedText() {
+            selectedRows = gridOptions.api.getSelectedNodes();
+            console.log(gridOptions.api.getDisplayedRowCount());
+            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of x selected`;
+        }
+
         function onActionButtonClick() {
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedNodes();
