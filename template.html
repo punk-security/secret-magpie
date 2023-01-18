@@ -238,6 +238,8 @@
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
             onFilterChanged: populateFilterPanel,
+            isExternalFilterPresent: () => true,
+            doesExternalFilterPass: row => row.data.status == "False Positive",
         };
 
         // setup the grid after the page has finished loading
@@ -290,12 +292,29 @@
             }
         }
 
+        let dropdown = null;
+        let selectedRows = null;
         function onActionButtonClick() {
-            let dropdown = document.getElementById("actionDropDown").selectedOptions;
-            console.log(dropdown[0].label);
-            if (dropdown[0].label == "Marked as False Positive") {
+            dropdown = document.getElementById("actionDropDown").selectedOptions;
+            selectedRows = gridOptions.api.getSelectedRows
 
+            // builds filter model
+            function buildFilterModel(toFilter) {
+                let model = toFilter.forEach((e) => {
+
+                }, model)
             }
+
+            if (dropdown[0].value == 0) {
+                
+            }
+            if (dropdown[0].value == 1) {
+                
+                console.log(selectedRows);
+            }
+
+            gridOptions.api.setFilterModel(model);
+            gridOptions.api.onFilterChanged();
         }
 
         /*
@@ -572,8 +591,8 @@
         <div id="actionBar">
             <p style="display: inline-block">Action: </p>
             <select id="actionDropDown" style="display: inline-block">
-                <option>None</option>
-                <option>Mark as False Positive</option>
+                <option value="0">Confirm</option>
+                <option value="1">Mark as False Positive</option>
                 <option></option>
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
