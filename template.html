@@ -260,7 +260,7 @@
         window.onload = function populateDropdown() {
             populateExclHashTable()
 
-            var dropDown = document.getElementById('headerDropDown');
+            let dropDown = document.getElementById('headerDropDown');
             dropDown.innerHTML += ("<option>all columns</option>");
             columnDefs.forEach(function (element) {
                 console.log(element.field);
@@ -269,8 +269,8 @@
         }
 
         // TODO: Can probably tidy this up
-        var filter = "";
-        var val = ""
+        let filter = "";
+        let val = ""
         function onSearchBoxChange(filter) {
             filter = filter || "all columns";
             val = document.getElementById('searchbar').value
@@ -278,13 +278,21 @@
                 gridOptions.api.setQuickFilter(val);
             }
             else {
-                var obj = {};
+                let obj = {};
                 obj[filter] = {
                     filterType: 'text',
                     type: 'startsWith',
                     filter: val
                 }
                 gridOptions.api.setFilterModel(obj);
+            }
+        }
+
+        function onActionButtonClick() {
+            let dropdown = document.getElementById("actionDropDown").selectedOptions;
+            console.log(dropdown[0].label);
+            if (dropdown[0].label == "Marked as False Positive") {
+
             }
         }
 
@@ -348,17 +356,16 @@
             background-color: transparent;
             transition: all .3s ease-in 0s;
             display: inline-block;
-            margin-left: 10px;
         }
 
         .button:hover {
             background-color: #2da84d;
         }
 
-        .selectionBar {
+        #selectionBar {
             background-color: #1d2024;
             margin-bottom: 20px;
-            padding: 10px 20px 0px 20px;
+            padding: 10px 20px 10px 20px;
             border: 2px solid transparent;
             border-top: none;
             border-left: none;
@@ -378,12 +385,14 @@
 
         #actionBar {
             background-color: #1d2024;
-            padding: 0 15px;
+            padding: 10px 15px;
             margin-bottom: 10px;
         }
 
         #actionBar p {
             color: white;
+            margin: 10px 0 0 0;
+            padding: 0;
         }
 
         /*
@@ -492,7 +501,7 @@
 
 <body style="background-color: #242930;">
     <div id="outer-container">
-        <div class="selectionBar">
+        <div id="selectionBar">
             <p style="color: #f39b20; display: inline-block;">Download as:</p>
             <button type="button" class="button" onclick="exportCSV()">CSV</button>
             <!--<button type="button" class="downloadButtons">JSON</button>-->
@@ -503,9 +512,6 @@
                 <p class="makeInline" style="color: white;"> search for </p>
                 <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
             </div>
-            <div>
-                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
-            </div>
         </div>
 
         <div id="actionBar">
@@ -513,9 +519,14 @@
             <select id="actionDropDown" style="display: inline-block">
                 <option>None</option>
                 <option>Mark as False Positive</option>
+                <option></option>
             </select>
-            <button style="display: inline-block" type="button" onclick="onSearchActionChange(this.value)">Go</button>
+            <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
             <p id="selectedText" style="display: inline-block"> 0 out of x selected</p>
+            
+            <div style="display: inline-block; float: right;">
+                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
+            </div>
         </div>
 
         <div id="inner-container">
