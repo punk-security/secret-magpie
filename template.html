@@ -306,10 +306,12 @@
             // Value returns 1 if true (confirmed) or 0 if FP
             if (dropdown[0].value) { s = "Confirmed" }
 
-
+            selectedRows.forEach((r) => {
+                r.data.status = s;
+            })
 
             //gridOptions.api.setFilterModel(model);
-            //gridOptions.api.onFilterChanged();
+            gridOptions.api.refreshCells();
         }
 
         /*
