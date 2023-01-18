@@ -276,7 +276,7 @@
             var newRow = `
                 <div class="exclHashesTableRow">
                     <div class="hashRowCell" style="margin-right: 20px;">${x}</div>
-                    <div class="hashRowCell">${y}</div>                  
+                    <div class="hashRowCell">${y}</div>
                 </div>
             `
             document.getElementById("excludedHashesTable").innerHTML += newRow;
@@ -346,15 +346,14 @@
 
         .excludedHashesBar {
             background-color: #1d2024;
-            max-height: 300px;
+            max-height: 200px;
             margin-bottom: 20px;
             padding-left: 20px;
         }
 
         .excludedHashesTable {
-            overflow: scroll;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 2fr 1fr;
             grid-template-rows: auto;
             display: inline-grid;
             overflow: scroll;
