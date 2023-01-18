@@ -400,6 +400,15 @@
             }
         }
 
+        function resetFPList() {
+            gridOptions.api.forEachNode((rowNode, index) => {
+                if (rowNode.data.status == "False Positive") {
+                    rowNode.data.status = "New"
+                }
+            });
+            gridOptions.api.refreshCells();
+        }
+
         function ResetFilters() {
             gridOptions.api.setFilterModel({});
             gridOptions.api.onFilterChanged();
@@ -613,10 +622,8 @@
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
             <p id="selectedText" style="display: inline-block"> 0 out of x selected</p>
-
             <div style="display: inline-block; float: right;">
-                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive
-                    List</button>
+                <button type="button" class="button" onclick="resetFPList()">Reset False Positive List</button>
             </div>
         </div>
 
