@@ -5,8 +5,17 @@
     <title>Ag-Grid Basic Example</title>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script>
+        // The row data
+        let rowData = $$ROWDATA$$;
+
+        // Fetch overlay from localStorage
         let storedRowDataOverlay = window.localStorage.getItem("rowDataOverlay");
-        let rowDataOverlay = storedRowDataOverlay ? JSON.parse(rowDataOverlay) : {};
+        let rowDataOverlay = storedRowDataOverlay ? JSON.parse(storedRowDataOverlay) : {};
+
+        // Apply overlay over the data
+        for (const key of Object.keys(rowDataOverlay)) {
+            rowData[key]["status"] = rowDataOverlay[key];
+        }
 
         class HashIgnorer {
             init(params) {
@@ -24,20 +33,26 @@
                     // Goes up from buttom until it reaches the row to get the row's ID
                     var rowID = params.node.id;
 
+                    let transaction = [];
+
                     for (const index in rowData) {
                         if (rowData[index]["hashed_secret"] == params.value) {
+                            // Update rowData and the overlay
+                            rowDataOverlay[index] = "False Positive";
                             rowData[index]["status"] = "False Positive";
+
+                            // Create a transaction to update the row
+                            transaction.push({
+                                id: index,
+                                status: "False Positive"
+                            })
                         }
                     }
+                    //params.api.setRowData(rowData);
+                    params.api.applyTransaction({ update: transaction })
 
-                    params.api.setRowData(rowData);
-
-                    //addExclRows(this.cellValue, rowData[rowID].secret);
-
-                    //excludeHashes.push(this.cellValue);
-                    //hashSecrets.push(rowData[rowID].secret);
-                    //window.localStorage.setItem("excludeHashes", excludeHashes);
-                    //window.localStorage.setItem("hashSecrets", hashSecrets);
+                    // Store the overlay in localStorage
+                    window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
 
                     params.api.onFilterChanged();
                 }
@@ -110,6 +125,10 @@
             getValue() {
                 console.log(this.index);
                 rowDataOverlay[this.index] = this.input.value;
+
+                // Store the overlay in localStorage
+                window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
+
                 return this.input.value;
             }
 
@@ -197,10 +216,6 @@
             },
         ];
 
-        // specify the data
-        const rowData = $$ROWDATA$$;
-
-
         // let the grid know which columns and what data to use
         const gridOptions = {
             defaultColDef: {
@@ -210,9 +225,6 @@
             },
             columnDefs: columnDefs,
             rowData: rowData,
-
-            //isExternalFilterPresent: () => true,
-            //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
 
             rowHeight: 50,
         };
