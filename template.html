@@ -5,8 +5,8 @@
     <title>Ag-Grid Basic Example</title>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script>
-        let excludeHashes = window.localStorage.getItem("excludeHashes")?.split(",") ?? [];
-        let hashSecrets = window.localStorage.getItem("hashSecrets")?.split(",") ?? [];
+        let storedRowDataOverlay = window.localStorage.getItem("rowDataOverlay");
+        let rowDataOverlay = storedRowDataOverlay ? JSON.parse(rowDataOverlay) : {};
 
         class HashIgnorer {
             init(params) {
@@ -14,27 +14,31 @@
                 this.eGui.innerHTML = `
                     <span>
                         <button class="button">Ignore Hash</button>
-                        <span class="my-value"></span>
+                        <span>${params.value}</span>
                     </span>
                 `;
 
                 this.eButton = this.eGui.querySelector('.button');
-                this.eValue = this.eGui.querySelector('.my-value');
 
-                this.cellValue = this.getValueToDisplay(params);
-                this.eValue.innerHTML = this.cellValue;
-
-                this.eventListener = () => { 
+                this.eventListener = () => {
                     // Goes up from buttom until it reaches the row to get the row's ID
-                    var rowID = this.eGui.parentNode.parentNode.getAttribute('row-id');
+                    var rowID = params.node.id;
 
-                    addExclRows(this.cellValue, rowData[rowID].secret);
+                    for (const index in rowData) {
+                        if (rowData[index]["hashed_secret"] == params.value) {
+                            rowData[index]["status"] = "False Positive";
+                        }
+                    }
 
-                    excludeHashes.push(this.cellValue);
-                    hashSecrets.push(rowData[rowID].secret);
-                    window.localStorage.setItem("excludeHashes", excludeHashes);
-                    window.localStorage.setItem("hashSecrets", hashSecrets);
-                    
+                    params.api.setRowData(rowData);
+
+                    //addExclRows(this.cellValue, rowData[rowID].secret);
+
+                    //excludeHashes.push(this.cellValue);
+                    //hashSecrets.push(rowData[rowID].secret);
+                    //window.localStorage.setItem("excludeHashes", excludeHashes);
+                    //window.localStorage.setItem("hashSecrets", hashSecrets);
+
                     params.api.onFilterChanged();
                 }
                 this.eButton.addEventListener('click', this.eventListener);
@@ -50,14 +54,11 @@
 
                 return true;
             }
+
             destroy() {
                 if (this.eButton) {
                     this.eButton.removeEventListener('click', this.eventListener);
                 }
-            }
-
-            getValueToDisplay(params) {
-                return params.valueFormatted ? params.valueFormatted : params.value;
             }
         }
 
@@ -83,6 +84,46 @@
             }
 
             destroy() { }
+        }
+
+        class StatusEditor {
+            init(params) {
+                this.value = params.value;
+                this.index = params.node.id;
+
+                this.input = document.createElement('select');
+                let choices = ["New", "Complete", "False Positive"];
+                for (const choice of choices) {
+                    let opt = document.createElement("option");
+                    opt.value = choice;
+                    opt.text = choice;
+                    this.input.appendChild(opt);
+                }
+                this.input.value = this.value;
+                this.input.addEventListener("onchange", (e) => params.stopEditing())
+            }
+
+            getGui() {
+                return this.input;
+            }
+
+            getValue() {
+                console.log(this.index);
+                rowDataOverlay[this.index] = this.input.value;
+                return this.input.value;
+            }
+
+            isCancelBeforeStart() {
+                return false;
+            }
+
+            isCancelAfterEnd() {
+                return false;
+            }
+
+            afterGuiAttached() {
+                this.input.focus();
+            }
         }
 
         class ContextTooltip {
@@ -149,6 +190,11 @@
             { field: "redacted_secret", hide: true },
             { field: "context", hide: true },
             { field: "extra_context", hide: true },
+            {
+                field: "status",
+                cellEditor: StatusEditor,
+                editable: true,
+            },
         ];
 
         // specify the data
@@ -165,8 +211,8 @@
             columnDefs: columnDefs,
             rowData: rowData,
 
-            isExternalFilterPresent: () => true,
-            doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
+            //isExternalFilterPresent: () => true,
+            //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
 
             rowHeight: 50,
         };
@@ -183,7 +229,8 @@
                 skipFooters: true,
                 skipGroups: true,
                 fileName: "results.csv",
-                allColumns: true
+                allColumns: true,
+                exportedRows: "all",
             });
         }
 
@@ -220,9 +267,9 @@
         }
 
         function populateExclHashTable() {
-            for (var i = 0; i < excludeHashes.length; i++) {
-                addExclRows(excludeHashes[i], hashSecrets[i])
-            }
+            //for (var i = 0; i < excludeHashes.length; i++) {
+            //    addExclRows(excludeHashes[i], hashSecrets[i])
+            //}
         }
 
         function addExclRows(x, y) {
@@ -236,10 +283,10 @@
         }
 
         function deleteExcludedCellsLS() {
-            window.localStorage.removeItem('excludeHashes');
-            window.localStorage.removeItem('hashSecrets');
-            excludeHashes = []
-            hashSecrets = []
+            //window.localStorage.removeItem('excludeHashes');
+            //window.localStorage.removeItem('hashSecrets');
+            //excludeHashes = []
+            //hashSecrets = []
 
             var tableVals = document.getElementById("excludedHashesTable");
             while (tableVals.firstChild) {

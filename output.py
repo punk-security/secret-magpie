@@ -39,7 +39,7 @@ class Output:
         if self.format == "json":
             self.write_json(finding)
         if self.format == "html":
-            self.write_json(finding)
+            self.write_html(finding)
 
     def write_csv(self, finding):
         if self.writer == None:
@@ -56,6 +56,17 @@ class Output:
             self.fd.write("[")
             self.writer = True
             sep = ""  # no seperator for the first run
+        json_payload = json.dumps(finding.__dict__)
+        self.fd.write(f"{sep}{os.linesep}{json_payload}")
+        self.fd.flush()
+
+    def write_html(self, finding):
+        sep = ","
+        if self.writer == None:
+            self.fd.write("[")
+            self.writer = True
+            sep = ""  # no seperator for the first run
+        finding["status"] = "New"
         json_payload = json.dumps(finding.__dict__)
         self.fd.write(f"{sep}{os.linesep}{json_payload}")
         self.fd.flush()

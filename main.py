@@ -96,13 +96,18 @@ if __name__ == "__main__":
         filename = args.convert_to_html
         with open(filename, "r") as f:
             filetype = None
+            results = None
             if filename.endswith(".csv"):
-                results = json.dumps(list(csv.DictReader(f)))
+                results = list(csv.DictReader(f))
             elif filename.endswith(".json"):
-                results = f.read()
+                results = json.loads(f.read())
             else:
                 print("ERROR: Invalid input format for HTML conversion.")
                 sys.exit(1)
 
+            # Add the status column
+            for i in range(0, len(results)):
+                results[i]["status"] = "New"
+
         with open("results.html", "w") as f:
-            f.write(ag_grid_template.replace("$$ROWDATA$$", results))
+            f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
