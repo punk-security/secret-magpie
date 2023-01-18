@@ -299,7 +299,7 @@
         function updatedSelectedText() {
             selectedRows = gridOptions.api.getSelectedNodes();
             console.log(gridOptions.api.getDisplayedRowCount());
-            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount() } selected`;
+            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
         }
 
         function onActionButtonClick() {
@@ -442,6 +442,11 @@
                     filterPanel.appendChild(document.createElement("br"));
                 }
             }
+        }
+
+        function ResetFilters() {
+            gridOptions.api.setFilterModel({});
+            gridOptions.api.onFilterChanged();
         }
 
     </script>
@@ -667,6 +672,7 @@
             </div>
             <div id="filter-panel">
                 <h3>Filter</h3>
+                <button class="button" onclick="ResetFilters()">Clear All Filters</button><br>
                 <div id="filter-panel-content"></div>
             </div>
         </div>
