@@ -180,7 +180,6 @@
                 field: "",
                 headerCheckboxSelection: true,
                 checkboxSelection: true,
-                rowSelection: 'multiple',
                 lockPosition: true,
                 maxWidth: 50
             },
@@ -233,7 +232,6 @@
             },
             columnDefs: columnDefs,
             rowData: rowData,
-            rowSelection: 'multiple',
             rowHeight: 50,
             suppressRowClickSelection: true,
             //isExternalFilterPresent: () => true,
@@ -241,6 +239,7 @@
             onFilterChanged: populateFilterPanel,
             isExternalFilterPresent: () => true,
             doesExternalFilterPass: row => row.data.status == "False Positive",
+            getRowId: (params) => params.data.id,
         };
 
         // setup the grid after the page has finished loading
@@ -300,14 +299,14 @@
         function onActionButtonClick() {
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedRows();
+            s = "False Positive";
 
-            if (dropdown[0].value == 0) {
-                
-            }
-            if (dropdown[0].value == 1) {
-                
-                console.log(selectedRows);
-            }
+            console.log(selectedRows);
+
+            // Value returns 1 if true (confirmed) or 0 if FP
+            if (dropdown[0].value) { s = "Confirmed" }
+
+
 
             //gridOptions.api.setFilterModel(model);
             //gridOptions.api.onFilterChanged();
@@ -587,8 +586,8 @@
         <div id="actionBar">
             <p style="display: inline-block">Action: </p>
             <select id="actionDropDown" style="display: inline-block">
-                <option value="0">Confirm</option>
-                <option value="1">Mark as False Positive</option>
+                <option value="1">Confirm</option>
+                <option value="0">Mark as False Positive</option>
                 <option></option>
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
