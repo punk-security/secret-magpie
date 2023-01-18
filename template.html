@@ -298,13 +298,6 @@
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedRows
 
-            // builds filter model
-            function buildFilterModel(toFilter) {
-                let model = toFilter.forEach((e) => {
-
-                }, model)
-            }
-
             if (dropdown[0].value == 0) {
                 
             }
@@ -313,8 +306,8 @@
                 console.log(selectedRows);
             }
 
-            gridOptions.api.setFilterModel(model);
-            gridOptions.api.onFilterChanged();
+            //gridOptions.api.setFilterModel(model);
+            //gridOptions.api.onFilterChanged();
         }
 
         /*
