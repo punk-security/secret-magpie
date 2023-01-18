@@ -358,7 +358,13 @@
         .selectionBar {
             background-color: #1d2024;
             margin-bottom: 20px;
-            padding: 5px 20px;
+            padding: 10px 20px 0px 20px;
+            border: 2px solid transparent;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-width: 2px;
+            border-image: linear-gradient( to right, red, orange, yellow, green, blue, purple ) 1;
         }
 
         .makeInline {
@@ -370,6 +376,17 @@
             font-weight: bold;
         }
 
+        #actionBar {
+            background-color: #1d2024;
+            padding: 0 15px;
+            margin-bottom: 10px;
+        }
+
+        #actionBar p {
+            color: white;
+        }
+
+        /*
         .excludedHashesBar {
             background-color: #1d2024;
             max-height: 300px;
@@ -400,7 +417,7 @@
             grid-template-columns: 1fr 1fr;
             display: grid
         }
-
+        */
         code {
             color: white;
             font-family: monospace;
@@ -487,9 +504,18 @@
                 <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
             </div>
             <div>
-                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive
-                    List</button>
+                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
             </div>
+        </div>
+
+        <div id="actionBar">
+            <p style="display: inline-block">Action: </p>
+            <select id="actionDropDown" style="display: inline-block">
+                <option>None</option>
+                <option>Mark as False Positive</option>
+            </select>
+            <button style="display: inline-block" type="button" onclick="onSearchActionChange(this.value)">Go</button>
+            <p id="selectedText" style="display: inline-block"> 0 out of x selected</p>
         </div>
 
         <div id="inner-container">
