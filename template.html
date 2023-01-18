@@ -298,6 +298,7 @@
         function onActionButtonClick() {
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedNodes();
+            selectedRows = selectedRows.filter(row => row.rowIndex != null);
 
             selectedRows.forEach((r) => {
                 r.data.status = dropdown[0].value;
