@@ -300,7 +300,11 @@
 
             selectedRows.forEach((r) => {
                 r.data.status = dropdown[0].value;
-            })
+                rowDataOverlay[r.id] = dropdown[0].value;
+            });
+
+            // Store the overlay in localStorage
+            window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
 
             //gridOptions.api.setFilterModel(model);
             gridOptions.api.refreshCells();
@@ -633,9 +637,9 @@
         <div id="actionBar">
             <p style="display: inline-block">Action: </p>
             <select id="actionDropDown" style="display: inline-block">
-                <option value="Confirm">Confirm</option>
+                <option value="Confirm (Rotated)">Confirm as Rotated</option>
+                <option value="Confirm (Needs Rotating)">Confirm as Needs Rotating</option>
                 <option value="False Positive">Mark as False Positive</option>
-                <option></option>
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
             <p id="selectedText" style="display: inline-block"> 0 out of x selected</p>
