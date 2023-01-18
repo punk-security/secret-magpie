@@ -157,11 +157,19 @@
         }
 
         const columnDefs = [
+            {
+                field: "",
+                headerCheckboxSelection: true,
+                checkboxSelection: true,
+                rowSelection: 'multiple',
+                lockPosition: true,
+                maxWidth: 50
+            },
             { field: "source", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "verified", hide: true },
             { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
-            { field: "date", filter: "agTextColumnFilter", unSortIcon: true, lockPosition: true },
+            { field: "date", filter: "agTextColumnFilter", unSortIcon: true},
             { field: "author_email", hide: true },
             { field: "repository", hide: true },
             { field: "repository_url", hide: true },
@@ -200,7 +208,6 @@
         // specify the data
         const rowData = $$ROWDATA$$;
 
-
         // let the grid know which columns and what data to use
         const gridOptions = {
             defaultColDef: {
@@ -210,11 +217,10 @@
             },
             columnDefs: columnDefs,
             rowData: rowData,
-
+            rowSelection: 'multiple',
+            rowHeight: 50,
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
-
-            rowHeight: 50,
         };
 
         // setup the grid after the page has finished loading
@@ -266,12 +272,15 @@
             }
         }
 
+        /*
         function populateExclHashTable() {
             //for (var i = 0; i < excludeHashes.length; i++) {
             //    addExclRows(excludeHashes[i], hashSecrets[i])
             //}
         }
+        */
 
+        /*
         function addExclRows(x, y) {
             var newRow = `
                 <div class="exclHashesTableRow">
@@ -281,6 +290,7 @@
             `
             document.getElementById("excludedHashesTable").innerHTML += newRow;
         }
+        */
 
         function deleteExcludedCellsLS() {
             //window.localStorage.removeItem('excludeHashes');
@@ -288,10 +298,10 @@
             //excludeHashes = []
             //hashSecrets = []
 
-            var tableVals = document.getElementById("excludedHashesTable");
-            while (tableVals.firstChild) {
-                tableVals.removeChild(tableVals.lastChild);
-            }
+            //var tableVals = document.getElementById("excludedHashesTable");
+            //while (tableVals.firstChild) {
+            //    tableVals.removeChild(tableVals.lastChild);
+            //}
 
             gridOptions.api.onFilterChanged();
         }
@@ -416,16 +426,6 @@
         </div>
         <div>
             <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
-        </div>
-    </div>
-
-    <!-- Drop down table stickied to the bottom of the page. Shows all excluded hashes-->
-    <div class="excludedHashesBar">
-        <div id="excluedTableHeader" class="exclHashesTableRow orange">
-            <h5>Hashed_secret</h5>
-            <h5>Secret</h5>
-        </div>
-        <div id="excludedHashesTable">
         </div>
     </div>
 
