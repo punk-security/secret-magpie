@@ -294,20 +294,12 @@
 
         let dropdown = null;
         let selectedRows = null;
-        let s = null;
-
         function onActionButtonClick() {
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedNodes();
-            s = "False Positive";
-
-            console.log(selectedRows);
-
-            // Value returns 1 if true (confirmed) or 0 if FP
-            if (dropdown[0].value) { s = "Confirmed" }
 
             selectedRows.forEach((r) => {
-                r.data.status = s;
+                r.data.status = dropdown[0].value;
             })
 
             //gridOptions.api.setFilterModel(model);
@@ -641,8 +633,8 @@
         <div id="actionBar">
             <p style="display: inline-block">Action: </p>
             <select id="actionDropDown" style="display: inline-block">
-                <option value="1">Confirm</option>
-                <option value="0">Mark as False Positive</option>
+                <option value="Confirm">Confirm</option>
+                <option value="False Positive">Mark as False Positive</option>
                 <option></option>
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
