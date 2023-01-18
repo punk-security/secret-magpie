@@ -107,7 +107,7 @@
                 this.index = params.node.id;
 
                 this.input = document.createElement('select');
-                let choices = ["New", "Complete", "False Positive"];
+                let choices = ["New", "Confirmed (Rotated)", "Confirmed (Needs Rotating)", "False Positive"];
                 for (const choice of choices) {
                     let opt = document.createElement("option");
                     opt.value = choice;
@@ -237,12 +237,14 @@
             rowHeight: 50,
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
+            onFilterChanged: populateFilterPanel,
         };
 
         // setup the grid after the page has finished loading
         document.addEventListener('DOMContentLoaded', () => {
             const gridDiv = document.querySelector('#myGrid');
             new agGrid.Grid(gridDiv, gridOptions);
+            populateFilterPanel();
         });
 
         function exportCSV() {
@@ -320,6 +322,54 @@
             //}
 
             gridOptions.api.onFilterChanged();
+        }
+
+        function populateFilterPanel() {
+            // Populate the filter panel
+            let filterPanel = document.getElementById("filter-panel-content");
+            //filterPanel.childNodes.forEach(n => filterPanel.removeChild(n));
+            filterPanel.innerHTML = '';
+            for (const column of columnDefs) {
+                let columnName = column['field'];
+                if (Object.keys(column).indexOf("filter") != -1) {
+                    // Collect the 10 most common values from the table
+                    let valueCount = {};
+
+                    gridOptions.api.forEachNodeAfterFilter(
+                        (row, index) => {
+                            if (valueCount[row.data[columnName]] == undefined) {
+                                valueCount[row.data[columnName]] = 1;
+                            } else {
+                                valueCount[row.data[columnName]]++;
+                            }
+                        }
+                    );
+
+                    // Sort the valueCount by the value
+                    let keys = Object.keys(valueCount);
+
+                    keys.sort((a, b) => {
+                        return valueCount[a] - valueCount[b];
+                    });
+                    keys.reverse();
+
+                    let topTen = []
+                    for (let i = 0; i < Math.min(keys.length, 10); i++) {
+                        topTen.push({ k: keys[i], v: valueCount[keys[i]] });
+                    }
+
+                    let header = document.createElement("h3");
+                    header.innerHTML = columnName;
+                    filterPanel.appendChild(header);
+
+                    for (const pair of topTen) {
+                        let item = document.createElement("h4");
+                        item.setAttribute("href", "#");
+                        item.innerHTML = `${pair['k']} (${pair['v']})`;
+                        filterPanel.appendChild(item)
+                    }
+                }
+            }
         }
 
     </script>
@@ -439,6 +489,7 @@
             width: calc(100% - 20px * 2);
             height: calc(100% - 20px * 2);
             padding: 20px;
+            max-height: 100%;
         }
 
         #outer-container .selectionBar {
@@ -447,6 +498,7 @@
 
         #outer-container #inner-container {
             flex-grow: 9.5;
+            max-height: 90%;
         }
 
         #inner-container {
@@ -463,6 +515,9 @@
             background-color: #1d2024;
             margin-left: 20px;
             padding: 15px;
+            max-width: 20%;
+            max-height: 100%;
+            overflow-y: scroll;
         }
 
         #inner-container #filter-panel h3 {
@@ -497,6 +552,7 @@
             </div>
             <div id="filter-panel">
                 <h3>Filter</h3>
+                <div id="filter-panel-content"></div>
             </div>
         </div>
     </div>
