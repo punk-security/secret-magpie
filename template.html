@@ -232,6 +232,7 @@
             },
             columnDefs: columnDefs,
             rowData: rowData,
+            rowSelection: 'multiple',
             rowHeight: 50,
             suppressRowClickSelection: true,
             //isExternalFilterPresent: () => true,
@@ -239,7 +240,6 @@
             onFilterChanged: populateFilterPanel,
             isExternalFilterPresent: () => true,
             doesExternalFilterPass: row => row.data.status == "False Positive",
-            getRowId: (params) => params.data.id,
         };
 
         // setup the grid after the page has finished loading
