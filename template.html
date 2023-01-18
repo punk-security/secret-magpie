@@ -377,6 +377,7 @@
         }
 
         function populateFilterPanel() {
+            updatedSelectedText();
             gridOptions.api.deselectAll();
             let model = gridOptions.api.getFilterModel();
             // Populate the filter panel
