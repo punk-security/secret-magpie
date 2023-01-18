@@ -425,27 +425,81 @@
             font-weight: bold;
         }
 
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #outer-container {
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 20px * 2);
+            height: calc(100% - 20px * 2);
+            padding: 20px;
+        }
+
+        #outer-container .selectionBar {
+            flex-grow: 0.5;
+        }
+
+        #outer-container #inner-container {
+            flex-grow: 9.5;
+        }
+
+        #inner-container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        #inner-container #myGrid {
+            flex-grow: 7;
+        }
+
+        #inner-container #filter-panel {
+            flex-grow: 1;
+            background-color: #1d2024;
+            margin-left: 20px;
+            padding: 15px;
+        }
+
+        #inner-container #filter-panel h3 {
+            color: #f39b20;
+            margin-top: 0px;
+        }
+
     </style>
 </head>
 
-<body style="background-color: #242930; margin: 20px">
-    <div class="selectionBar">
-        <p style="color: #f39b20; display: inline-block;">Download as:</p>
-        <button type="button" class="button" onclick="exportCSV()">CSV</button>
-        <!--<button type="button" class="downloadButtons">JSON</button>-->
-        <div style="display: inline-block; float: right;">
-            <p class="makeInline" style="color: white;">In </p>
-            <select id="headerDropDown" name="column" onchange="onSearchBoxChange(this.value)"></select>
+<body style="background-color: #242930;">
+    <div id="outer-container">
+        <div class="selectionBar">
+            <p style="color: #f39b20; display: inline-block;">Download as:</p>
+            <button type="button" class="button" onclick="exportCSV()">CSV</button>
+            <!--<button type="button" class="downloadButtons">JSON</button>-->
+            <div style="display: inline-block; float: right;">
+                <p class="makeInline" style="color: white;">In </p>
+                <select id="headerDropDown" name="column" onchange="onSearchBoxChange(this.value)"></select>
 
-            <p class="makeInline" style="color: white;"> search for </p>
-            <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
+                <p class="makeInline" style="color: white;"> search for </p>
+                <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
+            </div>
+            <div>
+                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive
+                    List</button>
+            </div>
         </div>
-        <div>
-            <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive List</button>
+
+        <div id="inner-container">
+            <div id="myGrid" class="ag-theme-alpine-dark ag-theme-customtheme">
+            </div>
+            <div id="filter-panel">
+                <h3>Filter</h3>
+            </div>
         </div>
     </div>
-
-    <div id="myGrid" style="height: 1000px; width: 100%;" class="ag-theme-alpine-dark ag-theme-customtheme"></div>
 </body>
 
 </html>
