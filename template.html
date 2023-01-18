@@ -299,13 +299,15 @@
         function updatedSelectedText() {
             selectedRows = gridOptions.api.getSelectedNodes();
             console.log(gridOptions.api.getDisplayedRowCount());
-            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of x selected`;
+            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount() } selected`;
         }
 
         function onActionButtonClick() {
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedNodes();
             selectedRows = selectedRows.filter(row => row.rowIndex != null);
+
+            updatedSelectedText()
 
             selectedRows.forEach((r) => {
                 r.data.status = dropdown[0].value;
