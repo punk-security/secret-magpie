@@ -220,6 +220,7 @@
                 field: "status",
                 cellEditor: StatusEditor,
                 editable: true,
+                filter: "agTextColumnFilter",
             },
         ];
 
@@ -238,8 +239,8 @@
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
             onFilterChanged: populateFilterPanel,
-            isExternalFilterPresent: () => true,
-            doesExternalFilterPass: row => row.data.status == "False Positive",
+            //isExternalFilterPresent: () => true,
+            //doesExternalFilterPass: row => row.data.status == "False Positive",
         };
 
         // setup the grid after the page has finished loading
