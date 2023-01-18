@@ -224,6 +224,8 @@
             },
         ];
 
+        // refreshes text that displays how many rows out of the total number of rows have been selected
+
         // let the grid know which columns and what data to use
         const gridOptions = {
             defaultColDef: {
@@ -239,6 +241,7 @@
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
             onFilterChanged: populateFilterPanel,
+            onRowSelected: updatedSelectedText,
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => row.data.status == "False Positive",
         };
@@ -248,6 +251,7 @@
             const gridDiv = document.querySelector('#myGrid');
             new agGrid.Grid(gridDiv, gridOptions);
             populateFilterPanel();
+            updatedSelectedText();
         });
 
         function exportCSV() {
@@ -260,6 +264,11 @@
                 exportedRows: "all",
             });
         }
+
+        function updatedSelectedText() {
+            selectedRows = gridOptions.api.getSelectedNodes();
+            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
+        };
 
         // When the window loads, populates the dropdown
         window.onload = function populateDropdown() {
@@ -294,20 +303,13 @@
         }
 
         let dropdown = null;
-        let selectedRows = null;
-
-        function updatedSelectedText() {
-            selectedRows = gridOptions.api.getSelectedNodes();
-            console.log(gridOptions.api.getDisplayedRowCount());
-            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
-        }
+        let selectedRows = null
 
         function onActionButtonClick() {
+            updatedSelectedText();
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedNodes();
             selectedRows = selectedRows.filter(row => row.rowIndex != null);
-
-            updatedSelectedText()
 
             selectedRows.forEach((r) => {
                 r.data.status = dropdown[0].value;
@@ -375,6 +377,7 @@
         }
 
         function populateFilterPanel() {
+            gridOptions.api.deselectAll();
             let model = gridOptions.api.getFilterModel();
             // Populate the filter panel
             let filterPanel = document.getElementById("filter-panel-content");
