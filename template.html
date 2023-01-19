@@ -101,6 +101,29 @@
             destroy() { }
         }
 
+        class VerifiedRenderer {
+            init(params) {
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML = `
+                    <span>${params.value == "true" ? "✅" : "❌"}</span>
+                `;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh(params) {
+                this.eGui.innerHTML = `
+                    <span>${params.value == "true" ? "✅" : "❌"}</span>
+                `;
+
+                return true;
+            }
+
+            destroy() { }
+        }
+
         class StatusEditor {
             init(params) {
                 this.value = params.value;
@@ -256,8 +279,27 @@
                 skipFooters: true,
                 skipGroups: true,
                 fileName: "results.csv",
-                allColumns: true,
                 exportedRows: "all",
+                columnKeys: [
+                    "source",
+                    "detector_type",
+                    "verified",
+                    "commit",
+                    "date",
+                    "author_email",
+                    "repository",
+                    "repository_uri",
+                    "link",
+                    "file",
+                    "line",
+                    "filename",
+                    "extension",
+                    "hashed_secret",
+                    "secret",
+                    "redacted_secret",
+                    "context",
+                    "extra_context",
+                ],
             });
         }
 
@@ -380,8 +422,13 @@
             let filterPanel = document.getElementById("filter-panel-content");
             //filterPanel.childNodes.forEach(n => filterPanel.removeChild(n));
             filterPanel.innerHTML = '';
+
+            let ignoreColumns = ["link"];
+
             for (const column of columnDefs) {
                 let columnName = column['field'];
+                if (ignoreColumns.indexOf(columnName) != -1)
+                    continue;
                 if (Object.keys(column).indexOf("filter") != -1) {
                     // Collect the 10 most common values from the table
                     let valueCount = {};
