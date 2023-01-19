@@ -206,19 +206,19 @@
                 lockPosition: true,
                 maxWidth: 50
             },
-            { field: "source", headerName:"repo", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
+            { field: "source", headerName: "Repo", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
             { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "file", filter: "agTextColumnFilter", unSortIcon: true },
             {
                 field: "secret",
-                headerName: "short secret",
+                headerName: "Short Secret",
                 tooltipField: "secret",
                 filter: "agTextColumnFilter",
                 unSortIcon: true
             },
             {
                 field: "hashed_secret",
-                headerName: "hashed secret",
+                headerName: "Hashed Secret",
                 cellRenderer: HashIgnorer,
                 filter: "agTextColumnFilter",
                 unSortIcon: true
@@ -229,9 +229,8 @@
                 editable: true,
                 filter: "agTextColumnFilter",
             },
-            { field: "date", headerName: "commited at", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "date", headerName: "Commited At", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "verified", hide: true },
-            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, hide: true },
             { field: "author_email", hide: true },
             { field: "repository", hide: true },
             { field: "repository_url", hide: true },
@@ -248,6 +247,7 @@
             { field: "redacted_secret", hide: true },
             { field: "context", hide: true },
             { field: "extra_context", hide: true },
+            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, cellRenderer: VerifiedRenderer },
         ];
 
         // refreshes text that displays how many rows out of the total number of rows have been selected
@@ -305,13 +305,16 @@
                     "context",
                     "extra_context",
                 ],
+                processHeaderCallback: (params) => {
+                    return params.column.getColDef()['field'];
+                },
             });
         }
 
         function updatedSelectedText() {
             selectedRows = gridOptions.api.getSelectedNodes();
             selectedRows = selectedRows.filter(row => row.rowIndex != null);
-            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
+            document.getElemntById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
         };
 
         // TODO: Can probably tidy this up
@@ -642,7 +645,7 @@
             margin-bottom: 5px;
         }
 
-        #inner-container #filter-panel a{
+        #inner-container #filter-panel a {
             color: white;
             font-size: 13px;
             text-decoration: none;
