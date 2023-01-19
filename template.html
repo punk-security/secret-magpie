@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <title>Ag-Grid Basic Example</title>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script>
@@ -230,7 +231,7 @@
                 filter: "agTextColumnFilter",
             },
             { field: "date", headerName: "Commited At", filter: "agTextColumnFilter", unSortIcon: true },
-            { field: "verified", hide: true },
+            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, hide: true },
             { field: "author_email", hide: true },
             { field: "repository", hide: true },
             { field: "repository_url", hide: true },
@@ -247,7 +248,7 @@
             { field: "redacted_secret", hide: true },
             { field: "context", hide: true },
             { field: "extra_context", hide: true },
-            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, cellRenderer: VerifiedRenderer },
+            { field: "verified", cellRenderer: VerifiedRenderer },
         ];
 
         // refreshes text that displays how many rows out of the total number of rows have been selected
