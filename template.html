@@ -314,7 +314,7 @@
         function updatedSelectedText() {
             selectedRows = gridOptions.api.getSelectedNodes();
             selectedRows = selectedRows.filter(row => row.rowIndex != null);
-            document.getElemntById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
+            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
         };
 
         // TODO: Can probably tidy this up
