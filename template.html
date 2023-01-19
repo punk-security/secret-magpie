@@ -247,6 +247,8 @@
             },
         ];
 
+        // refreshes text that displays how many rows out of the total number of rows have been selected
+
         // let the grid know which columns and what data to use
         const gridOptions = {
             defaultColDef: {
@@ -259,9 +261,8 @@
             rowSelection: 'multiple',
             rowHeight: 50,
             suppressRowClickSelection: true,
-            //isExternalFilterPresent: () => true,
-            //doesExternalFilterPass: row => excludeHashes.indexOf(row.data.hashed_secret) == -1,
             onFilterChanged: populateFilterPanel,
+            onRowSelected: updatedSelectedText,
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => row.data.status == "False Positive",
         };
@@ -271,6 +272,7 @@
             const gridDiv = document.querySelector('#myGrid');
             new agGrid.Grid(gridDiv, gridOptions);
             populateFilterPanel();
+            updatedSelectedText();
         });
 
         function exportCSV() {
@@ -303,17 +305,10 @@
             });
         }
 
-        // When the window loads, populates the dropdown
-        window.onload = function populateDropdown() {
-            populateExclHashTable()
-
-            let dropDown = document.getElementById('headerDropDown');
-            dropDown.innerHTML += ("<option>all columns</option>");
-            columnDefs.forEach(function (element) {
-                console.log(element.field);
-                dropDown.innerHTML += (`<option>${element.field}</option>`);
-            })
-        }
+        function updatedSelectedText() {
+            selectedRows = gridOptions.api.getSelectedNodes();
+            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
+        };
 
         // TODO: Can probably tidy this up
         let filter = "";
@@ -336,20 +331,13 @@
         }
 
         let dropdown = null;
-        let selectedRows = null;
-
-        function updatedSelectedText() {
-            selectedRows = gridOptions.api.getSelectedNodes();
-            console.log(gridOptions.api.getDisplayedRowCount());
-            document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
-        }
+        let selectedRows = null
 
         function onActionButtonClick() {
+            updatedSelectedText();
             dropdown = document.getElementById("actionDropDown").selectedOptions;
             selectedRows = gridOptions.api.getSelectedNodes();
             selectedRows = selectedRows.filter(row => row.rowIndex != null);
-
-            updatedSelectedText()
 
             selectedRows.forEach((r) => {
                 r.data.status = dropdown[0].value;
@@ -362,40 +350,6 @@
             //gridOptions.api.setFilterModel(model);
             gridOptions.api.refreshCells();
             populateFilterPanel();
-        }
-
-        /*
-        function populateExclHashTable() {
-            //for (var i = 0; i < excludeHashes.length; i++) {
-            //    addExclRows(excludeHashes[i], hashSecrets[i])
-            //}
-        }
-        */
-
-        /*
-        function addExclRows(x, y) {
-            var newRow = `
-                <div class="exclHashesTableRow">
-                    <div class="hashRowCell" style="margin-right: 20px;">${x}</div>
-                    <div class="hashRowCell">${y}</div>                  
-                </div>
-            `
-            document.getElementById("excludedHashesTable").innerHTML += newRow;
-        }
-        */
-
-        function deleteExcludedCellsLS() {
-            //window.localStorage.removeItem('excludeHashes');
-            //window.localStorage.removeItem('hashSecrets');
-            //excludeHashes = []
-            //hashSecrets = []
-
-            //var tableVals = document.getElementById("excludedHashesTable");
-            //while (tableVals.firstChild) {
-            //    tableVals.removeChild(tableVals.lastChild);
-            //}
-
-            gridOptions.api.onFilterChanged();
         }
 
         function setFilterTo(column, value) {
@@ -417,6 +371,8 @@
         }
 
         function populateFilterPanel() {
+            updatedSelectedText();
+            gridOptions.api.deselectAll();
             let model = gridOptions.api.getFilterModel();
             // Populate the filter panel
             let filterPanel = document.getElementById("filter-panel-content");
@@ -489,6 +445,15 @@
                     filterPanel.appendChild(document.createElement("br"));
                 }
             }
+        }
+
+        function resetFPList() {
+            gridOptions.api.forEachNode((rowNode, index) => {
+                if (rowNode.data.status == "False Positive") {
+                    rowNode.data.status = "New"
+                }
+            });
+            gridOptions.api.refreshCells();
         }
 
         function ResetFilters() {
@@ -690,10 +655,7 @@
             <button type="button" class="button" onclick="exportCSV()">CSV</button>
             <!--<button type="button" class="downloadButtons">JSON</button>-->
             <div style="display: inline-block; float: right;">
-                <p class="makeInline" style="color: white;">In </p>
-                <select id="headerDropDown" name="column" onchange="onSearchBoxChange(this.value)"></select>
-
-                <p class="makeInline" style="color: white;"> search for </p>
+                <p class="makeInline" style="color: white;"> Search </p>
                 <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
             </div>
         </div>
@@ -707,10 +669,8 @@
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
             <p id="selectedText" style="display: inline-block"> 0 out of x selected</p>
-
             <div style="display: inline-block; float: right;">
-                <button type="button" class="button" onclick="deleteExcludedCellsLS()">Reset False Positive
-                    List</button>
+                <button type="button" class="button" onclick="resetFPList()">Reset False Positive List</button>
             </div>
         </div>
 
