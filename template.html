@@ -307,6 +307,7 @@
 
         function updatedSelectedText() {
             selectedRows = gridOptions.api.getSelectedNodes();
+            selectedRows = selectedRows.filter(row => row.rowIndex != null);
             document.getElementById("selectedText").innerHTML = `${selectedRows.length} out of ${gridOptions.api.getDisplayedRowCount()} selected`;
         };
 
@@ -450,10 +451,16 @@
         function resetFPList() {
             gridOptions.api.forEachNode((rowNode, index) => {
                 if (rowNode.data.status == "False Positive") {
-                    rowNode.data.status = "New"
+                    rowDataOverlay[rowNode.id] = "New";
+                    rowNode.data.status = "New";
                 }
             });
             gridOptions.api.refreshCells();
+
+            // Store the overlay in localStorage
+            window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
+
+            gridOptions.api.onFilterChanged();
         }
 
         function ResetFilters() {
