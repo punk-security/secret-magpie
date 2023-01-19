@@ -206,17 +206,19 @@
                 lockPosition: true,
                 maxWidth: 50
             },
-            { field: "source", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
+            { field: "source", headerName:"repo", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
             { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "file", filter: "agTextColumnFilter", unSortIcon: true },
             {
                 field: "secret",
+                headerName: "short secret",
                 tooltipField: "secret",
                 filter: "agTextColumnFilter",
                 unSortIcon: true
             },
             {
                 field: "hashed_secret",
+                headerName: "hashed secret",
                 cellRenderer: HashIgnorer,
                 filter: "agTextColumnFilter",
                 unSortIcon: true
@@ -227,7 +229,7 @@
                 editable: true,
                 filter: "agTextColumnFilter",
             },
-            { field: "date", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "date", headerName: "commited at", filter: "agTextColumnFilter", unSortIcon: true },
             { field: "verified", hide: true },
             { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, hide: true },
             { field: "author_email", hide: true },
@@ -637,7 +639,17 @@
 
         #inner-container #filter-panel h3 {
             color: #f39b20;
-            margin-top: 0px;
+            margin-bottom: 5px;
+        }
+
+        #inner-container #filter-panel a{
+            color: white;
+            font-size: 14px;
+            text-decoration: none;
+            overflow-wrap: break-word;
+            display: block;
+            margin: 0px;
+            padding: 0px;
         }
 
         .filterlink,
