@@ -132,6 +132,8 @@ options:
   --disable-trufflehog  Scan without trufflehog
   --disable-gitleaks    Scan without gitleaks
   --single-branch       Scan only the default branch
+  --max-branch-count MAX_BRANCH_COUNT
+                        Limit the number of branches scanned per repo
   --dont-store-secret   Do not store the plaintext secret in the results
   --extra-context       Output two lines before and after the secret for additional context.
   --no-stats            Do not output stats summary
@@ -153,6 +155,7 @@ gitlab:
                         The access token to use for accessing GitLab.
   --gitlab-url GITLAB_URL
                         URL of the GitLab instance to run against. (default: https://gitlab.com)
+
 bitbucket:
   --workspace WORKSPACE
   --username USERNAME

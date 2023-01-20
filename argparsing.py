@@ -125,6 +125,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--max-branch-count",
+    type=int,
+    default=20,
+    help="Limit the number of branches scanned per repo",
+)
+
+parser.add_argument(
     "--dont-store-secret",
     action="store_true",
     help="Do not store the plaintext secret in the results",
