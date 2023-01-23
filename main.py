@@ -18,7 +18,7 @@ import urllib3
 ag_grid_template = ""
 
 if __name__ == "__main__":
-    with open("template.html", "r") as f:
+    with open("template.html", "r", encoding="utf-8") as f:
         ag_grid_template = f.read()
     urllib3.disable_warnings()
     print(argparsing.banner)
@@ -109,5 +109,5 @@ if __name__ == "__main__":
             for i in range(0, len(results)):
                 results[i]["status"] = "New"
 
-        with open("results.html", "w") as f:
+        with open("results.html", "w", encoding="utf-8") as f:
             f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
