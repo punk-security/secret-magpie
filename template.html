@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Ag-Grid Basic Example</title>
+    <title>SecretMagpie HTML</title>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <script>
         // The row data
@@ -14,9 +14,20 @@
         let rowDataOverlay = storedRowDataOverlay ? JSON.parse(storedRowDataOverlay) : {};
 
         // Apply overlay over the data
-        for (const key of Object.keys(rowDataOverlay)) {
-            rowData[key]["status"] = rowDataOverlay[key];
+
+        function keyOfRow(row) {
+            return `${row['commit']}${row['file']}${row['line']}${row['hashed_secret']}`;
         }
+
+        rowData = rowData.map(row => {
+            let key = keyOfRow(row);
+            if (rowDataOverlay[key]) {
+                row['status'] = rowDataOverlay[key];
+                return row;
+            } else {
+                return row;
+            }
+        });
 
         class HashIgnorer {
             init(params) {
@@ -39,14 +50,12 @@
                     for (const index in rowData) {
                         if (rowData[index]["hashed_secret"] == params.value) {
                             // Update rowData and the overlay
-                            rowDataOverlay[index] = "False Positive";
-                            rowData[index]["status"] = "False Positive";
+                            rowDataOverlay[keyOfRow(rowData[index])] = "False Positive";
+                            let data = rowData[index];
+                            data["status"] = "False Positive"
 
                             // Create a transaction to update the row
-                            transaction.push({
-                                id: index,
-                                status: "False Positive"
-                            })
+                            transaction.push(data)
                         }
                     }
                     //params.api.setRowData(rowData);
@@ -82,7 +91,7 @@
             init(params) {
                 this.eGui = document.createElement('div');
                 this.eGui.innerHTML = `
-                    <a target="_blank" href="${params.value}">${params.value}</a>
+                    <a class="celllink" target="_blank" href="${params.node.data['link']}">${params.value}</a>
                 `;
             }
 
@@ -93,7 +102,7 @@
             refresh(params) {
                 this.eGui = document.createElement('div');
                 this.eGui.innerHTML = `
-                    <a target="_blank" href="${this.params.value}">${params.value}</a>
+                    <a class="celllink" target="_blank" href="${params.node.data['link']}">${params.value}</a>
                 `;
 
                 return true;
@@ -128,7 +137,7 @@
         class StatusEditor {
             init(params) {
                 this.value = params.value;
-                this.index = params.node.id;
+                this.index = keyOfRow(params.node.data);
 
                 this.input = document.createElement('select');
                 let choices = ["New", "Confirmed (Rotated)", "Confirmed (Needs Rotating)", "False Positive"];
@@ -188,7 +197,7 @@
                         <p>
                             <span class="orange">Extra Context: </span>
                             <code>
-                                ${data.extra_context.split('\\n').join('</br>')}
+                                ${data.extra_context.split('\n').join('</br>')}
                             </code>
                         </p>
                     `;
@@ -207,9 +216,10 @@
                 lockPosition: true,
                 maxWidth: 50
             },
-            { field: "source", headerName: "Repo", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
-            { field: "commit", filter: "agTextColumnFilter", unSortIcon: true },
-            { field: "file", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "source", headerName: "Source", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130, hide: true },
+            { field: "repository", headerName: "Repository", filter: "agTextColumnFilter", },
+            { field: "commit", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130 },
+            { field: "file", filter: "agTextColumnFilter", unSortIcon: true, cellRenderer: LinkRenderer },
             {
                 field: "secret",
                 headerName: "Short Secret",
@@ -226,25 +236,24 @@
             },
             {
                 field: "status",
+                headerName: "Status",
                 cellEditor: StatusEditor,
                 editable: true,
                 filter: "agTextColumnFilter",
             },
             { field: "date", headerName: "Commited At", filter: "agTextColumnFilter", unSortIcon: true },
-            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, hide: true },
+            { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, hide: true, headerName: "Type" },
             { field: "author_email", hide: true },
-            { field: "repository", hide: true },
             { field: "repository_url", hide: true },
             {
                 field: "link",
                 filter: "agTextColumnFilter",
                 unSortIcon: true,
-                cellRenderer: LinkRenderer,
                 hide: true
             },
             { field: "line", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 130, hide: true },
-            { field: "filename", hide: true },
-            { field: "extension", hide: true },
+            { field: "filename", hide: true, filter: "agTextColumnFilter", headerName: "Filename", },
+            { field: "extension", hide: true, filter: "agTextColumnFilter", headerName: "Extension", },
             { field: "redacted_secret", hide: true },
             { field: "context", hide: true },
             { field: "extra_context", hide: true },
@@ -267,6 +276,11 @@
             suppressRowClickSelection: true,
             onFilterChanged: populateFilterPanel,
             onRowSelected: updatedSelectedText,
+            onCellDoubleClicked: (params) => {
+                if (params.colDef.cellEditor)
+                    return;
+                setFilterTo(params.colDef.field, params.value);
+            },
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => row.data.status == "False Positive",
         };
@@ -305,11 +319,118 @@
                     "redacted_secret",
                     "context",
                     "extra_context",
+                    "status"
                 ],
                 processHeaderCallback: (params) => {
                     return params.column.getColDef()['field'];
                 },
             });
+        }
+
+        function importCSV(input) {
+            let file = input.files[0];
+            let fileReader = new FileReader();
+            fileReader.readAsText(file);
+            fileReader.onload = (event) => {
+                let csvString = event.target.result;
+
+                csvString = csvString.replaceAll('\r', '');
+
+                function readLine(s) {
+                    // Read the line
+
+                    let arr = [];
+                    let acc = "";
+
+                    let index = 0;
+                    let state = 1;
+
+                    while (s[index]) {
+                        if (state && s[index] == '\n')
+                            break;
+
+                        if (!state && s[index] == '"' && s[index + 1] == '"') {
+                            index += 2;
+                            acc += '"';
+                            continue;
+                        }
+
+                        if (state && s[index] == '"') {
+                            state ^= 1;
+                            index++;
+                            continue;
+                        }
+
+                        if (s[index] == '"') {
+                            state ^= 1;
+                            arr.push(acc);
+                            acc = ""
+                            index++;
+                            continue;
+                        }
+
+                        if (state && s[index] == ',') {
+                            //arr.push(acc);
+                            acc = "";
+                            index++;
+                            continue;
+                        }
+
+                        acc += s[index];
+                        index++;
+                    }
+
+                    if (acc)
+                        arr.push(acc);
+
+                    return [arr, index];
+                }
+
+                let table = []
+
+                while (csvString.length) {
+                    //console.log(csvString);
+                    let [arr, i] = readLine(csvString);
+                    csvString = csvString.substring(i + 1, csvString.length);
+                    table.push(arr);
+                }
+
+                // Identify headers
+                let headerIndexMap = {};
+                for (const index in table[0]) {
+                    headerIndexMap[index] = table[0][index];
+                }
+
+                table.shift();
+
+                table = table.map((l) => {
+                    let dict = {};
+                    for (const index in l) {
+                        dict[headerIndexMap[index]] = l[index];
+                    }
+                    return dict;
+                });
+
+                transaction = [];
+
+                table.forEach(row => {
+                    gridOptions.api.forEachNode((node, index) => {
+                        if (keyOfRow(node.data) == keyOfRow(row)) {
+                            let data = node.data;
+                            data['status'] = row['status']
+                            transaction.push(data);
+                        }
+                    });
+                    rowDataOverlay[keyOfRow(row)] = row['status'];
+                });
+
+                // Store the overlay in localStorage
+                window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
+
+                gridOptions.api.applyTransaction({ update: transaction });
+                gridOptions.api.onFilterChanged();
+                populateFilterPanel();
+            }
         }
 
         function updatedSelectedText() {
@@ -349,7 +470,7 @@
 
             selectedRows.forEach((r) => {
                 r.data.status = dropdown[0].value;
-                rowDataOverlay[r.id] = dropdown[0].value;
+                rowDataOverlay[keyOfRow(r.data)] = dropdown[0].value;
             });
 
             // Store the overlay in localStorage
@@ -387,12 +508,10 @@
             //filterPanel.childNodes.forEach(n => filterPanel.removeChild(n));
             filterPanel.innerHTML = '';
 
-            let ignoreColumns = ["link"];
+            let columns = ["status", "repository", "detector_type", "filename", "extension", "hashed_secret"];
 
-            for (const column of columnDefs) {
-                let columnName = column['field'];
-                if (ignoreColumns.indexOf(columnName) != -1)
-                    continue;
+            for (const columnName of columns) {
+                let column = columnDefs.filter(x => x.field == columnName)[0];
                 if (Object.keys(column).indexOf("filter") != -1) {
                     // Collect the 10 most common values from the table
                     let valueCount = {};
@@ -421,7 +540,7 @@
                     }
 
                     let header = document.createElement("h3");
-                    header.innerHTML = `By ${columnName}`;
+                    header.innerHTML = `By ${column['headerName'] ? column['headerName'] : columnName}`;
                     filterPanel.appendChild(header);
 
                     // Always add an "All" option that resets the filter state
@@ -458,7 +577,7 @@
         function resetFPList() {
             gridOptions.api.forEachNode((rowNode, index) => {
                 if (rowNode.data.status == "False Positive") {
-                    rowDataOverlay[rowNode.id] = "New";
+                    rowDataOverlay[keyOfRow(rowNode.data)] = "New";
                     rowNode.data.status = "New";
                 }
             });
@@ -674,6 +793,13 @@
             color: royalblue !important;
         }
 
+        .celllink,
+        .celllink:active,
+        .celllink:visited {
+            color: white;
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 
@@ -683,6 +809,8 @@
             <p style="color: #f39b20; display: inline-block;">Download as:</p>
             <button type="button" class="button" onclick="exportCSV()">CSV</button>
             <!--<button type="button" class="downloadButtons">JSON</button>-->
+            <p style="color: #f39b20; display: inline-block;">Import statuses from CSV:</p>
+            <input type="file" class="button" onchange="importCSV(this)" />
             <div style="display: inline-block; float: right;">
                 <p class="makeInline" style="color: white;"> Search </p>
                 <input class="makeInline" id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search">
