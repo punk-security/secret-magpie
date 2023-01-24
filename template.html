@@ -29,64 +29,6 @@
             }
         });
 
-        class HashIgnorer {
-            init(params) {
-                this.eGui = document.createElement('div');
-                this.eGui.innerHTML = `
-                    <span>
-                        <button class="button">Ignore Hash</button>
-                        <span>${params.value}</span>
-                    </span>
-                `;
-
-                this.eButton = this.eGui.querySelector('.button');
-
-                this.eventListener = () => {
-                    // Goes up from buttom until it reaches the row to get the row's ID
-                    var rowID = params.node.id;
-
-                    let transaction = [];
-
-                    for (const index in rowData) {
-                        if (rowData[index]["hashed_secret"] == params.value) {
-                            // Update rowData and the overlay
-                            rowDataOverlay[keyOfRow(rowData[index])] = "False Positive";
-                            let data = rowData[index];
-                            data["status"] = "False Positive"
-
-                            // Create a transaction to update the row
-                            transaction.push(data)
-                        }
-                    }
-                    //params.api.setRowData(rowData);
-                    params.api.applyTransaction({ update: transaction })
-
-                    // Store the overlay in localStorage
-                    window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
-
-                    params.api.onFilterChanged();
-                }
-                this.eButton.addEventListener('click', this.eventListener);
-            }
-
-            getGui() {
-                return this.eGui;
-            }
-
-            refresh(params) {
-                this.cellValue = this.getValueToDisplay(params);
-                this.eValue.innerHTML = this.cellValue;
-
-                return true;
-            }
-
-            destroy() {
-                if (this.eButton) {
-                    this.eButton.removeEventListener('click', this.eventListener);
-                }
-            }
-        }
-
         class LinkRenderer {
             init(params) {
                 this.eGui = document.createElement('div');
@@ -230,7 +172,6 @@
             {
                 field: "hashed_secret",
                 headerName: "Hashed Secret",
-                cellRenderer: HashIgnorer,
                 filter: "agTextColumnFilter",
                 unSortIcon: true
             },
@@ -274,12 +215,12 @@
             rowSelection: 'multiple',
             rowHeight: 50,
             suppressRowClickSelection: true,
+            suppressContextMenu: true,
+            preventDefaultOnContextMenu: true,
             onFilterChanged: populateFilterPanel,
             onRowSelected: updatedSelectedText,
-            onCellDoubleClicked: (params) => {
-                if (params.colDef.cellEditor)
-                    return;
-                setFilterTo(params.colDef.field, params.value);
+            onCellContextMenu: (params) => {
+                createContextMenu(params);
             },
             //isExternalFilterPresent: () => true,
             //doesExternalFilterPass: row => row.data.status == "False Positive",
@@ -292,6 +233,70 @@
             populateFilterPanel();
             updatedSelectedText();
         });
+
+        function markHashAsFP(hash) {
+            let transaction = [];
+
+            for (const index in rowData) {
+                if (rowData[index]["hashed_secret"] == hash) {
+                    // Update rowData and the overlay
+                    rowDataOverlay[keyOfRow(rowData[index])] = "False Positive";
+                    let data = rowData[index];
+                    data["status"] = "False Positive"
+
+                    // Create a transaction to update the row
+                    transaction.push(data)
+                }
+            }
+            //params.api.setRowData(rowData);
+            gridOptions.api.applyTransaction({ update: transaction })
+
+            // Store the overlay in localStorage
+            window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
+
+            gridOptions.api.onFilterChanged();
+        }
+
+        function createContextMenu(params) {
+            if (params.colDef.cellEditor)
+                return;
+
+            document.querySelectorAll(".contextmenu").forEach(x => x.remove());
+
+            let contextmenu = document.createElement("div");
+            document.body.appendChild(contextmenu);
+            contextmenu.onmouseleave = () => contextmenu.remove();
+            contextmenu.onclick = () => contextmenu.remove();
+            contextmenu.classList.add("contextmenu");
+            contextmenu.style.left = `${params.event.pageX}px`;
+            contextmenu.style.top = `${params.event.pageY}px`;
+
+            let ul = document.createElement("ul");
+
+            // Create the filter option
+            let filterLi = document.createElement("li");
+            filterLi.innerHTML = "Set filter on cell value.";
+            filterLi.onclick = () => setFilterTo(params.colDef.field, params.value);
+
+            ul.appendChild(filterLi);
+
+            // Create the reset filter option
+            let resetLi = document.createElement("li");
+            resetLi.innerHTML = "Reset column filter";
+            resetLi.onclick = () => removeFilterFrom(params.colDef.field);
+
+            ul.appendChild(resetLi);
+
+            if (params.colDef.field == 'hashed_secret') {
+                // Create the reset filter option
+                let markLi = document.createElement("li");
+                markLi.innerHTML = "Mark Hash as false positive";
+                markLi.onclick = () => markHashAsFP(params.value);
+
+                ul.appendChild(markLi);
+            }
+            contextmenu.appendChild(ul);
+        }
 
         function exportCSV() {
             gridOptions.api.exportDataAsCsv({
@@ -798,6 +803,30 @@
         .celllink:visited {
             color: white;
             text-decoration: underline;
+        }
+
+        .contextmenu {
+            position: absolute;
+            background-color: #242930;
+            box-shadow: black 0px 0px 5px 5px;
+        }
+
+        .contextmenu ul {
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        .contextmenu li {
+            color: white;
+            padding: 10px;
+            font-family: sans-serif;
+            display: block;
+        }
+
+        .contextmenu li:hover {
+            background-color: #1d2024;
+            cursor: pointer;
         }
 
     </style>
