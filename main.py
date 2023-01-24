@@ -1,5 +1,4 @@
 from logging import handlers
-#from msilib import Directory
 from multiprocessing.pool import ThreadPool
 from functools import partial
 import sys
