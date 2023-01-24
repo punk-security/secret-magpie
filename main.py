@@ -115,14 +115,13 @@ if __name__ == "__main__":
 
         with open("results.html", "w", encoding="utf-8") as f:
             f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
-
         
-        PORT = 8080
-
-        with socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler) as httpd:
-            print("Server started at localhost:"+str(PORT))
-            try:
-                httpd.serve_forever()
-            except KeyboardInterrupt:
-                httpd.server_close()
-                print("Server shutdown")
+        if args.web:
+            PORT = 8080
+            with socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler) as httpd:
+                print("Server started at localhost:"+str(PORT))
+                try:
+                    httpd.serve_forever()
+                except KeyboardInterrupt:
+                    httpd.server_close()
+                    print("Server shutdown")
