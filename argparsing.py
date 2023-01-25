@@ -167,6 +167,12 @@ parser.add_argument(
     help="Specifies the input results file to read in and convert to a HTML document"
 )
 
+parser.add_argument(
+    "--web",
+    action="store_true",
+    help="Creates a localhost on 8080 to view the results in browser"
+)
+
 def parse_args():
     args = parser.parse_args()
     if "bitbucket" == args.provider and (

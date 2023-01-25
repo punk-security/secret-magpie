@@ -1,3 +1,4 @@
+from logging import handlers
 from multiprocessing.pool import ThreadPool
 from functools import partial
 import sys
@@ -14,6 +15,9 @@ import time
 import os
 import subprocess  # nosec blacklist
 import urllib3
+
+import http.server
+import socketserver
 
 ag_grid_template = ""
 
@@ -111,3 +115,13 @@ if __name__ == "__main__":
 
         with open("results.html", "w", encoding="utf-8") as f:
             f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
+        
+        if args.web:
+            PORT = 8080
+            with socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler) as httpd:
+                print("Server started at localhost:"+str(PORT))
+                try:
+                    httpd.serve_forever()
+                except KeyboardInterrupt:
+                    httpd.server_close()
+                    print("Server shutdown")
