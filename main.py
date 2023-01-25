@@ -1,4 +1,3 @@
-from logging import handlers
 from multiprocessing.pool import ThreadPool
 from functools import partial
 import sys
@@ -22,12 +21,14 @@ import socketserver
 ag_grid_template = ""
 
 if __name__ == "__main__":
-    with open("template.html", "r", encoding="utf-8") as f:
-        ag_grid_template = f.read()
     urllib3.disable_warnings()
     print(argparsing.banner)
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
+
+    if args.web:
+        with open("template.html", "r") as f:
+            ag_grid_template = f.read()
 
     if args.convert_to_html is None:
         with open(os.devnull, "wb") as devnull:
@@ -66,7 +67,6 @@ if __name__ == "__main__":
             cleanup=cleanup,
             threshold_date=threshold_date,
             validate_https=not args.dont_validate_https,
-            max_branch_count=args.max_branch_count,
         )
         pool = ThreadPool(args.parallel_repos)
         results = pool.imap_unordered(f, repos)
@@ -88,7 +88,9 @@ if __name__ == "__main__":
                             item.secret = ""  # nosec hardcoded_password_string
                             item.context = ""
                             item.extra_context = ""
-                        o.write(item)
+
+                        if args.out_format != "html":
+                            o.write(item)
         print(
             f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
         )
@@ -96,8 +98,10 @@ if __name__ == "__main__":
         if not args.no_stats:
             s = stats.Stats(total_results, processed_repos)
             print(s.Report())
-    else:
-        filename = args.convert_to_html
+
+    if args.web:
+        filename = f"{args.out}.{args.out_format}"
+        print(filename)
         with open(filename, "r") as f:
             filetype = None
             results = None
@@ -105,6 +109,8 @@ if __name__ == "__main__":
                 results = list(csv.DictReader(f))
             elif filename.endswith(".json"):
                 results = json.loads(f.read())
+            elif filename.endswith(".html"):
+                pass
             else:
                 print("ERROR: Invalid input format for HTML conversion.")
                 sys.exit(1)
@@ -115,13 +121,15 @@ if __name__ == "__main__":
 
         with open("results.html", "w", encoding="utf-8") as f:
             f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
-        
-        if args.web:
-            PORT = 8080
-            with socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler) as httpd:
-                print("Server started at localhost:"+str(PORT))
-                try:
-                    httpd.serve_forever()
-                except KeyboardInterrupt:
-                    httpd.server_close()
-                    print("Server shutdown")
+
+        PORT = 8080
+        with socketserver.TCPServer(
+            ("", PORT), http.server.SimpleHTTPRequestHandler
+        ) as httpd:
+            print("Server started at localhost:" + str(PORT))
+            try:
+                httpd.serve_forever()
+            except KeyboardInterrupt:
+                print("Shutting down...")
+                httpd.server_close()
+                print("Server shutdown.")

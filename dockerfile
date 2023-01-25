@@ -23,7 +23,3 @@ COPY . .
 # Exports
 ENV SM_COMMAND "docker run punksecurity/secret-magpie --" 
 ENTRYPOINT [ "python3", "/app/main.py" ]
-
-COPY results.html /
-EXPOSE 8080
-CMD python3 -m http.server 8080
