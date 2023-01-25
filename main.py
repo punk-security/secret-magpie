@@ -122,10 +122,15 @@ if __name__ == "__main__":
         with open("results.html", "w", encoding="utf-8") as f:
             f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
 
+
+        class ServeResultsHandler(http.server.SimpleHTTPRequestHandler):
+            def do_GET(self):
+                if self.path == '/':
+                    self.path = '/results.html'
+                return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
         PORT = 8080
-        with socketserver.TCPServer(
-            ("", PORT), http.server.SimpleHTTPRequestHandler
-        ) as httpd:
+        with socketserver.TCPServer(("", PORT), ServeResultsHandler) as httpd:
             print("Server started at localhost:" + str(PORT))
             try:
                 httpd.serve_forever()
