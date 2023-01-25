@@ -27,7 +27,7 @@ if __name__ == "__main__":
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
     if args.web:
-        with open("template.html", "r") as f:
+        with open("template.html", "r", encoding="utf-8") as f:
             ag_grid_template = f.read()
 
     if args.convert_to_html is None:
