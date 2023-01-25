@@ -648,8 +648,8 @@
 
         #selectionBar {
             background-color: #1d2024;
-            margin-bottom: 20px;
-            padding: 10px 20px 10px 20px;
+            margin: 0 0 10px 0;
+            padding: 10px 20px 5px 20px;
             border: 2px solid transparent;
             border-top: none;
             border-left: none;
@@ -685,7 +685,7 @@
 
         #actionBar p {
             color: white;
-            margin: 10px 0 0 0;
+            margin: 5px 0 0 0;
             padding: 0;
         }
 
@@ -728,7 +728,8 @@
 
         #outer-container #inner-container {
             flex-grow: 9.5;
-            max-height: 85%;
+            max-height: 70vh;
+            min-height: 40vh;
         }
 
         #inner-container {
@@ -743,7 +744,7 @@
         #inner-container #filter-panel {
             flex-grow: 1;
             background-color: #1d2024;
-            margin-left: 20px;
+            margin-left: 10px;
             padding: 15px;
             max-width: 20%;
             max-height: 100%;
@@ -752,6 +753,7 @@
 
         #inner-container #filter-panel h3 {
             color: #f39b20;
+            margin-top: 0;
             margin-bottom: 5px;
         }
 
@@ -839,7 +841,7 @@
                     <input id="searchbar" onkeyup="onSearchBoxChange()" type="text" name="search" placeholder="Search..">
                </div> 
                 <div>
-                    <p style="color: lightgray; font-size: 12px; float: right; vertical-align: bottom; font-style: italic">Made by Punk Secuirty</p>
+                    <p style="color: lightgray; font-size: 12px; float: right; vertical-align: bottom; font-style: italic">Made by Punk Security</p>
                 </div>
             </div>
         </div>
@@ -863,7 +865,7 @@
             </div>
             <div id="filter-panel">
                 <h3>Filter</h3>
-                <button class="button" onclick="ResetFilters()">Clear All Filters</button><br>
+                <button style="margin: 5px 0 15px 0;" class="button" onclick="ResetFilters()">Clear All Filters</button><br>
                 <div id="filter-panel-content"></div>
             </div>
         </div>
