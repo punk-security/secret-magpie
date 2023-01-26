@@ -183,7 +183,7 @@ def get_repos_from_gitlab(org, pat, url, dont_validate_https):
     def get_projects_from_group(g, group):
         for project in group.projects.list(all=True):
             yield project
-        for group in group.subgroups.list(all=True):
+        for group in group.subgroups.list(all=True, all_available=True):
             group = g.groups.get(group.id, lazy=True)
             for project in get_projects_from_group(g, group):
                 yield project
