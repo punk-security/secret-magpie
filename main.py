@@ -125,8 +125,8 @@ if __name__ == "__main__":
 
         class ServeResultsHandler(http.server.SimpleHTTPRequestHandler):
             def do_GET(self):
-                if self.path == '/':
-                    self.path = '/results.html'
+                if self.path == "/":
+                    self.path = "/results.html"
                 return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
         PORT = 8080
