@@ -39,7 +39,6 @@ class Finding(object):
         self.filename = file.split("/")[-1]
         self.extension = file.split(".")[-1] if "." in file else ""
         self.hashed_secret = sha256(secret.encode("utf-8")).hexdigest()
-        self.secret = secret
         if redacted_secret == None:
             self.redacted_secret = self.redact(secret)
 
@@ -69,7 +68,7 @@ class Finding(object):
         if len(secret) < 5:
             return "REDACTED"
         else:
-            return f"{secret[0:3]}{'*' * (len(secret) - 4)}"
+            return f"{secret[0:3]}{'*' * (min(len(secret) - 4, 128))}"
 
     @staticmethod
     def getDirectoryOfRepo(repo):
