@@ -39,6 +39,7 @@ class Finding(object):
         self.filename = file.split("/")[-1]
         self.extension = file.split(".")[-1] if "." in file else ""
         self.hashed_secret = sha256(secret.encode("utf-8")).hexdigest()
+        self.secret = secret
         if redacted_secret == None:
             self.redacted_secret = self.redact(secret)
 

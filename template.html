@@ -57,7 +57,7 @@
             init(params) {
                 this.eGui = document.createElement('div');
                 this.eGui.innerHTML = `
-                    <span>${params.value == "true" ? "✅" : "❌"}</span>
+                    <span>${params.value.toLowerCase() == "true" ? "✅" : "❌"}</span>
                 `;
             }
 
@@ -67,7 +67,33 @@
 
             refresh(params) {
                 this.eGui.innerHTML = `
-                    <span>${params.value == "true" ? "✅" : "❌"}</span>
+                    <span>${params.value.toLowerCase() == "true" ? "✅" : "❌"}</span>
+                `;
+
+                return true;
+            }
+
+            destroy() { }
+        }
+
+        class TimestampRenderer {
+            init(params) {
+                this.eGui = document.createElement('div');
+                let date = new Date(params.value);
+                this.eGui.innerHTML = `
+                    <span>${date.getFullYear()} ${date.getMonth() + 1} ${date.getDate()}</span>
+                `;
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh(params) {
+                this.eGui = document.createElement('div');
+                let date = new Date(params.value);
+                this.eGui.innerHTML = `
+                    <span>${date.getFullYear()} ${date.getMonth() + 1} ${date.getDate()}</span>
                 `;
 
                 return true;
@@ -82,7 +108,7 @@
                 this.index = keyOfRow(params.node.data);
 
                 this.input = document.createElement('select');
-                let choices = ["New", "Confirmed (Rotated)", "Confirmed (Needs Rotating)", "False Positive"];
+                let choices = ["New", "Confirmed (Rotated)", "Confirmed (Needs Rotating)", "False Positive", "Investigating"];
                 for (const choice of choices) {
                     let opt = document.createElement("option");
                     opt.value = choice;
@@ -183,7 +209,7 @@
                 editable: true,
                 filter: "agTextColumnFilter",
             },
-            { field: "date", headerName: "Commited At", filter: "agTextColumnFilter", unSortIcon: true },
+            { field: "date", headerName: "Commited At", filter: "agTextColumnFilter", unSortIcon: true, cellRenderer: TimestampRenderer },
             { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, hide: true, headerName: "Type" },
             { field: "author_email", hide: true },
             { field: "repository_url", hide: true },
@@ -868,6 +894,7 @@
             <select id="actionDropDown" style="display: inline-block">
                 <option value="Confirmed (Rotated)">Confirmed as Rotated</option>
                 <option value="Confirmed (Needs Rotating)">Confirmed as Needs Rotating</option>
+                <option value="Investigating">Mark as Investigating</option>
                 <option value="False Positive">Mark as False Positive</option>
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
