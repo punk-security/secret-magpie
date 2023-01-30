@@ -132,6 +132,8 @@ options:
   --disable-trufflehog  Scan without trufflehog
   --disable-gitleaks    Scan without gitleaks
   --single-branch       Scan only the default branch
+  --max-branch-count MAX_BRANCH_COUNT
+                        Limit the number of branches scanned per repo
   --dont-store-secret   Do not store the plaintext secret in the results
   --extra-context       Output two lines before and after the secret for additional context.
   --no-stats            Do not output stats summary
@@ -140,6 +142,8 @@ options:
   --update-ca-store     If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.
   --dont-validate-https
                         Disables HTTPS validation for APIs/cloning.
+  --to-scan-list TO_SCAN_LIST
+                        The file to read the list of repositories to scan from. One repository per line, web URL to the repository.
 
 github/azuredevops:
   --org ORG             Organisation name to target
@@ -151,6 +155,7 @@ gitlab:
                         The access token to use for accessing GitLab.
   --gitlab-url GITLAB_URL
                         URL of the GitLab instance to run against. (default: https://gitlab.com)
+
 bitbucket:
   --workspace WORKSPACE
   --username USERNAME

@@ -48,6 +48,12 @@ def step_impl(context, branch):
     context.rules.append(["branch " + branch])
 
 
+@given("we have a file called {name} with content")
+def step_impl(context, name):
+    with open(name, "w") as f:
+        f.write(context.text)
+
+
 def run_secret_magpie(context, engines, outformat="csv", args=[]):
     try:
         context.repos = LocalRepos(context.rules, TESTING_DIRECTORY)
@@ -262,6 +268,36 @@ def step_impl(
     engines,
 ):
     args = []
+    if https_validation == "disabled":
+        args.append("--dont-validate-https")
+    if threshold_date != "None":
+        args.append(f"--ignore-branches-older-than={threshold_date}")
+    if extra_context == "enabled":
+        args.append("--extra-context")
+    if secret_toggle == "disabled":
+        args.append("--dont-store-secret")
+    if branch_toggle == "single":
+        args.append("--single-branch")
+    run_secret_magpie(context, engines, outformat=format, args=args)
+
+
+@when(
+    "we run secret-magpie-cli in {branch_toggle} branch mode, to scan list {to_scan_list}, https validation {https_validation}, ignoring commits older than {threshold_date}, extra context {extra_context}, secret storing {secret_toggle}, output format {format} and engines: {engines}"
+)
+def step_impl(
+    context,
+    branch_toggle,
+    to_scan_list,
+    https_validation,
+    threshold_date,
+    extra_context,
+    secret_toggle,
+    format,
+    engines,
+):
+    args = []
+    if to_scan_list != "None":
+        args.append(f"--to-scan-list={to_scan_list}")
     if https_validation == "disabled":
         args.append("--dont-validate-https")
     if threshold_date != "None":

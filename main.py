@@ -29,6 +29,11 @@ if __name__ == "__main__":
     if args.web:
         with open("template.html", "r", encoding="utf-8") as f:
             ag_grid_template = f.read()
+    to_scan_list = None
+
+    if args.to_scan_list is not None:
+        with open(args.to_scan_list, "r") as f:
+            to_scan_list = f.read().split("\n")
 
     if args.convert_to_html is None:
         with open(os.devnull, "wb") as devnull:
@@ -121,7 +126,6 @@ if __name__ == "__main__":
 
         with open("results.html", "w", encoding="utf-8") as f:
             f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
-
 
         class ServeResultsHandler(http.server.SimpleHTTPRequestHandler):
             def do_GET(self):

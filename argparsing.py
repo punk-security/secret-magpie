@@ -125,6 +125,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--max-branch-count",
+    type=int,
+    default=20,
+    help="Limit the number of branches scanned per repo",
+)
+
+parser.add_argument(
     "--dont-store-secret",
     action="store_true",
     help="Do not store the plaintext secret in the results",
@@ -172,6 +179,13 @@ parser.add_argument(
     action="store_true",
     help="Creates a localhost on 8080 to view the results in browser"
 )
+
+parser.add_argument(
+    "--to-scan-list",
+    type=str,
+    help="The file to read the list of repositories to scan from. One repository per line, web URL to the repository.",
+)
+
 
 def parse_args():
     args = parser.parse_args()
