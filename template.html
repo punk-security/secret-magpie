@@ -371,12 +371,15 @@
                             state ^= 1;
                             arr.push(acc);
                             acc = ""
-                            index++;
+                            if (s[index + 1] == ',')
+                                index += 2;
+                            else
+                                index += 1;
                             continue;
                         }
 
                         if (state && s[index] == ',') {
-                            //arr.push(acc);
+                            arr.push(acc);
                             acc = "";
                             index++;
                             continue;
