@@ -81,7 +81,7 @@
                 this.eGui = document.createElement('div');
                 let date = new Date(params.value);
                 this.eGui.innerHTML = `
-                    <span>${date.getFullYear()} ${date.getMonth() + 1} ${date.getDate()}</span>
+                    <span>${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}</span>
                 `;
             }
 
@@ -93,7 +93,7 @@
                 this.eGui = document.createElement('div');
                 let date = new Date(params.value);
                 this.eGui.innerHTML = `
-                    <span>${date.getFullYear()} ${date.getMonth() + 1} ${date.getDate()}</span>
+                    <span>${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}</span>
                 `;
 
                 return true;
@@ -131,6 +131,10 @@
                 window.localStorage.setItem("rowDataOverlay", JSON.stringify(rowDataOverlay));
 
                 return this.input.value;
+            }
+
+            destroy() {
+                gridOptions.api.onFilterChanged();
             }
 
             isCancelBeforeStart() {
@@ -237,6 +241,7 @@
                 tooltipComponent: ContextTooltip,
                 sortable: true
             },
+            tooltipShowDelay: 500,
             columnDefs: columnDefs,
             rowData: rowData,
             rowSelection: 'multiple',
@@ -894,8 +899,8 @@
             <select id="actionDropDown" style="display: inline-block">
                 <option value="Confirmed (Rotated)">Confirmed as Rotated</option>
                 <option value="Confirmed (Needs Rotating)">Confirmed as Needs Rotating</option>
-                <option value="Investigating">Mark as Investigating</option>
                 <option value="False Positive">Mark as False Positive</option>
+                <option value="Investigating">Mark as Investigating</option>
             </select>
             <button style="display: inline-block" type="button" onclick="onActionButtonClick()">Go</button>
             <p id="selectedText" style="display: inline-block"> 0 out of x selected</p>
