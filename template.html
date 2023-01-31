@@ -134,7 +134,7 @@
             }
 
             destroy() {
-                gridOptions.api.onFilterChanged();
+                setTimeout(() => gridOptions.api.onFilterChanged(), 100);
             }
 
             isCancelBeforeStart() {
