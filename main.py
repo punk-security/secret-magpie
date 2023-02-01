@@ -14,9 +14,12 @@ import time
 import os
 import subprocess  # nosec blacklist
 import urllib3
+import random
+import string
 
 import http.server
 import socketserver
+from urllib.parse import urlparse, parse_qs
 
 ag_grid_template = ""
 
@@ -25,9 +28,6 @@ if __name__ == "__main__":
     print(argparsing.banner)
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
-
-    if "SECRETMAGPIE_LISTEN_ADDR" not in dict(os.environ).keys():
-        os.environ["SECRETMAGPIE_LISTEN_ADDR"] = "127.0.0.1:8080"
 
     if args.web:
         with open("template.html", "r", encoding="utf-8") as f:
@@ -135,16 +135,29 @@ if __name__ == "__main__":
                     ).replace("$$AGGRID_CODE$$", aggrid.read()),
                 )
 
+        auth_param = "".join(
+            [random.choice(string.ascii_letters) for i in range(0, 64)]
+        )
+
         class ServeResultsHandler(http.server.SimpleHTTPRequestHandler):
             def do_GET(self):
-                if self.path == "/":
-                    self.path = "/results.html"
+                query = urlparse(self.path).query
+                query_components = parse_qs(query)
+
+                if query_components.get("key", "") != [auth_param]:
+                    return None
+                self.path = "results.html"
                 return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
-        [ADDR, PORT] = os.environ["SECRETMAGPIE_LISTEN_ADDR"].split(":")
+        [ADDR, PORT] = os.environ.get(
+            "SECRETMAGPIE_LISTEN_ADDR", "127.0.0.1:8080"
+        ).split(":")
 
         with socketserver.TCPServer((ADDR, int(PORT)), ServeResultsHandler) as httpd:
             print(f"Server started at {ADDR}:{PORT}")
+            print(
+                f"Available at http://{ADDR if ADDR != '0.0.0.0' else '127.0.0.1'}:{PORT}/?key={auth_param}"
+            )
             try:
                 httpd.serve_forever()
             except KeyboardInterrupt:
