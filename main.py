@@ -26,6 +26,9 @@ if __name__ == "__main__":
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
+    if "SECRETMAGPIE_LISTEN_ADDR" not in dict(os.environ).keys():
+        os.environ["SECRETMAGPIE_LISTEN_ADDR"] = "127.0.0.1:8080"
+
     if args.web:
         with open("template.html", "r", encoding="utf-8") as f:
             ag_grid_template = f.read()
@@ -72,6 +75,7 @@ if __name__ == "__main__":
         threshold_date=threshold_date,
         validate_https=not args.dont_validate_https,
         to_scan_list=to_scan_list,
+        max_branch_count=args.max_branch_count,
     )
     pool = ThreadPool(args.parallel_repos)
     results = pool.imap_unordered(f, repos)
@@ -137,9 +141,10 @@ if __name__ == "__main__":
                     self.path = "/results.html"
                 return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
-        PORT = 8080
-        with socketserver.TCPServer(("", PORT), ServeResultsHandler) as httpd:
-            print("Server started at localhost:" + str(PORT))
+        [ADDR, PORT] = os.environ["SECRETMAGPIE_LISTEN_ADDR"].split(":")
+
+        with socketserver.TCPServer((ADDR, int(PORT)), ServeResultsHandler) as httpd:
+            print(f"Server started at {ADDR}:{PORT}")
             try:
                 httpd.serve_forever()
             except KeyboardInterrupt:

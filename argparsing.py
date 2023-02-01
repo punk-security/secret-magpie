@@ -171,7 +171,7 @@ parser.add_argument(
 parser.add_argument(
     "--web",
     action="store_true",
-    help="Hosts a webserver on http://localhost:8080 to view the results in browser",
+    help="Hosts a webserver on http://127.0.0.1:8080 to view the results in browser",
 )
 
 parser.add_argument(
