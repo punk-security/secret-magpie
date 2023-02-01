@@ -35,74 +35,73 @@ if __name__ == "__main__":
         with open(args.to_scan_list, "r") as f:
             to_scan_list = f.read().split("\n")
 
-    if args.convert_to_html is None:
-        with open(os.devnull, "wb") as devnull:
-            if args.update_ca_store:
-                subprocess.call(  # nosec subprocess_without_shell_equals_true start_process_with_partial_path
-                    ["update-ca-certificates"], stdout=devnull, stderr=devnull
-                )
+    with open(os.devnull, "wb") as devnull:
+        if args.update_ca_store:
+            subprocess.call(  # nosec subprocess_without_shell_equals_true start_process_with_partial_path
+                ["update-ca-certificates"], stdout=devnull, stderr=devnull
+            )
 
-        threshold_date = None
-        if args.ignore_branches_older_than != None:
-            try:
-                threshold_date = time.mktime(
-                    datetime.datetime.fromisoformat(
-                        args.ignore_branches_older_than
-                    ).timetuple()
-                )
-            except ValueError:
-                print("ERROR: Invalid ISO format string.")
-                sys.exit(1)
-
-        tool_list = []
-        if not args.disable_gitleaks:
-            tool_list.append(tools.gitleaks)
-        if not args.disable_trufflehog:
-            tool_list.append(tools.truffle_hog)
-        if len(tool_list) == 0:
-            print("ERROR: No tools to scan with")
+    threshold_date = None
+    if args.ignore_branches_older_than != None:
+        try:
+            threshold_date = time.mktime(
+                datetime.datetime.fromisoformat(
+                    args.ignore_branches_older_than
+                ).timetuple()
+            )
+        except ValueError:
+            print("ERROR: Invalid ISO format string.")
             sys.exit(1)
-        repos = tasks.get_repos(**args.__dict__)
-        total_results = []
-        f = partial(
-            tasks.process_repo,
-            functions=tool_list,
-            single_branch=args.single_branch,
-            extra_context=args.extra_context,
-            cleanup=cleanup,
-            threshold_date=threshold_date,
-            validate_https=not args.dont_validate_https,
-            to_scan_list=to_scan_list,
-        )
-        pool = ThreadPool(args.parallel_repos)
-        results = pool.imap_unordered(f, repos)
-        processed_repos = 0
-        with output.Output(args.out_format, args.out) as o:
-            for result_batch in results:
-                processed_repos += 1
-                print(
-                    f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
-                    end="\r",
-                    flush=True,
-                )
-                for result in result_batch:
-                    if result.status == "FAIL" or result.findings == []:
-                        continue
-                    for item in result.findings:
-                        total_results.append(item)
-                        if args.dont_store_secret:
-                            item.secret = ""  # nosec hardcoded_password_string
-                            item.context = ""
-                            item.extra_context = ""
 
-                        o.write(item)
-        print(
-            f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
-        )
+    tool_list = []
+    if not args.disable_gitleaks:
+        tool_list.append(tools.gitleaks)
+    if not args.disable_trufflehog:
+        tool_list.append(tools.truffle_hog)
+    if len(tool_list) == 0:
+        print("ERROR: No tools to scan with")
+        sys.exit(1)
+    repos = tasks.get_repos(**args.__dict__)
+    total_results = []
+    f = partial(
+        tasks.process_repo,
+        functions=tool_list,
+        single_branch=args.single_branch,
+        extra_context=args.extra_context,
+        cleanup=cleanup,
+        threshold_date=threshold_date,
+        validate_https=not args.dont_validate_https,
+        to_scan_list=to_scan_list,
+    )
+    pool = ThreadPool(args.parallel_repos)
+    results = pool.imap_unordered(f, repos)
+    processed_repos = 0
+    with output.Output(args.out_format, args.out) as o:
+        for result_batch in results:
+            processed_repos += 1
+            print(
+                f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
+                end="\r",
+                flush=True,
+            )
+            for result in result_batch:
+                if result.status == "FAIL" or result.findings == []:
+                    continue
+                for item in result.findings:
+                    total_results.append(item)
+                    if args.dont_store_secret:
+                        item.secret = ""  # nosec hardcoded_password_string
+                        item.context = ""
+                        item.extra_context = ""
 
-        if not args.no_stats:
-            s = stats.Stats(total_results, processed_repos)
-            print(s.Report())
+                    o.write(item)
+    print(
+        f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
+    )
+
+    if not args.no_stats:
+        s = stats.Stats(total_results, processed_repos)
+        print(s.Report())
 
     if args.web:
         filename = f"{args.out}.{args.out_format}"

@@ -169,15 +169,9 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--convert-to-html",
-    type=str,
-    help="Specifies the input results file to read in and convert to a HTML document"
-)
-
-parser.add_argument(
     "--web",
     action="store_true",
-    help="Creates a localhost on 8080 to view the results in browser"
+    help="Hosts a webserver on http://localhost:8080 to view the results in browser",
 )
 
 parser.add_argument(

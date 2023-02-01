@@ -126,7 +126,7 @@ options:
   -h, --help            show this help message and exit
   --out OUT             Output file (default: results)
   --no-cleanup          Don't remove checked-out repositories upon completion
-  --out-format {csv,json}
+  --out-format {csv,json,html}
   --parallel-repos PARALLEL_REPOS
                         Number of repos to process in parallel - more than 3 not advised (default: 3)
   --disable-trufflehog  Scan without trufflehog
@@ -142,6 +142,7 @@ options:
   --update-ca-store     If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.
   --dont-validate-https
                         Disables HTTPS validation for APIs/cloning.
+  --web                 Hosts a webserver on http://localhost:8080 to view the results in browser
   --to-scan-list TO_SCAN_LIST
                         The file to read the list of repositories to scan from. One repository per line, web URL to the repository.
 
