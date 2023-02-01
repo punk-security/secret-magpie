@@ -20,6 +20,7 @@ import string
 import http.server
 import socketserver
 from urllib.parse import urlparse, parse_qs
+import hashlib
 
 ag_grid_template = ""
 
@@ -135,9 +136,7 @@ if __name__ == "__main__":
                     ).replace("$$AGGRID_CODE$$", aggrid.read()),
                 )
 
-        auth_param = "".join(
-            [random.choice(string.ascii_letters) for i in range(0, 64)]
-        )
+        auth_param = hashlib.sha256(os.urandom(32)).hexdigest()
 
         class ServeResultsHandler(http.server.SimpleHTTPRequestHandler):
             def do_GET(self):
@@ -156,7 +155,7 @@ if __name__ == "__main__":
         with socketserver.TCPServer((ADDR, int(PORT)), ServeResultsHandler) as httpd:
             print(f"Server started at {ADDR}:{PORT}")
             print(
-                f"Available at http://{ADDR if ADDR != '0.0.0.0' else '127.0.0.1'}:{PORT}/?key={auth_param}"
+                f"Available at http://{ADDR if ADDR != '0.0.0.0' else '127.0.0.1'}:{PORT}/?key={auth_param}"  # nosec hardcoded_bind_all_interfaces
             )
             try:
                 httpd.serve_forever()
