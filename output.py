@@ -23,8 +23,15 @@ class Output:
         if self.format == "html":
             with open("template.html", "r") as f:
                 self.ag_grid_template = f.read()
+
+            with open("ag-grid-community.min.js", "r") as f:
+                self.ag_grid_code = f.read()
             self.fd = open(self.path, "w", 1, encoding="utf-8", newline="")
-            self.fd.write(self.ag_grid_template.split("$$ROWDATA$$")[0])
+            self.fd.write(
+                self.ag_grid_template.split("$$ROWDATA$$")[0].replace(
+                    "$$AGGRID_CODE$$", self.ag_grid_code
+                )
+            )
         return self
 
     def __exit__(self, type, value, traceback):

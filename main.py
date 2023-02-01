@@ -124,7 +124,12 @@ if __name__ == "__main__":
                 results[i]["status"] = "New"
 
         with open("results.html", "w", encoding="utf-8") as f:
-            f.write(ag_grid_template.replace("$$ROWDATA$$", json.dumps(results)))
+            with open("ag-grid-community.min.js") as aggrid:
+                f.write(
+                    ag_grid_template.replace(
+                        "$$ROWDATA$$", json.dumps(results)
+                    ).replace("$$AGGRID_CODE$$", aggrid.read()),
+                )
 
         class ServeResultsHandler(http.server.SimpleHTTPRequestHandler):
             def do_GET(self):

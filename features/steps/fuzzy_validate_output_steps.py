@@ -156,11 +156,11 @@ def do_match_test(format, expected):
                     - 1
                 ]
 
-                print(json.dumps(json.loads(rowData)))
-                print(json.dumps(json.loads(expected)))
-
                 if first_half.find("<!DOCTYPE html>") == -1:
                     raise AssertionError("results.html is missing its first half!")
+
+                if first_half.find("ag-grid-community") == -1:
+                    raise AssertionError("ag-grid-community.min.js is missing!")
 
                 if latter_half.find("</html>") == -1:
                     raise AssertionError("results.html is missing its latter half!")
@@ -208,6 +208,10 @@ def step_impl(context, address, file):
             resp = requests.get(address).content.decode(encoding="UTF-8")
         except:
             time.sleep(10)
+
+    if resp == "":
+        raise AssertionError("Webserver never started!")
+
     with open("features/match_files/" + file) as f:
         expected = f.read()
         position = resp.find("let rowData = ")
@@ -217,11 +221,11 @@ def step_impl(context, address, file):
 
         rowData = resp[position + len("let rowData = ") : resp.find("\n", position) - 1]
 
-        print(json.dumps(json.loads(rowData)))
-        print(json.dumps(json.loads(expected)))
-
         if first_half.find("<!DOCTYPE html>") == -1:
             raise AssertionError("results.html is missing its first half!")
+
+        if first_half.find("ag-grid-community") == -1:
+            raise AssertionError("ag-grid-community.min.js is missing!")
 
         if latter_half.find("</html>") == -1:
             raise AssertionError("results.html is missing its latter half!")
