@@ -212,8 +212,9 @@
                 cellEditor: StatusEditor,
                 editable: true,
                 filter: "agTextColumnFilter",
+                maxWidth: 180,
             },
-            { field: "date", headerName: "Commited At", filter: "agTextColumnFilter", unSortIcon: true, cellRenderer: TimestampRenderer },
+            { field: "date", headerName: "Commited At", filter: "agTextColumnFilter", unSortIcon: true, cellRenderer: TimestampRenderer, maxWidth: 160 },
             { field: "detector_type", filter: "agTextColumnFilter", unSortIcon: true, maxWidth: 180, hide: true, headerName: "Type" },
             { field: "author_email", hide: true },
             { field: "repository_url", hide: true },
@@ -229,7 +230,7 @@
             { field: "redacted_secret", hide: true },
             { field: "context", hide: true },
             { field: "extra_context", hide: true },
-            { field: "verified", cellRenderer: VerifiedRenderer, maxWidth: 100 },
+            { field: "verified", cellRenderer: VerifiedRenderer, maxWidth: 85 },
         ];
 
         // refreshes text that displays how many rows out of the total number of rows have been selected

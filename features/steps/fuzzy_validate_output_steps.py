@@ -8,6 +8,9 @@ import subprocess
 
 import io
 
+import requests
+import time
+
 
 @when("we run Trufflehog capturing JSON output")
 def step_impl(context):
@@ -76,10 +79,14 @@ def step_impl(context):
 
 def recursive_compare_json(expected, actual):
     if type(expected) != type(actual):
+        print(
+            f"Failed on type({expected}) == type({actual}) ({type(expected)} == {type(actual)})"
+        )
         return False
     match expected:
         case dict():
             if expected.keys() != actual.keys():
+                print(f"Failed on {expected.keys()} == {actual.keys()}")
                 return False
             for key in expected.keys():
                 if not recursive_compare_json(expected[key], actual[key]):
@@ -87,6 +94,9 @@ def recursive_compare_json(expected, actual):
             return True
         case list():
             if len(expected) != len(actual):
+                print(
+                    f"Failed on len({expected}) == len({actual}) ({len(expected)} == {len(actual)})"
+                )
                 return False
             for expected, actual in zip(expected, actual):
                 if not recursive_compare_json(expected, actual):
@@ -94,6 +104,7 @@ def recursive_compare_json(expected, actual):
             return True
         case _:
             if expected != actual and expected != "_":
+                print(f"Failed on {expected} == {actual}")
                 return False
             return True
 
@@ -124,6 +135,40 @@ def do_match_test(format, expected):
                 assert recursive_compare_json(
                     json.loads(expected), json.loads(f.read())
                 ), "results.json did not match!"
+        case "html":
+            with open("results.html", "r") as f:
+                # For the HTML, we need to
+                #  - verify that the start of the file exists
+                #  - validate the data within the "middle" of the file
+                #  - verify that the end of the file exists
+                file_contents = f.read()
+
+                # We expect the rowData to be all on one line
+
+                position = file_contents.find("let rowData = ")
+
+                first_half = file_contents[0:position]
+                latter_half = file_contents[(file_contents.find("\n", position)) :]
+
+                rowData = file_contents[
+                    position
+                    + len("let rowData = ") : file_contents.find("\n", position)
+                    - 1
+                ]
+
+                print(json.dumps(json.loads(rowData)))
+                print(json.dumps(json.loads(expected)))
+
+                if first_half.find("<!DOCTYPE html>") == -1:
+                    raise AssertionError("results.html is missing its first half!")
+
+                if latter_half.find("</html>") == -1:
+                    raise AssertionError("results.html is missing its latter half!")
+
+                assert recursive_compare_json(
+                    json.loads(expected), json.loads(rowData)
+                ), "results.html's data did not match!"
+
         case "csv":
             with open("results.csv", "r") as f:
                 expected = list(csv.DictReader(io.StringIO(expected)))
@@ -153,3 +198,34 @@ def step_impl(context, format):
 def step_impl(context, format, file):
     with open("features/match_files/" + file) as f:
         do_match_test(format, f.read())
+
+
+@then("a web request to {address} will match file {file}")
+def step_impl(context, address, file):
+    resp = ""
+    for i in range(0, 3):
+        try:
+            resp = requests.get(address).content.decode(encoding="UTF-8")
+        except:
+            time.sleep(10)
+    with open("features/match_files/" + file) as f:
+        expected = f.read()
+        position = resp.find("let rowData = ")
+
+        first_half = resp[0:position]
+        latter_half = resp[(resp.find("\n", position)) :]
+
+        rowData = resp[position + len("let rowData = ") : resp.find("\n", position) - 1]
+
+        print(json.dumps(json.loads(rowData)))
+        print(json.dumps(json.loads(expected)))
+
+        if first_half.find("<!DOCTYPE html>") == -1:
+            raise AssertionError("results.html is missing its first half!")
+
+        if latter_half.find("</html>") == -1:
+            raise AssertionError("results.html is missing its latter half!")
+
+        assert recursive_compare_json(
+            json.loads(expected), json.loads(rowData)
+        ), "results.html's data did not match!"

@@ -71,5 +71,5 @@ class Output:
         data = finding.__dict__
         data["status"] = "New"
         json_payload = json.dumps(data)
-        self.fd.write(f"{sep}{os.linesep}{json_payload}")
+        self.fd.write(f"{sep}{json_payload}")
         self.fd.flush()

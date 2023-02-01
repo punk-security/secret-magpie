@@ -72,6 +72,7 @@ if __name__ == "__main__":
             cleanup=cleanup,
             threshold_date=threshold_date,
             validate_https=not args.dont_validate_https,
+            to_scan_list=to_scan_list,
         )
         pool = ThreadPool(args.parallel_repos)
         results = pool.imap_unordered(f, repos)
@@ -94,8 +95,7 @@ if __name__ == "__main__":
                             item.context = ""
                             item.extra_context = ""
 
-                        if args.out_format != "html":
-                            o.write(item)
+                        o.write(item)
         print(
             f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
         )
