@@ -58,7 +58,7 @@ class Output:
             self.writer.writeheader()
         try:
             self.writer.writerow(finding.__dict__)
-        except: # nosec try_except_pass
+        except:  # nosec try_except_pass
             pass  # best effort
 
     def write_json(self, finding):
