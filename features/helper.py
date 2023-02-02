@@ -153,7 +153,7 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
 
     if context.web:
         context.proc = subprocess.Popen(
-            param_list, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            param_list, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
     else:
         context.proc = subprocess.run(

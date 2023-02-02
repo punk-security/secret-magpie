@@ -54,4 +54,4 @@ Feature: Validate that the output of the various tools and secret magpie itself 
     @fixture.wantsAWSSecret
     Scenario: Validate that we get the expected data when we run secret-magpie-cli in web mode
         When we run secret-magpie-cli in multi branch mode, web mode enabled, to scan list None, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
-        Then a web request to http://127.0.0.1:8080 will match file secret-magpie-html-web.json
+        Then a web request will match file secret-magpie-html-web.json

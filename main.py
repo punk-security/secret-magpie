@@ -157,6 +157,8 @@ if __name__ == "__main__":
             print(
                 f"Available at http://{ADDR if ADDR != '0.0.0.0' else '127.0.0.1'}:{PORT}/?key={auth_param}"  # nosec hardcoded_bind_all_interfaces
             )
+            # Force a flush of stdout at this point
+            sys.stdout.flush()
             try:
                 httpd.serve_forever()
             except KeyboardInterrupt:

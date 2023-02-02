@@ -200,17 +200,37 @@ def step_impl(context, format, file):
         do_match_test(format, f.read())
 
 
-@then("a web request to {address} will match file {file}")
-def step_impl(context, address, file):
-    resp = ""
-    for i in range(0, 3):
-        try:
-            resp = requests.get(address).content.decode(encoding="UTF-8")
-        except:
-            time.sleep(10)
+@then("a web request will match file {file}")
+def step_impl(context, file):
+    # Set non-blocking on stdout and stderr
+    os.set_blocking(context.proc.stdout.fileno(), False)
+    os.set_blocking(context.proc.stderr.fileno(), False)
+
+    stdout = b""
+    stderr = b""
+
+    # We expect the server to print its address within 10 seconds of it starting
+    start_time = time.time()
+    while time.time() - start_time < 10:
+        if (read := context.proc.stdout.read()) is not None:
+            stdout += read
+        if (read := context.proc.stderr.read()) is not None:
+            stderr += read
+        time.sleep(1)
+
+    stdout = stdout.decode(encoding="UTF-8")
+
+    linestart = stdout.find("Available at ")
+    lineend = stdout.find("\n", linestart)
+    if linestart == -1:
+        raise AssertionError("Webserver never started!")
+
+    address = stdout[linestart:lineend].split(" ")[2]
+
+    resp = requests.get(address).content.decode(encoding="UTF-8")
 
     if resp == "":
-        raise AssertionError("Webserver never started!")
+        raise AssertionError("Empty response!")
 
     with open("features/match_files/" + file) as f:
         expected = f.read()
