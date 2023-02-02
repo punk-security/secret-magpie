@@ -56,8 +56,10 @@ class Output:
                 self.fd, fieldnames=finding.__dict__.keys(), dialect="excel"
             )
             self.writer.writeheader()
-
-        self.writer.writerow(finding.__dict__)
+        try:
+            self.writer.writerow(finding.__dict__)
+        except:
+            pass # best effort
 
     def write_json(self, finding):
         sep = ","

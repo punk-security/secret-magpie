@@ -2,6 +2,8 @@ from multiprocessing.pool import ThreadPool
 from functools import partial
 import sys
 
+import web
+
 import csv
 import json
 import tools
@@ -14,13 +16,6 @@ import time
 import os
 import subprocess  # nosec blacklist
 import urllib3
-import random
-import string
-
-import http.server
-import socketserver
-from urllib.parse import urlparse, parse_qs
-import hashlib
 
 ag_grid_template = ""
 
@@ -82,24 +77,27 @@ if __name__ == "__main__":
     results = pool.imap_unordered(f, repos)
     processed_repos = 0
     with output.Output(args.out_format, args.out) as o:
-        for result_batch in results:
-            processed_repos += 1
-            print(
-                f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
-                end="\r",
-                flush=True,
-            )
-            for result in result_batch:
-                if result.status == "FAIL" or result.findings == []:
-                    continue
-                for item in result.findings:
-                    total_results.append(item)
-                    if args.dont_store_secret:
-                        item.secret = ""  # nosec hardcoded_password_string
-                        item.context = ""
-                        item.extra_context = ""
+        try:
+            for result_batch in results:
+                processed_repos += 1
+                print(
+                    f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
+                    end="\r",
+                    flush=True,
+                )
+                for result in result_batch:
+                    if result.status == "FAIL" or result.findings == []:
+                        continue
+                    for item in result.findings:
+                        total_results.append(item)
+                        if args.dont_store_secret:
+                            item.secret = ""  # nosec hardcoded_password_string
+                            item.context = ""
+                            item.extra_context = ""
 
-                    o.write(item)
+                        o.write(item)
+        except KeyboardInterrupt:
+            print("                  ... CAUGHT INTERRUPT ... ABORTING EARLY                                   \n\n ")
     print(
         f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
     )
@@ -110,7 +108,6 @@ if __name__ == "__main__":
 
     if args.web:
         filename = f"{args.out}.{args.out_format}"
-        print(filename)
         with open(filename, "r") as f:
             filetype = None
             results = None
@@ -136,32 +133,4 @@ if __name__ == "__main__":
                     ).replace("$$AGGRID_CODE$$", aggrid.read()),
                 )
 
-        auth_param = hashlib.sha256(os.urandom(32)).hexdigest()
-
-        class ServeResultsHandler(http.server.SimpleHTTPRequestHandler):
-            def do_GET(self):
-                query = urlparse(self.path).query
-                query_components = parse_qs(query)
-
-                if query_components.get("key", "") != [auth_param]:
-                    return None
-                self.path = "results.html"
-                return http.server.SimpleHTTPRequestHandler.do_GET(self)
-
-        [ADDR, PORT] = os.environ.get(
-            "SECRETMAGPIE_LISTEN_ADDR", "127.0.0.1:8080"
-        ).split(":")
-
-        with socketserver.TCPServer((ADDR, int(PORT)), ServeResultsHandler) as httpd:
-            print(f"Server started at {ADDR}:{PORT}")
-            print(
-                f"Available at http://{ADDR if ADDR != '0.0.0.0' else '127.0.0.1'}:{PORT}/?key={auth_param}"  # nosec hardcoded_bind_all_interfaces
-            )
-            # Force a flush of stdout at this point
-            sys.stdout.flush()
-            try:
-                httpd.serve_forever()
-            except KeyboardInterrupt:
-                print("Shutting down...")
-                httpd.server_close()
-                print("Server shutdown.")
+        web.run("results.html")
