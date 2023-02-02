@@ -97,7 +97,9 @@ if __name__ == "__main__":
 
                         o.write(item)
         except KeyboardInterrupt:
-            print("                  ... CAUGHT INTERRUPT ... ABORTING EARLY                                   \n\n ")
+            print(
+                "                  ... CAUGHT INTERRUPT ... ABORTING EARLY                                   \n\n "
+            )
     print(
         f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
     )

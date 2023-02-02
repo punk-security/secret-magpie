@@ -59,7 +59,7 @@ class Output:
         try:
             self.writer.writerow(finding.__dict__)
         except:
-            pass # # nosec try_except_pass best effort
+            pass  # # nosec try_except_pass best effort
 
     def write_json(self, finding):
         sep = ","
