@@ -149,29 +149,40 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
     env = os.environ
     env["PYTHONUTF8"] = "1"
 
-    proc = subprocess.run(param_list, capture_output=True, env=env, encoding="UTF-8")
+    context.stdout = ""
 
-    if proc.stderr != "":
-        raise AssertionError(proc.stderr)
+    if context.web:
+        context.proc = subprocess.Popen(
+            param_list, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+    else:
+        context.proc = subprocess.run(
+            param_list, capture_output=True, env=env, encoding="UTF-8"
+        )
 
-    if "❌" in proc.stdout:
-        raise AssertionError(proc.stdout)
+        if context.proc.stderr != "":
+            raise AssertionError(context.proc.stderr)
 
-    if "warning" in proc.stdout:
-        raise AssertionError(proc.stdout)
+        if "❌" in context.proc.stdout:
+            raise AssertionError(context.proc.stdout)
 
-    stdout = proc.stdout.split("\n")
+        if "warning" in context.proc.stdout:
+            raise AssertionError(context.proc.stdout)
 
-    context.stdout = stdout[10:][:1]
+        stdout = context.proc.stdout.split("\n")
 
-    for fn in [
-        lambda l: list(map(lambda l: l.split("|"), l)),
-        lambda l: list(filter(lambda l: len(l) == 4, l)),
-    ]:
-        stdout = fn(stdout)
+        context.stdout = stdout[10:][:1]
 
-    detections = list(filter(lambda l: l[1].strip() == "Detections", stdout))
-    unique_secrets = list(filter(lambda l: l[1].strip() == "Unique Secrets", stdout))
+        for fn in [
+            lambda l: list(map(lambda l: l.split("|"), l)),
+            lambda l: list(filter(lambda l: len(l) == 4, l)),
+        ]:
+            stdout = fn(stdout)
+
+        detections = list(filter(lambda l: l[1].strip() == "Detections", stdout))
+        unique_secrets = list(
+            filter(lambda l: l[1].strip() == "Unique Secrets", stdout)
+        )
 
     try:
         context.found = int(detections[0][2])
@@ -296,6 +307,40 @@ def step_impl(
     engines,
 ):
     args = []
+    if to_scan_list != "None":
+        args.append(f"--to-scan-list={to_scan_list}")
+    if https_validation == "disabled":
+        args.append("--dont-validate-https")
+    if threshold_date != "None":
+        args.append(f"--ignore-branches-older-than={threshold_date}")
+    if extra_context == "enabled":
+        args.append("--extra-context")
+    if secret_toggle == "disabled":
+        args.append("--dont-store-secret")
+    if branch_toggle == "single":
+        args.append("--single-branch")
+    run_secret_magpie(context, engines, outformat=format, args=args)
+
+
+@when(
+    "we run secret-magpie-cli in {branch_toggle} branch mode, web mode {web_mode}, to scan list {to_scan_list}, https validation {https_validation}, ignoring commits older than {threshold_date}, extra context {extra_context}, secret storing {secret_toggle}, output format {format} and engines: {engines}"
+)
+def step_impl(
+    context,
+    branch_toggle,
+    web_mode,
+    to_scan_list,
+    https_validation,
+    threshold_date,
+    extra_context,
+    secret_toggle,
+    format,
+    engines,
+):
+    args = []
+    if web_mode == "enabled":
+        context.web = True
+        args.append("--web")
     if to_scan_list != "None":
         args.append(f"--to-scan-list={to_scan_list}")
     if https_validation == "disabled":

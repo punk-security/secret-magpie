@@ -69,7 +69,7 @@ class Finding(object):
         if len(secret) < 5:
             return "REDACTED"
         else:
-            return f"{secret[0:3]}{'*' * (len(secret) - 4)}"
+            return f"{secret[0:3]}{'*' * (min(len(secret) - 4, 128))}"
 
     @staticmethod
     def getDirectoryOfRepo(repo):

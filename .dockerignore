@@ -1,5 +1,3 @@
-.idea
-venv
 __pycache__/
 /*.csv
 /*.json
@@ -7,6 +5,4 @@ __pycache__/
 !template.html
 testing/
 .vscode
-.vs
-.run
-repos.txt
+.git

@@ -78,6 +78,16 @@ def after_tag(context, tag):
 
 
 def before_scenario(context, scenario):
+    context.proc = None
+    context.web = False
     if "skipinrunner" in scenario.effective_tags:
         if os.environ.get("SKIP_IN_RUNNER") != None:
             scenario.skip("Skipping in GitHub Action Runner")
+
+
+def after_scenario(context, scenario):
+    if context.proc is not None:
+        try:
+            context.proc.terminate()
+        except:
+            pass

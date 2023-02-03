@@ -21,5 +21,6 @@ WORKDIR /app
 COPY . .
 
 # Exports
+ENV SECRETMAGPIE_LISTEN_ADDR=0.0.0.0:8080
 ENV SM_COMMAND "docker run punksecurity/secret-magpie --" 
 ENTRYPOINT [ "python3", "/app/main.py" ]

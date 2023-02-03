@@ -96,7 +96,7 @@ parser.add_argument(
     "--out-format",
     type=str,
     default="csv",
-    choices=["csv", "json"],
+    choices=["csv", "json", "html"],
 )
 
 parser.add_argument(
@@ -168,6 +168,11 @@ parser.add_argument(
     help="Disables HTTPS validation for APIs/cloning.",
 )
 
+parser.add_argument(
+    "--web",
+    action="store_true",
+    help="Hosts a webserver on http://127.0.0.1:8080 to view the results in browser",
+)
 
 parser.add_argument(
     "--to-scan-list",

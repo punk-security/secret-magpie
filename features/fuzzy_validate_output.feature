@@ -43,3 +43,15 @@ Feature: Validate that the output of the various tools and secret magpie itself 
     Scenario: Validate that results.csv contains expected data when secret-magpie-cli is run against remote repos with secret storing disabled
         When we run secret-magpie-cli with secret storing disabled, output format csv and engines: all
         Then results.csv will match file secret-magpie-github-no-secrets.csv
+
+    @localrepos
+    @fixture.wantsAWSSecret
+    Scenario: Validate that results.html contains expected data when secret-magpie-cli is run
+        When we run secret-magpie-cli with output format html and engines: all
+        Then results.html will match file secret-magpie-html.json
+
+    @localrepos
+    @fixture.wantsAWSSecret
+    Scenario: Validate that we get the expected data when we run secret-magpie-cli in web mode
+        When we run secret-magpie-cli in multi branch mode, web mode enabled, to scan list None, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
+        Then a web request will match file secret-magpie-html-web.json

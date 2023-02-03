@@ -2,6 +2,10 @@ from multiprocessing.pool import ThreadPool
 from functools import partial
 import sys
 
+import web
+
+import csv
+import json
 import tools
 import tasks
 import argparsing
@@ -13,12 +17,17 @@ import os
 import subprocess  # nosec blacklist
 import urllib3
 
+ag_grid_template = ""
+
 if __name__ == "__main__":
     urllib3.disable_warnings()
     print(argparsing.banner)
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
+    if args.web:
+        with open("template.html", "r", encoding="utf-8") as f:
+            ag_grid_template = f.read()
     to_scan_list = None
 
     if args.to_scan_list is not None:
@@ -68,23 +77,29 @@ if __name__ == "__main__":
     results = pool.imap_unordered(f, repos)
     processed_repos = 0
     with output.Output(args.out_format, args.out) as o:
-        for result_batch in results:
-            processed_repos += 1
+        try:
+            for result_batch in results:
+                processed_repos += 1
+                print(
+                    f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
+                    end="\r",
+                    flush=True,
+                )
+                for result in result_batch:
+                    if result.status == "FAIL" or result.findings == []:
+                        continue
+                    for item in result.findings:
+                        total_results.append(item)
+                        if args.dont_store_secret:
+                            item.secret = ""  # nosec hardcoded_password_string
+                            item.context = ""
+                            item.extra_context = ""
+
+                        o.write(item)
+        except KeyboardInterrupt:
             print(
-                f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |",
-                end="\r",
-                flush=True,
+                "                  ... CAUGHT INTERRUPT ... ABORTING EARLY                                   \n\n "
             )
-            for result in result_batch:
-                if result.status == "FAIL" or result.findings == []:
-                    continue
-                for item in result.findings:
-                    total_results.append(item)
-                    if args.dont_store_secret:
-                        item.secret = ""  # nosec hardcoded_password_string
-                        item.context = ""
-                        item.extra_context = ""
-                    o.write(item)
     print(
         f"          | Processed Repos: {processed_repos} | | Total secret detections: {len(total_results)} |"
     )
@@ -92,3 +107,32 @@ if __name__ == "__main__":
     if not args.no_stats:
         s = stats.Stats(total_results, processed_repos)
         print(s.Report())
+
+    if args.web:
+        filename = f"{args.out}.{args.out_format}"
+        with open(filename, "r") as f:
+            filetype = None
+            results = None
+            if filename.endswith(".csv"):
+                results = list(csv.DictReader(f))
+            elif filename.endswith(".json"):
+                results = json.loads(f.read())
+            elif filename.endswith(".html"):
+                pass
+            else:
+                print("ERROR: Invalid input format for HTML conversion.")
+                sys.exit(1)
+
+            # Add the status column
+            for i in range(0, len(results)):
+                results[i]["status"] = "New"
+
+        with open("results.html", "w", encoding="utf-8") as f:
+            with open("ag-grid-community.min.js") as aggrid:
+                f.write(
+                    ag_grid_template.replace(
+                        "$$ROWDATA$$", json.dumps(results)
+                    ).replace("$$AGGRID_CODE$$", aggrid.read()),
+                )
+
+        web.run("results.html")

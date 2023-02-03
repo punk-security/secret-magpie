@@ -84,6 +84,12 @@ This can be achieved using the following command
 docker -v /path/to/your/certificates:/usr/local/share/ca-certificates/ run punksecurity/secret-magpie <other options> --update-ca-certificates
 ```
 
+There is additionally a web mode that allows you to access your results via a web browser immediately after scanning has finished, it can be used like
+```
+docker run -p 127.0.0.1:8080:8080 punksecurity/secret-magpie --web <other options>
+```
+**Note: We strongly advise against exposing the web server to the world, please ensure you are binding to 127.0.0.1**
+
 ## Running the tool locally
 
 If you prefer not to use Docker then you will need to manually install the following:
@@ -113,6 +119,12 @@ or for the local filesystem
 python main.py filesystem --path <path to repos>
 ```
 
+You can also use the web mode outside of docker, like
+```
+python main.py --web <other options>
+```
+It will by default bind to `127.0.0.1:8080`, this address can be overriden via the `SECRETMAGPIE_LISTEN_ADDR` environment variable, this enviroment variable should always be in the format `address:port`. We strongly recommend always binding to `127.0.0.1`.
+
 ## Full Usage
 
 ```
@@ -126,7 +138,7 @@ options:
   -h, --help            show this help message and exit
   --out OUT             Output file (default: results)
   --no-cleanup          Don't remove checked-out repositories upon completion
-  --out-format {csv,json}
+  --out-format {csv,json,html}
   --parallel-repos PARALLEL_REPOS
                         Number of repos to process in parallel - more than 3 not advised (default: 3)
   --disable-trufflehog  Scan without trufflehog
@@ -142,6 +154,7 @@ options:
   --update-ca-store     If you're running secret-magpie-cli within Docker and need to provide an external CA certificate to trust, pass this option to cause it to update the container's certificate store.
   --dont-validate-https
                         Disables HTTPS validation for APIs/cloning.
+  --web                 Hosts a webserver on http://127.0.0.1:8080 to view the results in browser
   --to-scan-list TO_SCAN_LIST
                         The file to read the list of repositories to scan from. One repository per line, web URL to the repository.
 
