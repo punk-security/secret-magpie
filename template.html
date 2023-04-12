@@ -320,6 +320,17 @@
 
             ul.appendChild(resetLi);
 
+            // Create the copy cell to clipboard option
+            let copyLi = document.createElement("li");
+            copyLi.innerHTML = "Copy cell";
+            copyLi.onclick = () => {
+                navigator.clipboard.writeText(params.value)
+                document.execCommand('copy');
+                selection.removeAllRanges();
+            }
+
+            ul.appendChild(copyLi);
+
             if (params.colDef.field == 'hashed_secret') {
                 // Create the reset filter option
                 let markLi = document.createElement("li");
