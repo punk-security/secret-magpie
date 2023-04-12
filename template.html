@@ -325,8 +325,6 @@
             copyLi.innerHTML = "Copy cell";
             copyLi.onclick = () => {
                 navigator.clipboard.writeText(params.value)
-                document.execCommand('copy');
-                selection.removeAllRanges();
             }
 
             ul.appendChild(copyLi);
