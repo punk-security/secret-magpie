@@ -1,5 +1,5 @@
 behave==1.2.6
-gitpython==3.*
+gitpython==3.1.29
 pygithub==1.*
 python-gitlab==3.*
 atlassian-python-api==3.*
