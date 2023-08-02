@@ -34,8 +34,8 @@ def gitleaks(path, repo, branch, extra_context, conf):
     gitleaks = ["gitleaks", "detect", "-s", path, "-r", temp_path]
     gitleaks.append(f"--log-opts={branch}")
 
-    if "gitleaks" in conf:
-        gitleaks.append(f"--config={conf['gitleaks']}")
+    if "config_file_path" in conf["gitleaks"]:
+        gitleaks.append(f"--config={conf['gitleaks']['config_file_path']}")
 
     result = run(  # nosec B603 git branch has limited char set
         gitleaks, capture_output=True

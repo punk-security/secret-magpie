@@ -25,7 +25,7 @@ if __name__ == "__main__":
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
-    conf = {}
+    conf = {"gitleaks": {}}
 
     if args.web:
         with open("template.html", "r", encoding="utf-8") as f:
@@ -37,7 +37,7 @@ if __name__ == "__main__":
             to_scan_list = f.read().split("\n")
 
     if args.gl_config is not None:
-        conf["gitleaks"] = args.gl_config
+        conf["gitleaks"]["config_file_path"] = args.gl_config
 
     with open(os.devnull, "wb") as devnull:
         if args.update_ca_store:
