@@ -37,6 +37,11 @@ if __name__ == "__main__":
             to_scan_list = f.read().split("\n")
 
     if args.gl_config is not None:
+        try:
+            open(args.gl_config, "rb").close()
+        except FileNotFoundError:
+            print("File at", args.gl_config, "not found.")
+            exit()
         conf["gitleaks"]["config_file_path"] = args.gl_config
 
     with open(os.devnull, "wb") as devnull:

@@ -183,7 +183,7 @@ parser.add_argument(
 parser.add_argument(
     "--gl-config",
     type=str,
-    help="The .toml file to pass from Gitleaks.",
+    help="Path to toml file for custom rulesets for Gitleaks",
 )
 
 
