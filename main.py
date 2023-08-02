@@ -16,6 +16,7 @@ import time
 import os
 import subprocess  # nosec blacklist
 import urllib3
+import tomllib
 
 ag_grid_template = ""
 
@@ -34,10 +35,11 @@ if __name__ == "__main__":
         with open(args.to_scan_list, "r") as f:
             to_scan_list = f.read().split("\n")
 
-    gl_config = None
-    if args.gl_config is not None:
-        with open(args.gl_config, "r") as f:
-            gl_config = f.read().split("\n")
+    #gl_config = None
+    #if args.gl_config is not None:
+    #    with open(args.gl_config, "rb") as f:
+    #        data = tomllib.load(f)
+    #        gl_config = f.read().split("\n")
 
     with open(os.devnull, "wb") as devnull:
         if args.update_ca_store:
@@ -72,7 +74,7 @@ if __name__ == "__main__":
         functions=tool_list,
         single_branch=args.single_branch,
         extra_context=args.extra_context,
-        gl_config=gl_config,
+        gl_config=args.gl_config,
         cleanup=cleanup,
         threshold_date=threshold_date,
         validate_https=not args.dont_validate_https,
