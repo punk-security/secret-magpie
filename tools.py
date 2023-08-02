@@ -29,10 +29,14 @@ def truffle_hog(path: str, repo, branch, extra_context):
     return ret
 
 
-def gitleaks(path, repo, branch, extra_context):
+def gitleaks(path, repo, branch, extra_context, config):
     temp_path = f"{path}.out"
     gitleaks = ["gitleaks", "detect", "-s", path, "-r", temp_path]
     gitleaks.append(f"--log-opts={branch}")
+
+    if config is not None:
+        gitleaks.append(f"--config={config}")
+
     result = run(  # nosec B603 git branch has limited char set
         gitleaks, capture_output=True
     )

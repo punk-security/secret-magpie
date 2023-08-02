@@ -97,6 +97,7 @@ def process_repo(
     functions,
     single_branch=False,
     extra_context=False,
+    gl_config=None,
     cleanup=True,
     threshold_date=None,
     validate_https=True,
@@ -125,14 +126,24 @@ def process_repo(
     for branch in branches:
         for function in functions:
             try:
-                out.append(
-                    ProcessRepoResult(
-                        repo,
-                        "SUCCESS",
-                        function.__name__,
-                        function(path, repo, branch, extra_context),
+                if gl_config is not None:
+                    out.append(
+                        ProcessRepoResult(
+                            repo,
+                            "SUCCESS",
+                            function.__name__,
+                            function(path, repo, branch, extra_context, gl_config),
+                        )
                     )
-                )
+                else:
+                    out.append(
+                        ProcessRepoResult(
+                            repo,
+                            "SUCCESS",
+                            function.__name__,
+                            function(path, repo, branch, extra_context),
+                        )
+                    )
             except:
                 out.append(
                     ProcessRepoResult(repo, "FAIL", f"Could not {function.__name__}")
