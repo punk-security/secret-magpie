@@ -208,7 +208,6 @@ def parse_args():
     if "filesystem" == args.provider and (args.path is None):
         parser.error("filesystem requires --path")
 
-    # TODO: Add check to make sure toml file
     if args.gl_config is not None and args.disable_gitleaks:
-        parser.error("gitleaks can't be disabled to pass a if passing a .toml file")
+        parser.error("Gitleaks can't be disabled if passing a .toml file")
     return args

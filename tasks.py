@@ -126,7 +126,7 @@ def process_repo(
     for branch in branches:
         for function in functions:
             try:
-                if gl_config is not None:
+                if function.__name__ == "gitleaks":
                     out.append(
                         ProcessRepoResult(
                             repo,
