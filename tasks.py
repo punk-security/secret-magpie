@@ -94,10 +94,10 @@ class ProcessRepoResult(object):
 
 def process_repo(
     repo,
+    conf,
     functions,
     single_branch=False,
     extra_context=False,
-    gl_config=None,
     cleanup=True,
     threshold_date=None,
     validate_https=True,
@@ -126,24 +126,14 @@ def process_repo(
     for branch in branches:
         for function in functions:
             try:
-                if function.__name__ == "gitleaks":
-                    out.append(
-                        ProcessRepoResult(
-                            repo,
-                            "SUCCESS",
-                            function.__name__,
-                            function(path, repo, branch, extra_context, gl_config),
-                        )
+                out.append(
+                    ProcessRepoResult(
+                        repo,
+                        "SUCCESS",
+                        function.__name__,
+                        function(path, repo, branch, extra_context, conf),
                     )
-                else:
-                    out.append(
-                        ProcessRepoResult(
-                            repo,
-                            "SUCCESS",
-                            function.__name__,
-                            function(path, repo, branch, extra_context),
-                        )
-                    )
+                )
             except:
                 out.append(
                     ProcessRepoResult(repo, "FAIL", f"Could not {function.__name__}")

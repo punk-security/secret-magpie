@@ -157,6 +157,8 @@ options:
   --web                 Hosts a webserver on http://127.0.0.1:8080 to view the results in browser
   --to-scan-list TO_SCAN_LIST
                         The file to read the list of repositories to scan from. One repository per line, web URL to the repository.
+  --gl-config GL_CONFIG
+                        The .toml file to pass from Gitleaks.
 
 github/azuredevops:
   --org ORG             Organisation name to target

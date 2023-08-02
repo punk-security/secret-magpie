@@ -4,7 +4,7 @@ from finding import Finding
 from json import loads
 
 
-def truffle_hog(path: str, repo, branch, extra_context):
+def truffle_hog(path: str, repo, branch, extra_context, conf):
     target = "file://" + path.replace("\\", "/")
     truffle_hog = [
         "trufflehog",
@@ -29,13 +29,13 @@ def truffle_hog(path: str, repo, branch, extra_context):
     return ret
 
 
-def gitleaks(path, repo, branch, extra_context, gl_config):
+def gitleaks(path, repo, branch, extra_context, conf):
     temp_path = f"{path}.out"
     gitleaks = ["gitleaks", "detect", "-s", path, "-r", temp_path]
     gitleaks.append(f"--log-opts={branch}")
 
-    if gl_config is not None:
-        gitleaks.append(f"--config={gl_config}")
+    if "gitleaks" in conf:
+        gitleaks.append(f"--config={conf['gitleaks']}")
 
     result = run(  # nosec B603 git branch has limited char set
         gitleaks, capture_output=True

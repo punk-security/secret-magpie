@@ -25,6 +25,8 @@ if __name__ == "__main__":
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
+    conf = {} #"gitleaks":"", "trufflehog":""
+
     if args.web:
         with open("template.html", "r", encoding="utf-8") as f:
             ag_grid_template = f.read()
@@ -33,6 +35,9 @@ if __name__ == "__main__":
     if args.to_scan_list is not None:
         with open(args.to_scan_list, "r") as f:
             to_scan_list = f.read().split("\n")
+
+    if args.gl_config is not None:
+        conf["gitleaks"] = args.gl_config
 
     with open(os.devnull, "wb") as devnull:
         if args.update_ca_store:
@@ -65,9 +70,9 @@ if __name__ == "__main__":
     f = partial(
         tasks.process_repo,
         functions=tool_list,
+        conf=conf,
         single_branch=args.single_branch,
         extra_context=args.extra_context,
-        gl_config=args.gl_config,
         cleanup=cleanup,
         threshold_date=threshold_date,
         validate_https=not args.dont_validate_https,
