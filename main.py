@@ -25,7 +25,7 @@ if __name__ == "__main__":
     args = argparsing.parse_args()
     cleanup = not (args.no_cleanup or "filesystem" == args.provider)
 
-    conf = {} #"gitleaks":"", "trufflehog":""
+    conf = {}
 
     if args.web:
         with open("template.html", "r", encoding="utf-8") as f:
