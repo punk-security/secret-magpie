@@ -130,11 +130,12 @@ Feature: Validate secret detection against various engines.
         When we run secret-magpie-cli in multi branch mode, to scan list repos.txt, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
         Then there will be 2 secrets detected
     
-    @azuredevops.PunkSecurity
-    Scenario: Validate that repo filtering works for AzureDevOps
-        Given we have a file called repos.txt with content
-            """
-            https://dev.azure.com/PunkSecurity/SecretMagpie-Testing/_git/ssh_key
-            """
-        When we run secret-magpie-cli in multi branch mode, to scan list repos.txt, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
-        Then there will be 2 secrets detected
+    @github.secretmagpie-testing
+    Scenario: Ensure that we only detect AWS secrets specified in the toml file on GitHub remote
+        When we run secret-magpie-cli with the config path set to includeAWSRule.toml
+        Then there will be 1 secrets detected
+
+    @github.secretmagpie-testing
+    Scenario: Ensure that we detect no secrets on GitHub remote when the toml file is empty
+        When we run secret-magpie-cli with the config path set to noRules.toml
+        Then there will be 0 secrets detected

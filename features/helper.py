@@ -384,6 +384,9 @@ def onerror(func, path, exc_info):
     os.chmod(path, stat.S_IWUSR)
     func(path)
 
+@when("we run secret-magpie-cli with the config path set to {conf}")
+def step_impl(context, conf):
+    run_secret_magpie(context, engines="all", outformat="csv", args=["--gl-config={conf}"])
 
 class LocalRepos:
     def __init__(self, rules, dir):
