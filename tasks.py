@@ -234,6 +234,7 @@ def get_repos_from_ado(org, pat, dont_validate_https):
         f"https://dev.azure.com/{org}/_apis/projects",
         headers=headers,
         verify=not dont_validate_https,
+        timeout=60,
     )
 
     if response.content == b"":
@@ -246,6 +247,7 @@ def get_repos_from_ado(org, pat, dont_validate_https):
             f"https://dev.azure.com/{org}/{project}/_apis/git/repositories",
             headers=headers,
             verify=not dont_validate_https,
+            timeout=60,
         )
         if response.content == b"":
             continue
