@@ -130,21 +130,46 @@ Feature: Validate secret detection against various engines.
         When we run secret-magpie-cli in multi branch mode, to scan list repos.txt, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
         Then there will be 2 secrets detected
     
+
     @localrepos
     @fixture.wantsAWSSecret
-    Scenario: Ensure that we only detect 1 AWS secret locally, when a matching rule is provided by toml file, and with only gitleaks enabled
-        When we run secret-magpie-cli with the config path set to includeAWSRule.toml 
+    Scenario: Ensure that we only detect an AWS secret locally, when a matching rule is provided by toml file, and with only gitleaks enabled
+        Given we have a file called rules.toml with content
+            """
+            [[rules]]
+            description = "AWS"
+            id = "aws-access-token"
+            regex = '''AKIAYVP4CIPPERUVIFXG'''
+            keywords = [
+                "akia","agpa","aida","aroa","aipa","anpa","anva","asia",
+            ]
+            """
+        When we run secret-magpie-cli with a gitleaks rules.toml file
+        Then there will be 1 secrets detected
+    
+    @localrepos
+    @fixture.wantsAWSSecret
+    @fixture.wantsSSHKey
+    Scenario: Ensure that we only detect 1 AWS secret locally, and not the SSH key, when a matching rule is provided by toml file, and with only gitleaks enabled
+        Given we have a file called rules.toml with content
+            """
+            [[rules]]
+            description = "AWS"
+            id = "aws-access-token"
+            regex = '''AKIAYVP4CIPPERUVIFXG'''
+            keywords = [
+                "akia","agpa","aida","aroa","aipa","anpa","anva","asia",
+            ]
+            """
+        When we run secret-magpie-cli with a gitleaks rules.toml file
         Then there will be 1 secrets detected
 
     @localrepos
     @fixture.wantsAWSSecret
-    Scenario: EEnsure that we don't detect any secrets locally, when there are no matching rules provided by toml file, and with only gitleaks enabled
-        When we run secret-magpie-cli with the config path set to noRules.toml
+    Scenario: Ensure that we don't detect any secrets locally, when there are no matching rules provided by toml file, and with only gitleaks enabled
+        Given we have a file called rules.toml with content
+            """
+            """
+        When we run secret-magpie-cli with a gitleaks rules.toml file
         Then there will be 0 secrets detected
 
-    @localrepos
-    @fixture.wantsSSHKey
-    @fixture.wantsAWSSecret
-    Scenario: Ensure that we only detect 1 AWS secret locally, and not the SSH key, when a matching rule is provided by toml file, and with only gitleaks enabled
-        When we run secret-magpie-cli with the config path set to includeAWSRule.toml 
-        Then there will be 1 secrets detected

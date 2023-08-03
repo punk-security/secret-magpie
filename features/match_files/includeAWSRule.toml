@@ -1,7 +1,0 @@
-[[rules]]
-description = "AWS"
-id = "aws-access-token"
-regex = '''AKIAYVP4CIPPERUVIFXG'''
-keywords = [
-    "akia","agpa","aida","aroa","aipa","anpa","anva","asia",
-]
