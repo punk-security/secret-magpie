@@ -390,7 +390,7 @@ def step_impl(context, conf):
     run_secret_magpie(
         context,
         engines="gitleaks",
-        args=[f"--gl-config=.\\features\\match_files\\{conf}"],
+        args=[f"--gl-config=./features/match_files/{conf}"],
     )
 
 
