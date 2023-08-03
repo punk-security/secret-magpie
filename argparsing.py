@@ -213,17 +213,19 @@ def parse_args():
         parser.error("Gitleaks can't be disabled if passing a .toml file")
 
     if not args.disable_gitleaks:
-
         gitleaks = shutil.which("gitleaks")
 
         if gitleaks == None:
-            parser.error("Gitleaks is not installed on this system. Please pass --disable-gitleaks")
+            parser.error(
+                "Gitleaks is not installed on this system. Please pass --disable-gitleaks"
+            )
 
     if not args.disable_trufflehog:
-
         trufflehog = shutil.which("trufflehog")
 
         if trufflehog == None:
-            parser.error("Trufflehog is not installed on this system. Please pass --disable-trufflehog")
+            parser.error(
+                "Trufflehog is not installed on this system. Please pass --disable-trufflehog"
+            )
 
     return args
