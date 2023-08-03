@@ -385,12 +385,12 @@ def onerror(func, path, exc_info):
     func(path)
 
 
-@when("we run secret-magpie-cli with a gitleaks rules.toml file")
-def step_impl(context):
+@when("we run secret-magpie-cli with a gitleaks {conf} file")
+def step_impl(context, conf):
     run_secret_magpie(
         context,
         engines="gitleaks",
-        args=[f"--gl-config=rules.toml"],
+        args=[f"--gl-config={conf}"],
     )
 
 
