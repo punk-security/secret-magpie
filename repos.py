@@ -30,7 +30,7 @@ class Repo:
         if validate_https:
             GitRepo.clone_from(target, path).remotes[0].fetch()
         else:
-            GitRepo.clone_from(target, path, c="http.sslVerify=false").remotes[
+            GitRepo.clone_from(target, path, allow_unsafe_options=True, c="http.sslVerify=false").remotes[
                 0
             ].fetch()
         return path
