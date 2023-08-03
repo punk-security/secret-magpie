@@ -130,12 +130,12 @@ Feature: Validate secret detection against various engines.
         When we run secret-magpie-cli in multi branch mode, to scan list repos.txt, https validation enabled, ignoring commits older than None, extra context disabled, secret storing enabled, output format csv and engines: all
         Then there will be 2 secrets detected
     
-    @github.secretmagpie-testing
-    Scenario: Ensure that we only detect AWS secrets specified in the toml file on GitHub remote
-        When we run secret-magpie-cli with the config path set to includeAWSRule.toml
+    @localrepos
+    Scenario: Ensure that we only detect AWS secrets specified in the toml file on GitHub remote and only gitleaks enabled
+        When we run secret-magpie-cli with the config path set to includeAWSRule.toml 
         Then there will be 1 secrets detected
 
-    @github.secretmagpie-testing
-    Scenario: Ensure that we detect no secrets on GitHub remote when the toml file is empty
+    @localrepos
+    Scenario: Ensure that we detect no secrets on GitHub remote when the toml file is empty and only gitleaks enabled
         When we run secret-magpie-cli with the config path set to noRules.toml
         Then there will be 0 secrets detected

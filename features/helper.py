@@ -388,7 +388,7 @@ def onerror(func, path, exc_info):
 @when("we run secret-magpie-cli with the config path set to {conf}")
 def step_impl(context, conf):
     run_secret_magpie(
-        context, engines="all", outformat="csv", args=["--gl-config={conf}"]
+        context, engines="gitleaks", args=["--gl-config=.\\features\\match_files\\{conf}"]
     )
 
 
