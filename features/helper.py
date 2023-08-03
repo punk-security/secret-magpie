@@ -385,6 +385,15 @@ def onerror(func, path, exc_info):
     func(path)
 
 
+@when("we run secret-magpie-cli with a gitleaks {conf} file")
+def step_impl(context, conf):
+    run_secret_magpie(
+        context,
+        engines="gitleaks",
+        args=[f"--gl-config={conf}"],
+    )
+
+
 class LocalRepos:
     def __init__(self, rules, dir):
         # Prepare the directory for repositories

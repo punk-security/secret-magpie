@@ -94,6 +94,7 @@ class ProcessRepoResult(object):
 
 def process_repo(
     repo,
+    conf,
     functions,
     single_branch=False,
     extra_context=False,
@@ -130,7 +131,7 @@ def process_repo(
                         repo,
                         "SUCCESS",
                         function.__name__,
-                        function(path, repo, branch, extra_context),
+                        function(path, repo, branch, extra_context, conf),
                     )
                 )
             except:
@@ -233,6 +234,7 @@ def get_repos_from_ado(org, pat, dont_validate_https):
         f"https://dev.azure.com/{org}/_apis/projects",
         headers=headers,
         verify=not dont_validate_https,
+        timeout=60,
     )
 
     if response.content == b"":
@@ -245,6 +247,7 @@ def get_repos_from_ado(org, pat, dont_validate_https):
             f"https://dev.azure.com/{org}/{project}/_apis/git/repositories",
             headers=headers,
             verify=not dont_validate_https,
+            timeout=60,
         )
         if response.content == b"":
             continue

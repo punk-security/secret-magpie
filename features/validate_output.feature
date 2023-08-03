@@ -58,3 +58,11 @@ Feature: Validate that the results files produced by secret-magpie-cli is of val
             """
             ERROR: Invalid ISO format string.
             """
+
+    @localrepos
+    Scenario: Ensure that secret-magpie-cli gives the expected error when we provide an invalid gitleaks toml file
+        When we run secret-magpie-cli with a gitleaks rules_not_found.toml file
+        Then secret-magpie-cli's output will be
+            """
+            ERROR: File at rules_not_found.toml not found.
+            """

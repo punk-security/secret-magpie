@@ -180,6 +180,12 @@ parser.add_argument(
     help="The file to read the list of repositories to scan from. One repository per line, web URL to the repository.",
 )
 
+parser.add_argument(
+    "--gl-config",
+    type=str,
+    help="Path to toml file for custom rulesets for Gitleaks",
+)
+
 
 def parse_args():
     args = parser.parse_args()
@@ -201,4 +207,7 @@ def parse_args():
 
     if "filesystem" == args.provider and (args.path is None):
         parser.error("filesystem requires --path")
+
+    if args.gl_config is not None and args.disable_gitleaks:
+        parser.error("Gitleaks can't be disabled if passing a .toml file")
     return args
