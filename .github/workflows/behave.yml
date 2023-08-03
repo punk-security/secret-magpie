@@ -24,4 +24,4 @@ jobs:
             -e SECRETMAGPIE_GITLAB_PAT=${{ secrets.SECRETMAGPIE_GITLAB_PAT }} \
             --entrypoint sh \
             secret-magpie \
-            -c "pip install behave; python -m behave"
+            -c "pip install -r test-requirements.txt; python -m behave"
