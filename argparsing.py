@@ -2,6 +2,7 @@ import argparse
 import math
 from os import linesep, environ, cpu_count
 import sys
+import shutil
 
 runtime = environ.get("SM_COMMAND", f"{sys.argv[0]}")
 
@@ -210,4 +211,19 @@ def parse_args():
 
     if args.gl_config is not None and args.disable_gitleaks:
         parser.error("Gitleaks can't be disabled if passing a .toml file")
+
+    if not args.disable_gitleaks:
+
+        gitleaks = shutil.which("gitleaks")
+
+        if gitleaks == None:
+            parser.error("Gitleaks is not installed on this system. Please pass --disable-gitleaks")
+
+    if not args.disable_trufflehog:
+
+        trufflehog = shutil.which("trufflehog")
+
+        if trufflehog == None:
+            parser.error("Trufflehog is not installed on this system. Please pass --disable-trufflehog")
+
     return args
