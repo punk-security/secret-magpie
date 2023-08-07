@@ -25,6 +25,10 @@ else:
     parallel = math.ceil(cores / 4)
 
 
+def check_exists(var):
+    return shutil.which(var)
+
+
 class CustomParser(argparse.ArgumentParser):
     def error(self, message):
         sys.stdout.write(f" ❌ error: {message}{linesep}{linesep}")
@@ -213,19 +217,17 @@ def parse_args():
         parser.error("Gitleaks can't be disabled if passing a .toml file")
 
     if not args.disable_gitleaks:
-        gitleaks = shutil.which("gitleaks")
+        gitleaks = check_exists("gitleaks")
 
-        if gitleaks == None:
-            parser.error(
-                "Gitleaks is not installed on this system. Please pass --disable-gitleaks"
-            )
+        if not isinstance(gitleaks, str) or len(gitleaks) == 0:
+            parser.error("Could not find Gitleaks on your system. Ensure it's on the PATH or pass --disable-gitleaks")
 
     if not args.disable_trufflehog:
-        trufflehog = shutil.which("trufflehog")
+        trufflehog = check_exists("trufflehog")
 
-        if trufflehog == None:
+        if not isinstance(trufflehog, str) or len(trufflehog) == 0:
             parser.error(
-                "Trufflehog is not installed on this system. Please pass --disable-trufflehog"
+                "Could not find Trufflehog on your system. Ensure it's on the PATH or pass --disable-trufflehog"
             )
 
     return args

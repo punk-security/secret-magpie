@@ -4,6 +4,8 @@ import shutil
 import stat
 import subprocess
 
+from unittest.mock import patch
+
 from behave import given, when, then, step
 
 
@@ -54,7 +56,8 @@ def step_impl(context, name):
         f.write(context.text)
 
 
-def run_secret_magpie(context, engines, outformat="csv", args=[]):
+
+def run_secret_magpie(context, engines, outformat="csv", args=[], err_check=True):
     try:
         context.repos = LocalRepos(context.rules, TESTING_DIRECTORY)
     except:
@@ -160,14 +163,15 @@ def run_secret_magpie(context, engines, outformat="csv", args=[]):
             param_list, capture_output=True, env=env, encoding="UTF-8"
         )
 
-        if context.proc.stderr != "":
-            raise AssertionError(context.proc.stderr)
+        if err_check:
+            if context.proc.stderr != "":
+                raise AssertionError(context.proc.stderr)
 
-        if "❌" in context.proc.stdout:
-            raise AssertionError(context.proc.stdout)
+            if "❌" in context.proc.stdout:
+                raise AssertionError(context.proc.stdout)
 
-        if "warning" in context.proc.stdout:
-            raise AssertionError(context.proc.stdout)
+            if "warning" in context.proc.stdout:
+                raise AssertionError(context.proc.stdout)
 
         stdout = context.proc.stdout.split("\n")
 
@@ -365,6 +369,21 @@ def step_impl(context):
         "Expected output: " + str(stdout) + ", found " + str(expected)
     )
 
+@when("we run secret-magpie-cli with {engine} disabled")
+def step_impl(context, engine):
+    with patch("shutil.which", return_value=None):
+        run_secret_magpie(context, engines=engine, err_check=False)
+
+
+@then("secret-magpie-cli's error output will be")
+def step_impl(context):
+    stderr = context.proc.stdout
+    expected = list(map(lambda s: s.rstrip("\r"), context.text.split("\n")))
+
+    assert str(expected) not in str(stderr), (
+        "Expected error output: " + str(expected) + ", found " + str(stderr)
+    )
+
 
 @then("directory {dir} won't exist")
 def step_impl(context, dir):
@@ -392,7 +411,6 @@ def step_impl(context, conf):
         engines="gitleaks",
         args=[f"--gl-config={conf}"],
     )
-
 
 class LocalRepos:
     def __init__(self, rules, dir):
