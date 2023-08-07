@@ -220,7 +220,9 @@ def parse_args():
         gitleaks = check_exists("gitleaks")
 
         if not isinstance(gitleaks, str) or len(gitleaks) == 0:
-            parser.error("Could not find Gitleaks on your system. Ensure it's on the PATH or pass --disable-gitleaks")
+            parser.error(
+                "Could not find Gitleaks on your system. Ensure it's on the PATH or pass --disable-gitleaks"
+            )
 
     if not args.disable_trufflehog:
         trufflehog = check_exists("trufflehog")

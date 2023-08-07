@@ -56,7 +56,6 @@ def step_impl(context, name):
         f.write(context.text)
 
 
-
 def run_secret_magpie(context, engines, outformat="csv", args=[], err_check=True):
     try:
         context.repos = LocalRepos(context.rules, TESTING_DIRECTORY)
@@ -369,6 +368,7 @@ def step_impl(context):
         "Expected output: " + str(stdout) + ", found " + str(expected)
     )
 
+
 @when("we run secret-magpie-cli with {engine} disabled")
 def step_impl(context, engine):
     with patch("shutil.which", return_value=None):
@@ -411,6 +411,7 @@ def step_impl(context, conf):
         engines="gitleaks",
         args=[f"--gl-config={conf}"],
     )
+
 
 class LocalRepos:
     def __init__(self, rules, dir):
