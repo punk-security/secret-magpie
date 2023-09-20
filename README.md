@@ -30,9 +30,12 @@ Given an auth token, it will:
 * scan EVERY branch with multiple tools
 * squash all the findings into one big list
 * deduplicate them so you dont triage the same thing twice
+* provide a slick web ui to quickly triage your findings
 * give you some great stats and a full report in csv or json
 
 ## See it in action!
+
+![WEB](Docs/secret-magpie-web.png)
 
 ![CMD](Docs/secret-magpie.gif)
 
