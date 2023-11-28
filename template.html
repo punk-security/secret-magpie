@@ -57,7 +57,7 @@
             init(params) {
                 this.eGui = document.createElement('div');
                 this.eGui.innerHTML = `
-                    <span>${params.value.toLowerCase() == "true" ? "✅" : "❌"}</span>
+                    <span>${String(params.value).toLowerCase() == "true" ? "✅" : "❌"}</span>
                 `;
             }
 
@@ -67,7 +67,7 @@
 
             refresh(params) {
                 this.eGui.innerHTML = `
-                    <span>${params.value.toLowerCase() == "true" ? "✅" : "❌"}</span>
+                    <span>${String(params.value).toLowerCase() == "true" ? "✅" : "❌"}</span>
                 `;
 
                 return true;
