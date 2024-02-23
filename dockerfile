@@ -20,6 +20,10 @@ WORKDIR /app
 
 COPY . .
 
+# This is necessary to fix "dubious ownership" issues you can encounter
+# when scanning local repos
+RUN git config --global safe.directory '*'
+
 # Exports
 ENV SECRETMAGPIE_LISTEN_ADDR=0.0.0.0:8080
 ENV SM_COMMAND "docker run punksecurity/secret-magpie --" 

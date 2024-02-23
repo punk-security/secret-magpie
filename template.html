@@ -164,15 +164,26 @@
                             <span class"orange">${data.secret}</span>
                         </p>
                         <p>
-                            <span><span class="orange">Context: </span><code>${data.context.split('\\n').join('</br>')}</code></span>
+                            <span><span class="orange">Context: </span><code id="context-code"></code></span>
                         </p>
                         <p>
                             <span class="orange">Extra Context: </span>
-                            <code>
-                                ${data.extra_context.split('\n').join('</br>')}
-                            </code>
+                            <code id="extra-context-code"></code>
                         </p>
                     `;
+
+                let context = eGui.querySelector("#context-code");
+                let extra_context = eGui.querySelector("#context-code");
+
+                for (let line of data.context.split('\n')) {
+                    context.appendChild(document.createTextNode(line));
+                    context.appendChild(document.createElement('br'));
+                }
+
+                for (let line of data.extra_context.split('\n')) {
+                    extra_context.appendChild(document.createTextNode(line));
+                    extra_context.appendChild(document.createElement('br'));
+                }
             }
 
             getGui() {
@@ -869,7 +880,6 @@
             background-color: #1d2024;
             cursor: pointer;
         }
-
     </style>
 </head>
 
