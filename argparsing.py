@@ -2,6 +2,7 @@ import argparse
 import math
 from os import linesep, environ, cpu_count
 import sys
+import shutil
 
 runtime = environ.get("SM_COMMAND", f"{sys.argv[0]}")
 
@@ -22,6 +23,10 @@ if cores is None or cores == 0:
     parallel = 1
 else:
     parallel = math.ceil(cores / 4)
+
+
+def check_exists(var):
+    return shutil.which(var)
 
 
 class CustomParser(argparse.ArgumentParser):
@@ -210,4 +215,21 @@ def parse_args():
 
     if args.gl_config is not None and args.disable_gitleaks:
         parser.error("Gitleaks can't be disabled if passing a .toml file")
+
+    if not args.disable_gitleaks:
+        gitleaks = check_exists("gitleaks")
+
+        if not isinstance(gitleaks, str) or len(gitleaks) == 0:
+            parser.error(
+                "Could not find Gitleaks on your system. Ensure it's on the PATH or pass --disable-gitleaks"
+            )
+
+    if not args.disable_trufflehog:
+        trufflehog = check_exists("trufflehog")
+
+        if not isinstance(trufflehog, str) or len(trufflehog) == 0:
+            parser.error(
+                "Could not find Trufflehog on your system. Ensure it's on the PATH or pass --disable-trufflehog"
+            )
+
     return args
