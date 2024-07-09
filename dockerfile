@@ -10,8 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 FROM python:3.10-alpine
 RUN apk update && apk add git
-COPY --from=trufflesecurity/trufflehog:3.20.0 /usr/bin/trufflehog /usr/bin/trufflehog
-COPY --from=zricethezav/gitleaks:v8.15.2 /usr/bin/gitleaks /usr/bin/gitleaks
+COPY --from=trufflesecurity/trufflehog:3.79.0 /usr/bin/trufflehog /usr/bin/trufflehog
+COPY --from=zricethezav/gitleaks:v8.18.4 /usr/bin/gitleaks /usr/bin/gitleaks
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 

@@ -125,7 +125,7 @@ def step_impl(context, file):
 
         assert recursive_compare_json(
             expected_json, context.json
-        ), "JSON output did not match!"
+        ), context.json
 
 
 def do_match_test(format, expected):

@@ -55,6 +55,14 @@ def step_impl(context, name):
     with open(name, "w") as f:
         f.write(context.text)
 
+@given("{binary} is not present")
+def step_impl(context, binary):
+    try:
+        context.patches
+    except:
+        context.patches = []
+    context.patches.append((["shutil.which"], {"return_value":None}))
+
 
 def run_secret_magpie(context, engines, outformat="csv", args=[], err_check=True):
     try:
@@ -65,6 +73,17 @@ def run_secret_magpie(context, engines, outformat="csv", args=[], err_check=True
     context.format = outformat
 
     param_list = []
+
+    patchers = []
+
+    try:
+        context.patches
+        patchers = list(map(lambda p: patch(*p[0], **p[1]), context.patches))
+    except:
+        pass
+
+    for patcher in patchers:
+        patcher.start()
 
     match context.repo_type:
         case "local":
@@ -196,6 +215,9 @@ def run_secret_magpie(context, engines, outformat="csv", args=[], err_check=True
         context.found_unique = int(unique_secrets[0][2])
     except:
         context.found_unique = 0
+
+    for patcher in reversed(patchers):
+        patcher.stop()
 
 
 @when("we run secret-magpie-cli with engines: {engines}")
@@ -367,12 +389,6 @@ def step_impl(context):
     assert stdout == expected, (
         "Expected output: " + str(stdout) + ", found " + str(expected)
     )
-
-
-@when("we run secret-magpie-cli with {engine} disabled")
-def step_impl(context, engine):
-    with patch("shutil.which", return_value=None):
-        run_secret_magpie(context, engines=engine, err_check=False)
 
 
 @then("secret-magpie-cli's error output will be")

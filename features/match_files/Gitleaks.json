@@ -1,7 +1,7 @@
 [
     [
         {
-            "Description": "Private Key",
+            "Description": "Identified a Private Key, which may compromise cryptographic security and sensitive data encryption.",
             "StartLine": 1,
             "EndLine": 16,
             "StartColumn": 1,
