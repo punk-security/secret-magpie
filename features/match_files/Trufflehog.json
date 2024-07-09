@@ -11,7 +11,7 @@
                 }
             }
         },
-        "SourceID": 0,
+        "SourceID": 1,
         "SourceType": 16,
         "SourceName": "trufflehog - git",
         "DetectorType": 15,
@@ -19,6 +19,7 @@
         "DecoderName": "PLAIN",
         "Verified": false,
         "Raw": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn\nNhAAAAAwEAAQAAAIEAuaJtfDkJfu0BhyQACpCeu6y1hWPHEN6kXbKJ4Da5ammYQrrmUjLS\nWJXhU8i8tM1438ZuJiA+49ZDP/Kh6P8Hs9GulRuYDNa9a+WuZurcsKUvr5WDK67KX7mU8K\nR0+1XkN6tzXTaBdjZldOGQ+V3DXAsWoWHbkzL6Cm1Iy6w57msAAAIAH+jd2h/o3doAAAAH\nc3NoLXJzYQAAAIEAuaJtfDkJfu0BhyQACpCeu6y1hWPHEN6kXbKJ4Da5ammYQrrmUjLSWJ\nXhU8i8tM1438ZuJiA+49ZDP/Kh6P8Hs9GulRuYDNa9a+WuZurcsKUvr5WDK67KX7mU8KR0\n+1XkN6tzXTaBdjZldOGQ+V3DXAsWoWHbkzL6Cm1Iy6w57msAAAADAQABAAAAgFRV1MPQ7d\n16M22AD3y9Q0AkMLuPHwss+yOOT1FLy2Tq4D/AxY6mhCW2wg3cbs79YmLXtYcgszGzUA4n\nXyOJaaekEVVgmeH8214bckwSIDadtDiIBLKZJ6thQOjk7ijS2ZCq/8PQdK4j7J2/Nl9X3e\n0ciE8lbU49occQl1ppE8aRAAAAQQDXkWIMdUhnSZ3LRkSBpLOEXiJ9UEHHNYg3dNZSmqK1\nLhNRpiY5GJAMBGPXujt6oGyoSCLCSqU9ckOUN8I+LRtuAAAAQQDaKzn9XIkNQjtbMDO4lx\ni/94me4HgbgrJjWdsmKpNJd6pMTXaIjCv992MWKIp4tv/uuMQNRuqiNHGeDZbwFDKPAAAA\nQQDZ0vZDS/MF4T2nmkkZyDEzSG5bf3pzZVpopTwidC2bbKRxsvRiDMHz0+iGbtNNJKq183\nUJor65LswerJbV7ERlAAAABm5vbmFtZQECAwQ=\n-----END OPENSSH PRIVATE KEY-----\n",
+        "RawV2": "",
         "Redacted": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5v",
         "ExtraData": null,
         "StructuredData": null

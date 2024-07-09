@@ -123,9 +123,7 @@ def step_impl(context, file):
     with open("features/match_files/" + file) as f:
         expected_json = json.loads(f.read())
 
-        assert recursive_compare_json(
-            expected_json, context.json
-        ), "JSON output did not match!"
+        assert recursive_compare_json(expected_json, context.json), context.json
 
 
 def do_match_test(format, expected):

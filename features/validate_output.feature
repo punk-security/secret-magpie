@@ -66,3 +66,21 @@ Feature: Validate that the results files produced by secret-magpie-cli is of val
             """
             ERROR: File at rules_not_found.toml not found.
             """
+
+    @localrepos
+    Scenario: Ensure that secret-magpie-cli gives the expected error when gitleaks is not found
+        Given gitleaks is not present
+        When we run secret-magpie-cli with engines: gitleaks
+        Then secret-magpie-cli's error output will be
+            """
+            ❌ error: Could not find Gitleaks on your system. Ensure it's on the PATH or pass --disable-gitleaks
+            """
+
+    @localrepos
+    Scenario: Ensure that secret-magpie-cli gives the expected error when trufflehog is not found
+        Given trufflehog is not present
+        When we run secret-magpie-cli with engines: trufflehog
+        Then secret-magpie-cli's error output will be
+            """
+            ❌ error: Could not find Trufflehog on your system. Ensure it's on the PATH or pass --disable-trufflehog
+            """
