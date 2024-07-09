@@ -55,13 +55,14 @@ def step_impl(context, name):
     with open(name, "w") as f:
         f.write(context.text)
 
+
 @given("{binary} is not present")
 def step_impl(context, binary):
     try:
         context.patches
     except:
         context.patches = []
-    context.patches.append((["shutil.which"], {"return_value":None}))
+    context.patches.append((["shutil.which"], {"return_value": None}))
 
 
 def run_secret_magpie(context, engines, outformat="csv", args=[], err_check=True):
